@@ -1,0 +1,81 @@
+# 작업 목록
+
+요구사항은 [Requirements.md](./Requirements.md), v1 이후 항목은 [Backlog.md](../Backlog.md),
+채택하지 않은 대안은 [Alternatives.md](../Alternatives.md) 참고.
+
+## 1. 프로젝트 설정
+
+`Project.swift` / `Tuist/Package.swift`
+
+- [ ] `deploymentTargets: .macOS("26.0")` 추가 (현재 미설정)
+    - [ ] 앱·테스트 두 타깃 모두 지정 (한쪽만 올리면 어긋남)
+- [ ] `bundleId`를 `dev.tuist.TelePointer` → `com.taeminyun.TelePointer`로 변경
+- [ ] 테스트 타깃 `bundleId`도 `dev.tuist.TelePointerTests` → `com.taeminyun.TelePointerTests`로 변경
+- [ ] `infoPlist`를 `.default` → 커스텀으로 교체
+    - [ ] `LSUIElement = true` 추가 (Dock 아이콘·App menu 숨김)
+    - [ ] 템플릿 잔재인 `NSMainStoryboardFile: Main` 제거 (SwiftUI 앱에 불필요)
+- [ ] App Sandbox entitlements 추가 (`com.apple.security.app-sandbox`)
+- [ ] Swift 6 strict concurrency 설정 명시
+- [ ] KeyboardShortcuts 3.0.1 의존성 추가
+- [ ] `tuist install` → `tuist generate`로 반영 확인
+
+## 2. 앱 골격
+
+- [ ] `TelePointerApp.swift`의 `WindowGroup` → `MenuBarExtra` + `.menuBarExtraStyle(.menu)`로 교체
+- [ ] 메뉴바 아이콘 설정 (SF Symbol `cursorarrow.rays`)
+- [ ] `ContentView.swift` 제거 (템플릿 잔재)
+- [ ] 메뉴 3개 항목 배치: Move Pointer / Open at Login / Quit
+
+## 3. Move Pointer
+
+- [ ] 현재 커서가 위치한 `NSScreen` 판별
+    - [ ] 어느 화면에도 속하지 않으면 주 디스플레이로 폴백 (`nil`이면 조용히 아무 일도 안 일어남)
+- [ ] `NSScreen.frame` 정중앙 좌표 계산
+- [ ] **좌표계 변환** — `NSScreen`은 좌하단 원점, `CGWarpMouseCursorPosition`은 좌상단 원점
+- [ ] 화면 중앙 계산 + 좌표계 변환을 순수 함수로 분리
+- [ ] 분리한 함수의 단위 테스트 작성 (템플릿 `TelePointerTests.swift` 대체)
+- [ ] `CGWarpMouseCursorPosition`으로 이동 (애니메이션 없이 즉각)
+- [ ] KeyboardShortcuts `Name` 정의 + 기본값 `⌃⌥⌘C` 지정
+- [ ] 앱 시작 시 핫키 핸들러 등록
+- [ ] 메뉴 항목 클릭 시에도 동일 동작 실행 (핫키와 로직 공유)
+
+> **warp은 이벤트를 발생시키지 않음**
+> 커서 아래 UI의 hover 상태는 사용자가 마우스를 실제로 움직이기 전까지 갱신되지 않는다.
+> 합성 `mouseMoved` 이벤트를 post하면 갱신되지만 접근성 권한이 필요하고,
+> `CGEvent.post`는 반환값이 없어 권한이 없으면 조용히 무시된다. v1에서는 하지 않는다.
+> 클릭 좌표는 정상 적용되므로 기능상 문제는 없다.
+
+> **핫키 충돌은 감지할 수 없음**
+> 이미 다른 앱이나 시스템이 점유한 조합(예: Spotlight의 `⌘Space`)도 등록 자체는 성공한다.
+> 충돌이 나면 오류 없이 조용히 동작하지 않으므로, 안전한 조합(`⌃⌥⌘C`)을 고정하는 것으로 대응한다.
+
+## 4. Open at Login
+
+- [ ] `SMAppService.mainApp` 등록/해제 토글
+    - [ ] `register()` / `unregister()`는 `throws` — 실패 시 처리 정의
+- [ ] 체크 상태를 `SMAppService.mainApp.status`에서 직접 조회 (UserDefaults 미사용)
+- [ ] 메뉴가 열릴 때마다 status 재조회 — 사용자가 시스템 설정에서 직접 끈 경우 반영
+- [ ] `.requiresApproval` 상태 처리 (시스템 설정으로 안내)
+- [ ] `.notFound`는 앱이 `/Applications`에 없을 때도 나오므로 오류로 취급하지 말 것
+
+## 5. Quit
+
+- [ ] 메뉴 항목 + ⌘Q 키 이퀴벌런트 연결
+- [ ] 메뉴가 열려 있을 때만 동작함을 확인 (전역 가로채기 아님)
+
+## 6. App Store 제출 준비
+
+- [ ] `AppIcon.appiconset` 에셋 추가 (현재 비어 있음)
+- [ ] 코드 서명 팀 / provisioning profile 설정
+- [ ] App Store Connect에 앱 등록
+- [ ] 스크린샷 · 앱 설명 · 개인정보 처리방침 URL 준비
+
+## 7. 검증
+
+- [ ] Dock 아이콘 미노출 확인
+- [ ] 메뉴바 좌측 App menu 미노출 확인
+- [ ] 멀티 디스플레이 — 커서가 있는 화면의 중앙으로 이동하는지
+- [ ] 다른 앱 포커스 상태에서 핫키 동작 확인 (부작용 없이 커서만 이동)
+- [ ] 샌드박스 빌드에서 핫키·커서 이동 동작 확인
+- [ ] 커서 이동 직후 hover가 갱신되지 않는 것이 수용 가능한 수준인지 확인
+- [ ] **Open at Login은 `/Applications`에 설치 후 검증** — Xcode DerivedData에서 실행하면 `notFound` 반환

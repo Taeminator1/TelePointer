@@ -7,17 +7,17 @@
 
 `Project.swift` / `Tuist/Package.swift`
 
-- [ ] `deploymentTargets: .macOS("26.0")` 추가 (현재 미설정)
-    - [ ] 앱·테스트 두 타깃 모두 지정 (한쪽만 올리면 어긋남)
-- [ ] `bundleId`를 `dev.tuist.TelePointer` → `com.taeminyun.TelePointer`로 변경
-- [ ] 테스트 타깃 `bundleId`도 `dev.tuist.TelePointerTests` → `com.taeminyun.TelePointerTests`로 변경
-- [ ] `infoPlist`를 `.default` → 커스텀으로 교체
-    - [ ] `LSUIElement = true` 추가 (Dock 아이콘·App menu 숨김)
-    - [ ] 템플릿 잔재인 `NSMainStoryboardFile: Main` 제거 (SwiftUI 앱에 불필요)
-- [ ] App Sandbox entitlements 추가 (`com.apple.security.app-sandbox`)
-- [ ] Swift 6 strict concurrency 설정 명시
-- [ ] KeyboardShortcuts 3.0.1 의존성 추가
-- [ ] `tuist install` → `tuist generate`로 반영 확인
+- [x] `deploymentTargets: .macOS("26.0")` 추가 (현재 미설정)
+    - [x] 앱·테스트 두 타깃 모두 지정 (한쪽만 올리면 어긋남)
+- [x] `bundleId`를 `dev.tuist.TelePointer` → `com.taeminyun.TelePointer`로 변경
+- [x] 테스트 타깃 `bundleId`도 `dev.tuist.TelePointerTests` → `com.taeminyun.TelePointerTests`로 변경
+- [x] `infoPlist`를 `.default` → 커스텀으로 교체
+    - [x] `LSUIElement = true` 추가 (Dock 아이콘·App menu 숨김)
+    - [x] 템플릿 잔재인 `NSMainStoryboardFile: Main` 제거 (SwiftUI 앱에 불필요)
+- [x] App Sandbox entitlements 추가 (`com.apple.security.app-sandbox`)
+- [x] Swift 6 strict concurrency 설정 명시
+- [x] KeyboardShortcuts 3.0.1 의존성 추가
+- [x] `tuist install` → `tuist generate`로 반영 확인
 
 ## 2. 앱 골격
 

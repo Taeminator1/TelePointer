@@ -21,10 +21,10 @@
 
 ## 2. 앱 골격
 
-- [ ] `TelePointerApp.swift`의 `WindowGroup` → `MenuBarExtra` + `.menuBarExtraStyle(.menu)`로 교체
-- [ ] 메뉴바 아이콘 설정 (SF Symbol `cursorarrow.rays`)
-- [ ] `ContentView.swift` 제거 (템플릿 잔재)
-- [ ] 메뉴 3개 항목 배치: Move Pointer / Open at Login / Quit
+- [x] `TelePointerApp.swift`의 `WindowGroup` → `MenuBarExtra` + `.menuBarExtraStyle(.menu)`로 교체
+- [x] 메뉴바 아이콘 설정 (SF Symbol `cursorarrow.rays`)
+- [x] `ContentView.swift` 제거 (템플릿 잔재)
+- [x] 메뉴 3개 항목 배치: Move Pointer / Open at Login / Quit
 
 ## 3. Move Pointer
 
@@ -60,7 +60,7 @@
 
 ## 5. Quit
 
-- [ ] 메뉴 항목 + ⌘Q 키 이퀴벌런트 연결
+- [x] 메뉴 항목 + ⌘Q 키 이퀴벌런트 연결
 - [ ] 메뉴가 열려 있을 때만 동작함을 확인 (전역 가로채기 아님)
 
 ## 6. App Store 제출 준비

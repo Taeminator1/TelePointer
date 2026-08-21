@@ -3,8 +3,9 @@ import SwiftUI
 @main
 struct TelePointerApp: App {
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+        MenuBarExtra("TelePointer", systemImage: "cursorarrow.rays") {
+            MenuBarContent()
         }
+        .menuBarExtraStyle(.menu)
     }
 }

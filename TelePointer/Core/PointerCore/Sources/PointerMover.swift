@@ -3,6 +3,16 @@ import AppKit
 @MainActor
 public enum PointerMover {
     public static func moveToScreenCenter() {
-        // TODO: 커서가 위치한 NSScreen 판별 → warpPoint 계산 → CGWarpMouseCursorPosition
+        guard let primaryScreen = NSScreen.screens.first else { return }
+
+        let cursor = NSEvent.mouseLocation
+        let targetScreen = NSScreen.screens.first { $0.frame.contains(cursor) } ?? primaryScreen
+
+        CGWarpMouseCursorPosition(
+            warpPoint(
+                centerOf: targetScreen.frame,
+                primaryScreenHeight: primaryScreen.frame.height
+            )
+        )
     }
 }

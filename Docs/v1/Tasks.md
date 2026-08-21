@@ -41,13 +41,13 @@ v1 이후 항목은 [Backlog.md](../Backlog.md), 채택하지 않은 대안은 [
 
 ## 4. Move Pointer
 
-- [ ] 현재 커서가 위치한 `NSScreen` 판별
-    - [ ] 어느 화면에도 속하지 않으면 주 디스플레이로 폴백 (`nil`이면 조용히 아무 일도 안 일어남)
-- [ ] `NSScreen.frame` 정중앙 좌표 계산
+- [x] 현재 커서가 위치한 `NSScreen` 판별
+    - [x] 어느 화면에도 속하지 않으면 주 디스플레이로 폴백 (`nil`이면 조용히 아무 일도 안 일어남)
+- [x] `NSScreen.frame` 정중앙 좌표 계산
 - [x] **좌표계 변환** — `NSScreen`은 좌하단 원점, `CGWarpMouseCursorPosition`은 좌상단 원점
 - [x] 화면 중앙 계산 + 좌표계 변환을 순수 함수로 분리
 - [x] 분리한 함수의 단위 테스트 작성 (템플릿 `TelePointerTests.swift` 대체)
-- [ ] `CGWarpMouseCursorPosition`으로 이동 (애니메이션 없이 즉각)
+- [x] `CGWarpMouseCursorPosition`으로 이동 (애니메이션 없이 즉각)
 - [x] KeyboardShortcuts `Name` 정의 + 기본값 `⌃⌥⌘C` 지정
 - [ ] 앱 시작 시 핫키 핸들러 등록
 - [ ] 메뉴 항목 클릭 시에도 동일 동작 실행 (핫키와 로직 공유)

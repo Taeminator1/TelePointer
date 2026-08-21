@@ -1,13 +1,35 @@
-import Foundation
+import ServiceManagement
 
 @MainActor
 public enum LoginItem {
-    public static var isEnabled: Bool {
-        // TODO: SMAppService.mainApp.status 조회
-        false
+    public enum State {
+        case enabled
+        case disabled
+        case requiresApproval
     }
 
-    public static func toggle() {
-        // TODO: SMAppService.mainApp 등록/해제, .requiresApproval 처리
+    public static var state: State {
+        switch SMAppService.mainApp.status {
+            case .enabled:
+                    .enabled
+            case .requiresApproval:
+                    .requiresApproval
+            case .notRegistered, .notFound:
+                    .disabled
+            @unknown default:
+                    .disabled
+        }
+    }
+
+    public static func setEnabled(_ isEnabled: Bool) throws {
+        if isEnabled {
+            try SMAppService.mainApp.register()
+        } else {
+            try SMAppService.mainApp.unregister()
+        }
+    }
+
+    public static func openSystemSettings() {
+        SMAppService.openSystemSettingsLoginItems()
     }
 }

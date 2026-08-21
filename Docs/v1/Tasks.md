@@ -64,12 +64,12 @@ v1 이후 항목은 [Backlog.md](../Backlog.md), 채택하지 않은 대안은 [
 
 ## 5. Open at Login
 
-- [ ] `SMAppService.mainApp` 등록/해제 토글
-    - [ ] `register()` / `unregister()`는 `throws` — 실패 시 처리 정의
-- [ ] 체크 상태를 `SMAppService.mainApp.status`에서 직접 조회 (UserDefaults 미사용)
-- [ ] 메뉴가 열릴 때마다 status 재조회 — 사용자가 시스템 설정에서 직접 끈 경우 반영
-- [ ] `.requiresApproval` 상태 처리 (시스템 설정으로 안내)
-- [ ] `.notFound`는 앱이 `/Applications`에 없을 때도 나오므로 오류로 취급하지 말 것
+- [x] `SMAppService.mainApp` 등록/해제 토글
+    - [x] `register()` / `unregister()`는 `throws` — 실패 시 처리 정의
+- [x] 체크 상태를 `SMAppService.mainApp.status`에서 직접 조회 (UserDefaults 미사용)
+- [x] 메뉴가 열릴 때마다 status 재조회 — 사용자가 시스템 설정에서 직접 끈 경우 반영
+- [x] `.requiresApproval` 상태 처리 (시스템 설정으로 안내)
+- [x] `.notFound`는 앱이 `/Applications`에 없을 때도 나오므로 오류로 취급하지 말 것
 
 ## 6. Quit
 
@@ -92,3 +92,4 @@ v1 이후 항목은 [Backlog.md](../Backlog.md), 채택하지 않은 대안은 [
 - [ ] 샌드박스 빌드에서 핫키·커서 이동 동작 확인
 - [ ] 커서 이동 직후 hover가 갱신되지 않는 것이 수용 가능한 수준인지 확인
 - [ ] **Open at Login은 `/Applications`에 설치 후 검증** — Xcode DerivedData에서 실행하면 `notFound` 반환
+- [ ] 시스템 설정에서 로그인 항목을 끈 뒤 메뉴를 다시 열면 체크가 풀리는지

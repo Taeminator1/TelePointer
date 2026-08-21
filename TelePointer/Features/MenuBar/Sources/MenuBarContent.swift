@@ -1,3 +1,4 @@
+import KeyboardShortcuts
 import LaunchAtLogin
 import PointerCore
 import SwiftUI
@@ -9,6 +10,7 @@ public struct MenuBarContent: View {
         Button("Move Pointer") {
             PointerMover.moveToScreenCenter()
         }
+        .globalKeyboardShortcut(.movePointer)
 
         Button("Open at Login") {
             LoginItem.toggle()

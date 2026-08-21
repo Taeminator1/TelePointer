@@ -1,7 +1,7 @@
 # 작업 목록
 
-요구사항은 [Requirements.md](./Requirements.md), v1 이후 항목은 [Backlog.md](../Backlog.md),
-채택하지 않은 대안은 [Alternatives.md](../Alternatives.md) 참고.
+요구사항은 [Requirements.md](./Requirements.md), 모듈 구조는 [Architecture.md](../Architecture.md),
+v1 이후 항목은 [Backlog.md](../Backlog.md), 채택하지 않은 대안은 [Alternatives.md](../Alternatives.md) 참고.
 
 ## 1. 프로젝트 설정
 
@@ -19,23 +19,36 @@
 - [x] KeyboardShortcuts 3.0.1 의존성 추가
 - [x] `tuist install` → `tuist generate`로 반영 확인
 
-## 2. 앱 골격
+## 2. 모듈 구조
+
+[Architecture.md](../Architecture.md)에 결정 근거 정리.
+
+- [x] `App` / `Features` / `Core` 계층으로 디렉터리 재배치
+- [x] `MenuBar`·`PointerCore`·`LaunchAtLogin` 세 모듈을 `staticFramework`로 분리
+    - [x] 커서 이동(`PointerCore`)과 로그인 항목(`LaunchAtLogin`)은 별도 모듈
+- [x] `Project.swift`에 모듈 타깃 헬퍼 추가 (단일 파일 유지)
+- [x] `KeyboardShortcuts` 의존을 앱 → `MenuBar`로 이동
+- [x] 테스트 타깃을 `PointerCoreTests`로 교체 — test host 없이 실행
+- [x] 템플릿 잔재 `Preview Content` 제거
+- [x] `tuist graph`로 의존 방향이 단방향인지 확인
+
+## 3. 앱 골격
 
 - [x] `TelePointerApp.swift`의 `WindowGroup` → `MenuBarExtra` + `.menuBarExtraStyle(.menu)`로 교체
 - [x] 메뉴바 아이콘 설정 (SF Symbol `cursorarrow.rays`)
 - [x] `ContentView.swift` 제거 (템플릿 잔재)
 - [x] 메뉴 3개 항목 배치: Move Pointer / Open at Login / Quit
 
-## 3. Move Pointer
+## 4. Move Pointer
 
 - [ ] 현재 커서가 위치한 `NSScreen` 판별
     - [ ] 어느 화면에도 속하지 않으면 주 디스플레이로 폴백 (`nil`이면 조용히 아무 일도 안 일어남)
 - [ ] `NSScreen.frame` 정중앙 좌표 계산
-- [ ] **좌표계 변환** — `NSScreen`은 좌하단 원점, `CGWarpMouseCursorPosition`은 좌상단 원점
-- [ ] 화면 중앙 계산 + 좌표계 변환을 순수 함수로 분리
-- [ ] 분리한 함수의 단위 테스트 작성 (템플릿 `TelePointerTests.swift` 대체)
+- [x] **좌표계 변환** — `NSScreen`은 좌하단 원점, `CGWarpMouseCursorPosition`은 좌상단 원점
+- [x] 화면 중앙 계산 + 좌표계 변환을 순수 함수로 분리
+- [x] 분리한 함수의 단위 테스트 작성 (템플릿 `TelePointerTests.swift` 대체)
 - [ ] `CGWarpMouseCursorPosition`으로 이동 (애니메이션 없이 즉각)
-- [ ] KeyboardShortcuts `Name` 정의 + 기본값 `⌃⌥⌘C` 지정
+- [x] KeyboardShortcuts `Name` 정의 + 기본값 `⌃⌥⌘C` 지정
 - [ ] 앱 시작 시 핫키 핸들러 등록
 - [ ] 메뉴 항목 클릭 시에도 동일 동작 실행 (핫키와 로직 공유)
 
@@ -49,7 +62,7 @@
 > 이미 다른 앱이나 시스템이 점유한 조합(예: Spotlight의 `⌘Space`)도 등록 자체는 성공한다.
 > 충돌이 나면 오류 없이 조용히 동작하지 않으므로, 안전한 조합(`⌃⌥⌘C`)을 고정하는 것으로 대응한다.
 
-## 4. Open at Login
+## 5. Open at Login
 
 - [ ] `SMAppService.mainApp` 등록/해제 토글
     - [ ] `register()` / `unregister()`는 `throws` — 실패 시 처리 정의
@@ -58,19 +71,19 @@
 - [ ] `.requiresApproval` 상태 처리 (시스템 설정으로 안내)
 - [ ] `.notFound`는 앱이 `/Applications`에 없을 때도 나오므로 오류로 취급하지 말 것
 
-## 5. Quit
+## 6. Quit
 
 - [x] 메뉴 항목 + ⌘Q 키 이퀴벌런트 연결
 - [ ] 메뉴가 열려 있을 때만 동작함을 확인 (전역 가로채기 아님)
 
-## 6. App Store 제출 준비
+## 7. App Store 제출 준비
 
 - [ ] `AppIcon.appiconset` 에셋 추가 (현재 비어 있음)
 - [ ] 코드 서명 팀 / provisioning profile 설정
 - [ ] App Store Connect에 앱 등록
 - [ ] 스크린샷 · 앱 설명 · 개인정보 처리방침 URL 준비
 
-## 7. 검증
+## 8. 검증
 
 - [ ] Dock 아이콘 미노출 확인
 - [ ] 메뉴바 좌측 App menu 미노출 확인

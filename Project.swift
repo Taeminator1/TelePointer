@@ -1,6 +1,7 @@
 import ProjectDescription
 
 let deploymentTargets: DeploymentTargets = .macOS("26.0")
+let bundlePrefix = "com.taeminyun.TelePointer"
 
 let appInfoPlist: [String: Plist.Value] = [
     "CFBundleDevelopmentRegion": "$(DEVELOPMENT_LANGUAGE)",
@@ -16,6 +17,22 @@ let appInfoPlist: [String: Plist.Value] = [
     "LSUIElement": true,
 ]
 
+func module(
+    name: String,
+    sources: [BuildableFolder],
+    dependencies: [TargetDependency] = []
+) -> Target {
+    .target(
+        name: name,
+        destinations: .macOS,
+        product: .staticFramework,
+        bundleId: "\(bundlePrefix).\(name)",
+        deploymentTargets: deploymentTargets,
+        buildableFolders: sources,
+        dependencies: dependencies
+    )
+}
+
 let project = Project(
     name: "TelePointer",
     settings: .settings(
@@ -29,31 +46,50 @@ let project = Project(
             name: "TelePointer",
             destinations: .macOS,
             product: .app,
-            bundleId: "com.taeminyun.TelePointer",
+            bundleId: bundlePrefix,
             deploymentTargets: deploymentTargets,
             infoPlist: .dictionary(appInfoPlist),
             buildableFolders: [
-                "TelePointer/Sources",
-                "TelePointer/Resources",
+                "TelePointer/App/Sources",
+                "TelePointer/App/Resources",
             ],
             entitlements: .dictionary([
                 "com.apple.security.app-sandbox": true,
             ]),
             dependencies: [
+                .target(name: "MenuBar"),
+            ]
+        ),
+        module(
+            name: "MenuBar",
+            sources: ["TelePointer/Features/MenuBar/Sources"],
+            dependencies: [
+                .target(name: "PointerCore"),
+                .target(name: "LaunchAtLogin"),
                 .external(name: "KeyboardShortcuts"),
             ]
         ),
+        module(
+            name: "PointerCore",
+            sources: ["TelePointer/Core/PointerCore/Sources"]
+        ),
         .target(
-            name: "TelePointerTests",
+            name: "PointerCoreTests",
             destinations: .macOS,
             product: .unitTests,
-            bundleId: "com.taeminyun.TelePointerTests",
+            bundleId: "\(bundlePrefix).PointerCoreTests",
             deploymentTargets: deploymentTargets,
             infoPlist: .default,
             buildableFolders: [
-                "TelePointer/Tests"
+                "TelePointer/Core/PointerCore/Tests",
             ],
-            dependencies: [.target(name: "TelePointer")]
+            dependencies: [
+                .target(name: "PointerCore"),
+            ]
+        ),
+        module(
+            name: "LaunchAtLogin",
+            sources: ["TelePointer/Core/LaunchAtLogin/Sources"]
         ),
     ]
 )

@@ -74,5 +74,6 @@
 ## 관련 문서
 
 - [Tasks.md](./Tasks.md) — v1 구현 작업 목록
+- [Architecture.md](../Architecture.md) — 모듈 구조와 결정 근거
 - [Backlog.md](../Backlog.md) — v1 이후 항목
 - [Alternatives.md](../Alternatives.md) — 검토했으나 채택하지 않은 대안

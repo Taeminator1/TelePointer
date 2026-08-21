@@ -1,3 +1,4 @@
+import MenuBar
 import SwiftUI
 
 @main

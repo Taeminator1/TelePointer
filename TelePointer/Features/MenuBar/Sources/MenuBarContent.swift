@@ -1,13 +1,17 @@
+import LaunchAtLogin
+import PointerCore
 import SwiftUI
 
-struct MenuBarContent: View {
-    var body: some View {
+public struct MenuBarContent: View {
+    public init() {}
+
+    public var body: some View {
         Button("Move Pointer") {
-            // TODO: 커서를 현재 화면 정중앙으로 이동
+            PointerMover.moveToScreenCenter()
         }
 
         Button("Open at Login") {
-            // TODO: 로그인 항목 등록/해제 토글
+            LoginItem.toggle()
         }
 
         Divider()

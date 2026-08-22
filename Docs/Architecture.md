@@ -5,6 +5,8 @@
 ```
 TelePointer (app)
   └─ MenuBar (staticFramework)
+       ├─ Settings (staticFramework)
+       │    └─ KeyboardShortcuts (external)
        ├─ KeyboardShortcuts (external)
        ├─ PointerCore (staticFramework)
        │    └─ PointerCoreTests (unitTests)
@@ -14,7 +16,8 @@ TelePointer (app)
 | 모듈 | 책임 |
 | --- | --- |
 | `TelePointer` | `@main`, `MenuBarExtra` Scene 선언, 앱 리소스(AppIcon) |
-| `MenuBar` | 메뉴 UI, 단축키 `Name` 정의, 핫키 등록 |
+| `MenuBar` | 메뉴 UI, 핫키 등록 |
+| `Settings` | 설정 창 UI, 단축키 `Name`과 기본값 정의 |
 | `PointerCore` | 좌표 계산(순수), 커서 이동, 방향 이동 홀드 루프 |
 | `LaunchAtLogin` | 로그인 항목 조회·토글 |
 
@@ -26,7 +29,8 @@ TelePointer/
 │   ├── Sources/
 │   └── Resources/
 ├── Features/
-│   └── MenuBar/Sources/
+│   ├── MenuBar/Sources/
+│   └── Settings/Sources/
 └── Core/
     ├── PointerCore/
     │   ├── Sources/
@@ -63,14 +67,23 @@ App Store 배포에서 dylib 임베드·서명 단계가 생기지 않고, 메�
 `LaunchAtLogin`에는 순수 로직이 없어 — 상태가 앱이 아니라 시스템에 있다 — 테스트 타깃을 두지 않는다.
 `PointerCore`만 `PointerCoreTests`를 갖는다.
 
+### 왜 설정 창을 새 모듈로 뺐나
+
+메뉴는 항목 몇 개로 끝나지만 설정 창은 Recorder · 방향키 십자 배치 · 초기화를 담은 화면 하나다.
+`MenuBar`에 넣으면 모듈 이름이 내용을 가리키지 못한다.
+
+단축키 `Name`도 창을 따라 `Settings`로 옮겼다. `KeyboardShortcuts.Recorder(for:)`가 `Name`을 그대로 받고,
+`initial:`의 기본값도 초기화 버튼이 되돌리는 대상이라 소유자가 설정 쪽이다.
+`MenuBar`는 그 `Name`을 읽어 핫키를 등록하고 메뉴에 글리프를 표시한다 — `MenuBar → Settings` 방향.
+
 ### 의존 방향
 
-`App → MenuBar → {PointerCore, LaunchAtLogin}` 단방향. 역방향과 우회 경로를 만들지 않는다.
+`App → MenuBar → {Settings, PointerCore, LaunchAtLogin}` 단방향. 역방향과 우회 경로를 만들지 않는다.
 
 - `App`은 Core 모듈을 직접 참조하지 않는다 — `MenuBar`를 거친다
 - `PointerCore`와 `LaunchAtLogin`은 서로를 참조하지 않는다
 - Core 모듈은 SwiftUI를 쓰지 않는다
-- `KeyboardShortcuts`는 `MenuBar` 밖으로 노출하지 않는다
+- `KeyboardShortcuts`는 Feature 모듈 밖으로 노출하지 않는다 — Core 모듈과 `App`은 모른다
 
 `tuist graph --format dot`으로 확인할 수 있다.
 

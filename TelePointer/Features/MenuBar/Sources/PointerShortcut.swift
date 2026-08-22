@@ -1,6 +1,7 @@
 import AppKit
 import KeyboardShortcuts
 import PointerCore
+import Settings
 
 @MainActor
 public enum PointerShortcut {
@@ -55,43 +56,4 @@ public enum PointerShortcut {
             MainActor.assumeIsolated { PointerMover.releasePressed() }
         }
     }
-}
-
-private let pointerModifiers: NSEvent.ModifierFlags = [.control, .option]
-
-extension KeyboardShortcuts.Name {
-    static let movePointer = Self(
-        "movePointer",
-        initial: .init(.c, modifiers: pointerModifiers)
-    )
-
-    static let clickPointerLeft = Self(
-        "clickPointerLeft",
-        initial: .init(.x, modifiers: pointerModifiers)
-    )
-
-    static let clickPointerRight = Self(
-        "clickPointerRight",
-        initial: .init(.v, modifiers: pointerModifiers)
-    )
-
-    static let movePointerUp = Self(
-        "movePointerUp",
-        initial: .init(.i, modifiers: pointerModifiers)
-    )
-
-    static let movePointerLeft = Self(
-        "movePointerLeft",
-        initial: .init(.j, modifiers: pointerModifiers)
-    )
-
-    static let movePointerDown = Self(
-        "movePointerDown",
-        initial: .init(.k, modifiers: pointerModifiers)
-    )
-
-    static let movePointerRight = Self(
-        "movePointerRight",
-        initial: .init(.l, modifiers: pointerModifiers)
-    )
 }

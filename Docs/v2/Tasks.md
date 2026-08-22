@@ -66,13 +66,14 @@ v1의 `PointerMover.moveToScreenCenter()`를 대체한다.
 
 ## 5. 설정 창
 
-- [ ] 설정 창을 어느 모듈에 둘지 결정 — `MenuBar`에 넣을지 새 모듈로 뺄지
-    - [ ] 결정 근거를 [Architecture.md](../Architecture.md)에 반영
-- [ ] 메뉴에 `Keyboard Shortcuts...` 항목 추가 (위치 결정)
-- [ ] `Window` scene + `openWindow`로 창 띄우기
-    - [ ] `Settings` scene은 App menu가 없으면 ⌘, 로만 열리므로 쓰지 않는다
-- [ ] `LSUIElement` 앱이라 창이 다른 앱 뒤에 뜬다 — `NSApp.activate()`로 앞에 올리기
-    - [ ] 창을 닫은 뒤 앱을 다시 비활성으로 되돌릴지 결정
+- [x] 설정 창을 어느 모듈에 둘지 결정 — 새 `Settings` 모듈. 단축키 `Name`도 함께 옮긴다
+    - [x] 결정 근거를 [Architecture.md](../Architecture.md)에 반영
+- [x] 메뉴에 `Keyboard Shortcuts...` 항목 추가 — Open at Login 다음, Quit 구분선 위
+- [x] `Window` scene + `openWindow`로 창 띄우기
+    - [x] `Settings` scene은 App menu가 없으면 ⌘, 로만 열리므로 쓰지 않는다
+    - [x] 실행 직후 창이 뜨지 않도록 `.defaultLaunchBehavior(.suppressed)` ([Notes.md](../Notes.md))
+- [x] `LSUIElement` 앱이라 창이 다른 앱 뒤에 뜬다 — `NSApp.activate()`로 앞에 올리기
+    - [x] 창을 닫은 뒤 앱을 다시 비활성으로 되돌릴지 결정 — 되돌린다. `NSApp.hide(nil)`
 - [ ] `KeyboardShortcuts.Recorder`로 단축키 수정 UI 배치
     - [ ] 입력 즉시 저장됨 (`KeyboardShortcuts`가 UserDefaults에 바로 쓴다)
 - [ ] 방향키 4개를 십자 배치로 표현

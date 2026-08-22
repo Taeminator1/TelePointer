@@ -1,4 +1,5 @@
 import MenuBar
+import Settings
 import SwiftUI
 
 @main
@@ -12,5 +13,12 @@ struct TelePointerApp: App {
             MenuBarContent()
         }
         .menuBarExtraStyle(.menu)
+
+        Window("Keyboard Shortcuts", id: ShortcutSettings.windowID) {
+            ShortcutSettings()
+        }
+        .windowResizability(.contentSize)
+        .defaultLaunchBehavior(.suppressed)
+        .restorationBehavior(.disabled)
     }
 }

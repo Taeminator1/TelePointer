@@ -244,3 +244,16 @@ press left   물리키[J+ctrlL+optL]     ← J를 누르는 순간 U가 사라�
 - `CGRect.contains`는 `maxX` · `maxY` 경계를 제외한다. AppKit 좌표에서 화면 맨 위(`y == maxY`)가 여기 걸린다
 - 메뉴바를 누르러 올린 커서가 이 위치일 수 있다 — 메뉴의 `Move Pointer`와 겹치는 경로다
 - v1처럼 주 화면으로 되돌리면 엉뚱한 모니터로 튄다. `targetFrame`은 가장 가까운 화면을 고른다
+
+## 메뉴바 앱에 창을 붙이기 (2026-08-22)
+
+- `Settings` scene은 쓰지 않는다. `LSUIElement` 앱은 App menu가 없어 ⌘, 로만 열리고 메뉴 항목에서 부를 수단이 없다
+- scene은 `App.body`에만 놓을 수 있다. `Window` scene은 App 타깃에 선언하고 루트 View만 `Settings` 모듈에서 `public`으로 내보낸다
+- 창이 이것 하나뿐이라 그대로 두면 실행 직후 뜬다 — `.defaultLaunchBehavior(.suppressed)`로 막는다
+- `.restorationBehavior(.disabled)`는 종료 시점에 열려 있던 창이 다음 실행에서 복원되는 것을 막는다
+- 앱이 비활성이라 `openWindow`만으로는 창이 다른 앱 뒤에 뜬다 — `NSApp.activate()`를 함께 부른다
+- 창을 닫아도 앱은 활성으로 남고, 되돌려줄 창이 없어 키보드 포커스가 어디에도 가지 않는다.
+  `NSApp.hide(nil)`로 내리면 직전 앱이 포커스를 되찾는다 — 대신 다시 열 때 `NSApp.unhide(nil)`가 필요하다
+- **창을 닫아도 `.onDisappear`는 불리지 않는다.** `Window` scene은 창이 닫혀도 콘텐츠 View를 살려둔다.
+  SwiftUI에 창 닫힘을 알려주는 모디파이어도 없어(`onDisappear` 외에 창 이벤트가 없다)
+  `NSWindow.willCloseNotification`을 직접 구독한다 — `Settings`의 `onWindowClose`

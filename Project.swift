@@ -58,6 +58,7 @@ let project = Project(
             ]),
             dependencies: [
                 .target(name: "MenuBar"),
+                .target(name: "Settings"),
             ]
         ),
         module(
@@ -66,6 +67,14 @@ let project = Project(
             dependencies: [
                 .target(name: "PointerCore"),
                 .target(name: "LaunchAtLogin"),
+                .target(name: "Settings"),
+                .external(name: "KeyboardShortcuts"),
+            ]
+        ),
+        module(
+            name: "Settings",
+            sources: ["TelePointer/Features/Settings/Sources"],
+            dependencies: [
                 .external(name: "KeyboardShortcuts"),
             ]
         ),

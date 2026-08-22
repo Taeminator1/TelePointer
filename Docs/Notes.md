@@ -48,6 +48,14 @@
     - v1에서는 하지 않는다
 - 클릭 좌표는 정상 적용되므로 기능상 문제는 없음
 
+## warp 직후 0.25초는 물리 마우스가 먹통 (2026-08-22)
+
+- `CGWarpMouseCursorPosition` 뒤 약 0.25초 동안 로컬 마우스 이벤트가 억제된다
+- 방향 이동은 8ms마다 warp하므로 이동 중 내내, 그리고 키를 뗀 뒤 0.25초까지 이어진다
+- `CGAssociateMouseAndMouseCursorPosition`을 warp 뒤에 부르면 풀리지만 채택하지 않았다
+    - 키보드로 맞춘 좌표가 손이 닿아 흔들리지 않는 편이 낫다
+    - 전역 상태라 마우스를 캡처한 다른 앱(게임 · 원격 제어)의 입력까지 되돌려 놓는다
+
 ## 핫키 충돌은 감지할 수 없음
 
 - 이미 다른 앱이나 시스템이 점유한 조합(예: Spotlight의 `⌘Space`)도 등록 자체는 성공
@@ -65,10 +73,19 @@ osascript -e 'quit app "TelePointer"'
 defaults delete com.taeminyun.TelePointer KeyboardShortcuts_movePointer
 ```
 
+## 커서 좌표는 두 좌표계를 오간다
+
+- AppKit(`NSScreen.frame`, `NSEvent.mouseLocation`): 주 화면 왼쪽 **아래**가 원점, y는 위로 증가
+- warp(`CGWarpMouseCursorPosition`, `CGEvent.location`): 주 화면 왼쪽 **위**가 원점, y는 아래로 증가
+- `ScreenGeometry`의 `warpPoint` · `warpFrame`이 AppKit → warp 변환을 맡는다
+- `Direction.up`의 벡터가 `dy: -1`인 것도 warp 좌표계 기준이기 때문
+- 화면 판정(`moveToScreenCenter`)은 AppKit 좌표, 방향 이동은 warp 좌표 — 섞어 쓰면 어긋난다
+
 ## 검토했으나 채택하지 않은 대안
 
 - 이동 대상 화면: 주 디스플레이 / 포커스된 앱이 있는 디스플레이
 - 가운데 기준: 메뉴바·Dock 제외 영역
 - 핫키 방식: 메뉴가 열렸을 때만 동작
 - 핫키 구현: 시스템 API 직접 호출 / 글로벌 이벤트 모니터
+- 영벡터일 때 warp 건너뛰기 — 상·하 동시 입력 중 마우스가 살아나 내부 좌표와 어긋난다
 - `Binding(set:)`에 메서드 참조 직접 전달 — Swift 6.3에서 IRGen 크래시, 클로저로 감싸 우회

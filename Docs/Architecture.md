@@ -15,7 +15,7 @@ TelePointer (app)
 | --- | --- |
 | `TelePointer` | `@main`, `MenuBarExtra` Scene 선언, 앱 리소스(AppIcon) |
 | `MenuBar` | 메뉴 UI, 단축키 `Name` 정의, 핫키 등록 |
-| `PointerCore` | 좌표 계산(순수), 커서 이동 |
+| `PointerCore` | 좌표 계산(순수), 커서 이동, 방향 이동 홀드 루프 |
 | `LaunchAtLogin` | 로그인 항목 조회·토글 |
 
 ## 디렉터리

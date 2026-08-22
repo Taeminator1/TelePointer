@@ -84,8 +84,7 @@ public final class DirectionalMover {
         var previous = began
 
         while !Task.isCancelled {
-            let flags = NSEvent.modifierFlags
-            active = active.filter { flags.isSuperset(of: $0.value) }
+            active = active.filter { modifiersHeld($0.value) }
             guard !active.isEmpty else { break }
 
             let now = clock.now

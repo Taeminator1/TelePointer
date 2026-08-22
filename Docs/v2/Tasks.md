@@ -8,7 +8,7 @@
 - [x] 이동 거리 결정 — 거리 대신 속도로. 400 → 2800pt/s, 0.4초 ease-in
 - [x] 화면 경계 처리 결정 — 화면 안에 가둔다. 이어지는 구간에서는 인접 모니터로 넘어간다
 - [x] 기본 단축키 조합 결정 — ⌃⌥ + IJKL
-    - [ ] 6개 조합(방향 4 + 클릭 2)이 서로, 그리고 ⌃⌥⌘C와 충돌하지 않는지
+    - [ ] 7개 조합(방향 4 + 클릭 2 + 이동 1)이 서로, 그리고 다른 앱과 충돌하지 않는지
     - [ ] ⌃⌥J · ⌃⌥K는 [Notes.md](../Notes.md) 후보표에 VS Code와 겹친다고 적어둔 조합 — 유지할지 결정
 - [x] `KeyboardShortcuts.Name` 4개 정의 (상 · 하 · 좌 · 우)
 - [x] 현재 좌표 + 방향 → 목표 좌표를 계산하는 순수 함수
@@ -33,7 +33,24 @@
 - [ ] `clickState`를 순수 함수로 분리하고 `PointerCoreTests`에 단위 테스트 추가
 - [ ] 릴리스 서명(Developer ID 또는 App Store)에서도 권한이 유지되는지 확인
 
-## 3. 모니터 간 이동
+## 3. 드래그
+
+클릭을 홀드 방식으로 바꾸면 짧게 누르는 것이 곧 클릭이 된다.
+
+- [x] 클릭 단축키를 `onKeyDown` → mouseDown, `onKeyUp` → mouseUp으로 분리
+    - [x] 짧게 눌렀을 때 클릭으로 인식되는지 — 더블·트리플 클릭 카운트가 유지되는지
+- [x] `PointerMover`가 눌린 버튼을 들고 있게 한다
+- [x] 드래그 중 방향 이동은 warp 대신 `mouseDragged`를 보낸다
+    - [x] `DirectionalMover`는 드래그를 몰라도 된다 — `PointerMover.move(to:)` 안에서 갈라진다
+- [x] 홀드 판정을 하드웨어 키 상태로 바꾼다 — 합성 이벤트가 `NSEvent.modifierFlags`를 지운다
+    - [x] 방향 이동도 같은 이유로 함께 고친다
+- [x] **안전장치와의 관계 결정** — modifier가 풀리면 버튼도 뗀다. 시간 제한은 두지 않는다
+- [x] 기본 단축키를 방향키와 매트릭스가 겹치지 않는 곳으로 — ⌃⌥X · ⌃⌥C · ⌃⌥V
+- [ ] 앱이 종료될 때 눌린 버튼을 떼는지 확인
+- [x] 창 옮기기 · 텍스트 선택 · 드래그 앤 드롭 각각 동작 확인
+- [x] 바뀐 단축키가 서로, 그리고 다른 앱과 충돌하지 않는지 (1번의 충돌 검증에 포함)
+
+## 4. 모니터 간 이동
 
 v1의 `PointerMover.moveToScreenCenter()`를 대체한다.
 
@@ -46,7 +63,7 @@ v1의 `PointerMover.moveToScreenCenter()`를 대체한다.
 - [ ] `PointerMover`에 연결 — 커서 좌표 조회는 `NSEvent.mouseLocation`
 - [ ] 메뉴의 Move Pointer 항목도 동일 동작 (핫키와 로직 공유)
 
-## 4. 설정 창
+## 5. 설정 창
 
 - [ ] 설정 창을 어느 모듈에 둘지 결정 — `MenuBar`에 넣을지 새 모듈로 뺄지
     - [ ] 결정 근거를 [Architecture.md](../Architecture.md)에 반영
@@ -63,7 +80,7 @@ v1의 `PointerMover.moveToScreenCenter()`를 대체한다.
 - [ ] 창을 두 번 열어도 하나만 뜨는지 확인
 - [ ] v1 Requirements의 메뉴 3항목 표 갱신
 
-## 5. App Store 제출 준비
+## 6. App Store 제출 준비
 
 v1에서 이관.
 
@@ -72,7 +89,7 @@ v1에서 이관.
 - [ ] App Store Connect에 앱 등록
 - [ ] 스크린샷 · 앱 설명 · 개인정보 처리방침 URL 준비
 
-## 6. 검증
+## 7. 검증
 
 v1에서 이관.
 

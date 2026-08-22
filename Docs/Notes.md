@@ -186,6 +186,38 @@ tccutil reset Accessibility com.taeminyun.TelePointer
 - 같은 버튼 · `NSEvent.doubleClickInterval` 이내 · 좌표 차이 `doubleClickRadius` 미만일 때만 이어진다
 - 간격을 시스템 설정에서 가져오므로 사용자가 바꾼 값을 그대로 따른다
 
+## 합성 이벤트가 전역 modifier 상태를 지운다 (2026-08-22)
+
+- `flags = []`로 보낸 마우스 이벤트가 처리되고 나면 시스템의 현재 modifier 상태가 그 값으로 덮인다
+- `post` 직후에는 멀쩡하고 수십 ms 뒤에 지워진다 — 비동기라 바로 재보면 안 보인다
+- 그래서 `NSEvent.modifierFlags` · `CGEventSource.flagsState`로는 홀드 여부를 판정할 수 없다.
+  드래그 중에는 우리가 계속 이벤트를 보내므로 값이 계속 지워진다
+- `CGEventSource.keyState(.hidSystemState, key:)`는 영향을 받지 않는다 — `ModifierState.modifiersHeld`가 이걸 쓴다
+- 방향 이동도 같은 이유로 고쳤다. 고치기 전에는 드래그 중 이동이 8ms 몇 틱 만에 멈췄다
+
+## 클릭과 방향키는 키 매트릭스가 겹치면 안 된다 (2026-08-22)
+
+- 드래그는 클릭 키와 방향 키를 동시에 눌러야 한다. 여기에 modifier 두 개가 더해져 4개 동시 입력이 된다
+- 처음 기본값이던 ⌃⌥U · ⌃⌥O는 방향키 IJKL 바로 위여서 **키보드가 조합을 유지하지 못했다**
+
+```
+press right  물리키[U+L+ctrlL+optL]   ← U와 L은 함께 잡힌다
+press left   물리키[J+ctrlL+optL]     ← J를 누르는 순간 U가 사라진다
+```
+
+- U가 놓이면 macOS가 ⌃⌥U의 keyUp을 보내 드래그가 끝난다. 앱은 받은 대로 동작한 것이라 코드로는 못 고친다
+- modifier 없이 `u`+`j` 두 개만 누르면 정상이다 — modifier가 더해져야 드러난다
+- 기본값을 ⌃⌥X(왼쪽 클릭) · ⌃⌥C(모니터 간 이동) · ⌃⌥V(오른쪽 클릭)로 옮겼다.
+  방향키와 손·매트릭스가 갈리고, 왼쪽부터 클릭 · 이동 · 클릭 순으로 놓인다
+
+## 클릭 단축키에 modifier를 더 붙이면 드래그가 깨진다 (2026-08-22)
+
+- Carbon 핫키는 modifier가 정확히 일치해야 발동한다. 여분이 있으면 탈락한다
+- 클릭을 ⌃⌥⌘X로 두면 드래그 중 ⌘이 계속 눌려 있어, J를 눌러도 시스템이 보는 조합은 ⌃⌥⌘J다.
+  등록된 ⌃⌥J와 달라 방향 이동이 발동하지 않는다
+- 방향키를 ⌃⌥⌘으로 함께 옮기는 것도 막혀 있다 — ⌃⌥⌘L이 VoiceOver 조합이다
+- 결론: Pointer 단축키는 전부 같은 modifier를 쓴다
+
 ## 검토했으나 채택하지 않은 대안
 
 - 이동 대상 화면: 주 디스플레이 / 포커스된 앱이 있는 디스플레이

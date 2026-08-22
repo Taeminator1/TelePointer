@@ -81,6 +81,111 @@ defaults delete com.taeminyun.TelePointer KeyboardShortcuts_movePointer
 - `Direction.up`의 벡터가 `dy: -1`인 것도 warp 좌표계 기준이기 때문
 - 화면 판정(`moveToScreenCenter`)은 AppKit 좌표, 방향 이동은 warp 좌표 — 섞어 쓰면 어긋난다
 
+## 합성 클릭은 샌드박스에서도 동작한다 (2026-08-22)
+
+클릭을 받아 기록하는 별도 앱을 표적으로 두고 관측했다.
+
+- `CGEvent.post`로 보낸 클릭이 다른 앱의 창에 정상 전달된다 — entitlement는 `app-sandbox` 하나로 충분
+- mouseDown / mouseUp 한 쌍이 필요하고, 그것으로 충분하다
+- `mouseEventClickState`를 올리면 수신 측 `NSEvent.clickCount`에 그대로 반영된다
+- `event.flags = []`가 필요하다. 단축키의 ⌃가 실린 채 가면 control-click이 되어 우클릭으로 해석된다
+- 권한이 없으면 조용히 무시된다 — 반환값도 없고 커서도 움직이지 않는다
+- 합성 클릭은 down·up 간격이 0~1ms이고 좌표가 완전히 같다. 물리 클릭은 수십~수백ms에 좌표가 매번 흔들린다 — 로그에서 둘을 구분하는 기준
+
+## 권한 프롬프트는 경로가 둘이고, 하나만 막힌다 (2026-08-22)
+
+- 앱이 `AXIsProcessTrustedWithOptions(prompt:)`로 **요청**하는 경로는 샌드박스가 막는다
+
+```
+Sandbox: TelePointer deny(1) mach-lookup com.apple.universalaccessAuthWarn
+  ← AXIsProcessTrustedWithOptions ← _AXRegisterControlComputerAccess
+```
+
+- 다이얼로그 없이 `false`만 돌아온다. `CGRequestPostEventAccess()`도 같은 거부에 걸려 우회로가 못 된다
+- 같은 코드를 샌드박스 없이 서명하면 거부가 없고 프롬프트가 정상적으로 뜬다
+- 반면 권한 없이 `CGEvent.post`를 호출하면 **TCC가 스스로** 프롬프트를 띄운다. 앱이 요청하는 게 아니라 샌드박스와 무관하다
+    - 앱당 한 번만 뜬다. 거부하면 앱이 다시 띄울 방법이 없다
+    - 버튼은 `허용 안 함` · `시스템 설정 열기` 둘뿐 — `허용` 버튼은 없다
+    - 이때 앱이 손쉬운 사용 목록에 등록되므로 사용자는 토글만 켜면 된다
+- 그래서 `click()`에 `AXIsProcessTrusted` 가드를 두면 안 된다. `post`에 도달하지 못해 프롬프트가 뜰 기회 자체가 사라진다
+
+## 권한 조회 API는 시작 시점 스냅샷 (2026-08-22)
+
+- 샌드박스에서 `AXIsProcessTrusted()` · `CGPreflightPostEventAccess()`는 실행 중 갱신되지 않는다
+- 권한을 켜도 재시작 전까지 계속 `false`, 꺼도 계속 `true`
+- 반면 클릭 능력은 즉시 반영된다 — 켠 직후 재시작 없이 클릭이 동작한다
+- 그래서 `isGranted`를 `static let`으로 둔다. 다시 호출해도 값이 바뀌지 않고 샌드박스 위반 로그만 쌓인다
+- 대가: 권한을 켠 뒤에도 재시작 전까지 메뉴의 `Enable Click…`이 남는다. 우회할 API가 없어 감수한다
+
+## 권한을 확인할 때 빠지기 쉬운 함정 (2026-08-22)
+
+- **인스턴스가 둘 이상 뜨면 핫키는 먼저 등록한 쪽이 가져간다.** 재빌드 후 옛 프로세스가 남아 있으면
+  권한을 가진 옛 프로세스가 클릭을 처리해 "재빌드해도 잘 된다"로 오독하게 된다. 확인 전에 전부 종료할 것
+- 시스템 설정이 열린 채로 `tccutil reset`을 하면 UI가 낡은 행을 들고 있다. 닫고 실행할 것
+- 권한을 켠 뒤에는 앱을 재시작해야 메뉴 표시가 맞는다 (위 「시작 시점 스냅샷」 참고)
+
+### 권한을 초기화해 프롬프트를 다시 띄우기
+
+```bash
+# 빌드 없이 실행만 다시 하는 경우
+
+## TelePointer 앱 닫기
+osascript -e 'quit app "TelePointer"'
+
+## 시스템 설정 끄기
+osascript -e 'quit app "System Settings"'
+
+## 권한 기록 지우기
+tccutil reset Accessibility com.taeminyun.TelePointer
+
+## TelePointer 열기
+open ~/Library/Developer/Xcode/DerivedData/TelePointer-*/Build/Products/Debug/TelePointer.app
+```
+
+```bash
+# 재빌드하는 경우
+
+## TelePointer 앱 닫기 (직접)
+
+## 시스템 설정 끄기
+osascript -e 'quit app "System Settings"'
+
+## 권한 기록 지우기
+tccutil reset Accessibility com.taeminyun.TelePointer
+
+## TelePointer 빌드하기 (직접)
+```
+
+**Xcode에서 실행 중인 앱은 Xcode에서 정지시킨다.** 스크립트로 끄고 리셋했을 때
+프롬프트가 다시 뜨지 않고 클릭도 그대로 동작한 적이 있다. 앱을 직접 종료하면 정상이었다.
+같은 명령을 따로 실행하면 앱은 제대로 꺼지므로 원인은 미확인이다.
+
+재실행만으로는 프롬프트가 뜨지 않는다. **클릭 단축키(⌃⌥U)를 눌러야** `CGEvent.post`가 실행되고
+그제서야 TCC가 프롬프트를 띄운다 — 앱은 스스로 권한을 요청하지 않는다.
+
+**리셋이 먹었는지는 메뉴로 확인한다.** 재실행 후 메뉴에 `Enable Click…`이 보이면 리셋된 것이고,
+안 보이면 권한이 남아 있는 것이다.
+
+실행 방식(Xcode Run / `open`)은 결과에 영향을 주지 않는다. Xcode로 띄워도
+책임 프로세스는 TelePointer 자신이고(부모만 `debugserver`), TCC 판단도 동일하다.
+
+한 번은 재빌드 후 권한이 무효가 되어, 목록에서 껐다 켜는 것으로 복구되지 않고
+기록을 지우고 프롬프트로 새로 등록해야 했다. 이후 재빌드에서는 권한이 그대로 유지됐으므로
+재빌드가 원인이라고 단정할 근거는 없다 — 원인 미확인.
+
+## Mac App Store와 접근성 권한 (2026-08-22)
+
+- MAS는 샌드박스를 의무화하지만, 샌드박스가 접근성 권한 자체를 금지하지는 않는다
+- `AXUIElementCreateApplication`처럼 다른 앱을 들여다보는 AX API는 막힌다. TelePointer는 쓰지 않는다
+- `CGEvent.post`가 정책상 금지된다는 근거는 찾지 못했다. 같은 질문에 App Review는 "Meet with Apple 예약해서 물어보라"는 정형 답변만 했다 — 공개된 확답이 없다
+- 확답이 없는 채로 MAS 경로를 유지하기로 했다. 반려되면 샌드박스를 끄고 Developer ID 직접 배포로 돌린다
+
+## 연타를 더블클릭으로 올리는 기준
+
+- `PointerMover.clickState`가 직전 클릭과 비교해 `mouseEventClickState`를 올린다
+- 같은 버튼 · `NSEvent.doubleClickInterval` 이내 · 좌표 차이 `doubleClickRadius` 미만일 때만 이어진다
+- 간격을 시스템 설정에서 가져오므로 사용자가 바꾼 값을 그대로 따른다
+
 ## 검토했으나 채택하지 않은 대안
 
 - 이동 대상 화면: 주 디스플레이 / 포커스된 앱이 있는 디스플레이
@@ -89,3 +194,8 @@ defaults delete com.taeminyun.TelePointer KeyboardShortcuts_movePointer
 - 핫키 구현: 시스템 API 직접 호출 / 글로벌 이벤트 모니터
 - 영벡터일 때 warp 건너뛰기 — 상·하 동시 입력 중 마우스가 살아나 내부 좌표와 어긋난다
 - `Binding(set:)`에 메서드 참조 직접 전달 — Swift 6.3에서 IRGen 크래시, 클로저로 감싸 우회
+- `AXIsProcessTrustedWithOptions(prompt:)`로 권한 프롬프트 띄우기 — 샌드박스가 막는다
+- `CGRequestPostEventAccess()` — 같은 거부에 걸린다
+- 클릭 전 `AXIsProcessTrusted` 가드 — TCC가 프롬프트를 띄울 기회를 없앤다
+- 권한 요청 시 `NSApp.activate()` — 얻는 것 없이 클릭 대상 앱의 포커스만 빼앗는다
+- 샌드박스 해제 + Developer ID 직접 배포 — 온보딩은 나아지지만 MAS를 포기하게 된다

@@ -20,7 +20,7 @@ public enum PointerShortcut {
 
     public static func registerHandler() {
         KeyboardShortcuts.onKeyDown(for: .movePointer) {
-            PointerMover.moveToScreenCenter()
+            PointerMover.cycleScreenCenter()
         }
 
         for (name, button) in buttons {

@@ -32,7 +32,7 @@ func clamped(_ point: CGPoint, to warpFrames: [CGRect]) -> CGPoint {
     } ?? point
 }
 
-private func squaredDistance(_ a: CGPoint, _ b: CGPoint) -> CGFloat {
+func squaredDistance(_ a: CGPoint, _ b: CGPoint) -> CGFloat {
     let dx = a.x - b.x
     let dy = a.y - b.y
     return dx * dx + dy * dy

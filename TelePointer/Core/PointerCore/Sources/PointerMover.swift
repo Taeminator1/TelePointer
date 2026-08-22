@@ -3,24 +3,23 @@ import AppKit
 @MainActor
 public enum PointerMover {
     private static let doubleClickRadius: CGFloat = 5
+    private static let centerTolerance: CGFloat = 2
     private static let watchdogTick = Duration.milliseconds(50)
 
     private static var lastClick: (at: ContinuousClock.Instant, point: CGPoint, button: PointerButton, state: Int64)?
     private static var pressed: (button: PointerButton, state: Int64)?
     private static var watchdog: Task<Void, Never>?
 
-    public static func moveToScreenCenter() {
+    public static func cycleScreenCenter() {
         guard let primaryScreen = NSScreen.screens.first else { return }
 
-        let cursor = NSEvent.mouseLocation
-        let targetScreen = NSScreen.screens.first { $0.frame.contains(cursor) } ?? primaryScreen
+        guard let target = targetFrame(
+            for: NSEvent.mouseLocation,
+            among: NSScreen.screens.map(\.frame),
+            centerTolerance: centerTolerance
+        ) else { return }
 
-        move(
-            to: warpPoint(
-                centerOf: targetScreen.frame,
-                primaryScreenHeight: primaryScreen.frame.height
-            )
-        )
+        move(to: warpPoint(centerOf: target, primaryScreenHeight: primaryScreen.frame.height))
     }
 
     public static func press(_ button: PointerButton, requiredModifiers: NSEvent.ModifierFlags) {

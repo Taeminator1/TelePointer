@@ -7,7 +7,7 @@ public struct MenuBarContent: View {
 
     public var body: some View {
         Button("Move Pointer") {
-            PointerMover.moveToScreenCenter()
+            PointerMover.cycleScreenCenter()
         }
         .globalKeyboardShortcut(.movePointer)
 

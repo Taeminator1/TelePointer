@@ -79,7 +79,7 @@ defaults delete com.taeminyun.TelePointer KeyboardShortcuts_movePointer
 - warp(`CGWarpMouseCursorPosition`, `CGEvent.location`): 주 화면 왼쪽 **위**가 원점, y는 아래로 증가
 - `ScreenGeometry`의 `warpPoint` · `warpFrame`이 AppKit → warp 변환을 맡는다
 - `Direction.up`의 벡터가 `dy: -1`인 것도 warp 좌표계 기준이기 때문
-- 화면 판정(`moveToScreenCenter`)은 AppKit 좌표, 방향 이동은 warp 좌표 — 섞어 쓰면 어긋난다
+- 화면 판정(`cycleScreenCenter`)은 AppKit 좌표, 방향 이동은 warp 좌표 — 섞어 쓰면 어긋난다
 
 ## 합성 클릭은 샌드박스에서도 동작한다 (2026-08-22)
 
@@ -231,3 +231,16 @@ press left   물리키[J+ctrlL+optL]     ← J를 누르는 순간 U가 사라�
 - 클릭 전 `AXIsProcessTrusted` 가드 — TCC가 프롬프트를 띄울 기회를 없앤다
 - 권한 요청 시 `NSApp.activate()` — 얻는 것 없이 클릭 대상 앱의 포커스만 빼앗는다
 - 샌드박스 해제 + Developer ID 직접 배포 — 온보딩은 나아지지만 MAS를 포기하게 된다
+
+## 화면 중앙 판정은 정확히 일치할 수 없다 (2026-08-22)
+
+- 중앙으로 보낸 커서를 다시 읽으면 좌표가 조금 어긋난다. warp이 픽셀에 스냅되고,
+  `NSEvent.mouseLocation`은 CG 좌표를 뒤집은 값이라 변환에서 1pt가 더 붙을 수 있다
+- 정확히 일치를 요구하면 「이미 중앙」이 성립하지 않아 순환이 시작되지 않는다
+- 허용 오차는 2pt. 더 키우면 사용자가 마우스를 조금 움직인 것까지 중앙으로 쳐서 한 화면을 건너뛴다
+
+## 화면 맨 윗줄은 어느 화면에도 속하지 않는다 (2026-08-22)
+
+- `CGRect.contains`는 `maxX` · `maxY` 경계를 제외한다. AppKit 좌표에서 화면 맨 위(`y == maxY`)가 여기 걸린다
+- 메뉴바를 누르러 올린 커서가 이 위치일 수 있다 — 메뉴의 `Move Pointer`와 겹치는 경로다
+- v1처럼 주 화면으로 되돌리면 엉뚱한 모니터로 튄다. `targetFrame`은 가장 가까운 화면을 고른다

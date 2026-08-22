@@ -54,14 +54,15 @@
 
 v1의 `PointerMover.moveToScreenCenter()`를 대체한다.
 
-- [ ] `NSScreen.screens`를 `frame.origin.x` 기준으로 정렬하는 순수 함수
-- [ ] 커서가 현재 화면의 중앙에 있는지 판정하는 순수 함수
-    - [ ] **허용 오차 결정** — 정확히 일치를 요구하면 스케일·좌표 변환 오차로 판정이 어긋난다
-- [ ] 다음 화면 선택 + 마지막에서 첫 화면으로 순환
-- [ ] 모니터가 하나면 항상 그 화면의 중앙 (v1과 동일)
-- [ ] 위 세 함수의 단위 테스트 (`PointerCoreTests`)
-- [ ] `PointerMover`에 연결 — 커서 좌표 조회는 `NSEvent.mouseLocation`
-- [ ] 메뉴의 Move Pointer 항목도 동일 동작 (핫키와 로직 공유)
+- [x] `NSScreen.screens`를 `frame.origin.x` 기준으로 정렬하는 순수 함수
+- [x] 커서가 현재 화면의 중앙에 있는지 판정하는 순수 함수
+    - [x] **허용 오차 결정** — 2pt. 정확히 일치를 요구하면 스케일·좌표 변환 오차로 판정이 어긋난다
+- [x] 다음 화면 선택 + 마지막에서 첫 화면으로 순환
+    - [x] 어느 화면에도 속하지 않는 좌표는 가장 가까운 화면으로 ([Notes.md](../Notes.md))
+- [x] 모니터가 하나면 항상 그 화면의 중앙 (v1과 동일)
+- [x] 위 세 함수의 단위 테스트 (`PointerCoreTests`)
+- [x] `PointerMover`에 연결 — 커서 좌표 조회는 `NSEvent.mouseLocation`
+- [x] 메뉴의 Move Pointer 항목도 동일 동작 (핫키와 로직 공유)
 
 ## 5. 설정 창
 

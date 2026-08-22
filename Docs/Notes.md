@@ -3,6 +3,7 @@
 ## etc.
 
 - Rotate 360과 ⌃⌥⌘C 경합에서 둘 중 하나만 실행 됨
+- VS Code의 claude-code extension과 ⌃⌥F 경합에서 TelePointer만 실행 됨
 
 ## 단축키 후보
 
@@ -52,6 +53,17 @@
 - 이미 다른 앱이나 시스템이 점유한 조합(예: Spotlight의 `⌘Space`)도 등록 자체는 성공
 - 충돌이 나면 오류 없이 조용히 동작하지 않음
 - 안전한 조합(`⌃⌥⌘C`)을 고정하는 것으로 대응
+
+## `initial:` 단축키는 첫 실행에만 적용된다 (2026-08-22)
+
+- `KeyboardShortcuts.Name(_:initial:)`은 UserDefaults에 값이 없을 때만 저장한다 (`setInitialShortcutIfNeeded`)
+- 한 번 저장되면 코드의 `initial:`을 바꿔도 무시되고, 메뉴바에 표시되는 글리프도 그대로
+- 개발 중 기본값을 바꾸려면 앱을 종료하고 저장값을 지운 뒤 재실행
+
+```bash
+osascript -e 'quit app "TelePointer"'
+defaults delete com.taeminyun.TelePointer KeyboardShortcuts_movePointer
+```
 
 ## 검토했으나 채택하지 않은 대안
 

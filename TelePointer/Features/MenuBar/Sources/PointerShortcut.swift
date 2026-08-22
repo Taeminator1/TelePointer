@@ -18,6 +18,14 @@ public enum PointerShortcut {
             PointerMover.moveToScreenCenter()
         }
 
+        KeyboardShortcuts.onKeyDown(for: .clickPointerLeft) {
+            PointerMover.clickLeft()
+        }
+
+        KeyboardShortcuts.onKeyDown(for: .clickPointerRight) {
+            PointerMover.clickRight()
+        }
+
         for (name, direction) in directions {
             KeyboardShortcuts.onKeyDown(for: name) {
                 mover.press(
@@ -38,6 +46,16 @@ extension KeyboardShortcuts.Name {
     static let movePointer = Self(
         "movePointer",
         initial: .init(.c, modifiers: [.control, .option, .command])
+    )
+
+    static let clickPointerLeft = Self(
+        "clickPointerLeft",
+        initial: .init(.u, modifiers: directionModifiers)
+    )
+
+    static let clickPointerRight = Self(
+        "clickPointerRight",
+        initial: .init(.o, modifiers: directionModifiers)
     )
 
     static let movePointerUp = Self(

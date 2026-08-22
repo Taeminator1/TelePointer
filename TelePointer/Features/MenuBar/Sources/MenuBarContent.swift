@@ -11,6 +11,8 @@ public struct MenuBarContent: View {
         }
         .globalKeyboardShortcut(.movePointer)
 
+        AccessibilityPermissionItem()
+
         LoginItemToggle()
 
         Divider()

@@ -1,7 +1,7 @@
 # 작업 목록
 
 요구사항은 [Requirements.md](./Requirements.md), 모듈 구조는 [Architecture.md](../Architecture.md),
-v1 이후 항목은 [Backlog.md](../Backlog.md), 채택하지 않은 대안은 [Alternatives.md](../Alternatives.md) 참고.
+v1 이후 항목은 [Backlog.md](../Backlog.md), 작업 기록과 채택하지 않은 대안은 [Notes.md](../Notes.md) 참고.
 
 ## 1. 프로젝트 설정
 
@@ -51,16 +51,6 @@ v1 이후 항목은 [Backlog.md](../Backlog.md), 채택하지 않은 대안은 [
 - [x] KeyboardShortcuts `Name` 정의 + 기본값 `⌃⌥⌘C` 지정
 - [x] 앱 시작 시 핫키 핸들러 등록
 - [x] 메뉴 항목 클릭 시에도 동일 동작 실행 (핫키와 로직 공유)
-
-> **warp은 이벤트를 발생시키지 않음**
-> 커서 아래 UI의 hover 상태는 사용자가 마우스를 실제로 움직이기 전까지 갱신되지 않는다.
-> 합성 `mouseMoved` 이벤트를 post하면 갱신되지만 접근성 권한이 필요하고,
-> `CGEvent.post`는 반환값이 없어 권한이 없으면 조용히 무시된다. v1에서는 하지 않는다.
-> 클릭 좌표는 정상 적용되므로 기능상 문제는 없다.
-
-> **핫키 충돌은 감지할 수 없음**
-> 이미 다른 앱이나 시스템이 점유한 조합(예: Spotlight의 `⌘Space`)도 등록 자체는 성공한다.
-> 충돌이 나면 오류 없이 조용히 동작하지 않으므로, 안전한 조합(`⌃⌥⌘C`)을 고정하는 것으로 대응한다.
 
 ## 5. Open at Login
 

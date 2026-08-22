@@ -18,6 +18,7 @@ struct TelePointerApp: App {
             ShortcutSettings()
         }
         .windowResizability(.contentSize)
+        .windowLevel(.floating)
         .defaultLaunchBehavior(.suppressed)
         .restorationBehavior(.disabled)
     }

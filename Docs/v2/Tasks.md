@@ -74,11 +74,16 @@ v1의 `PointerMover.moveToScreenCenter()`를 대체한다.
     - [x] 실행 직후 창이 뜨지 않도록 `.defaultLaunchBehavior(.suppressed)` ([Notes.md](../Notes.md))
 - [x] `LSUIElement` 앱이라 창이 다른 앱 뒤에 뜬다 — `NSApp.activate()`로 앞에 올리기
     - [x] 창을 닫은 뒤 앱을 다시 비활성으로 되돌릴지 결정 — 되돌린다. `NSApp.hide(nil)`
-- [ ] `KeyboardShortcuts.Recorder`로 단축키 수정 UI 배치
-    - [ ] 입력 즉시 저장됨 (`KeyboardShortcuts`가 UserDefaults에 바로 쓴다)
+- [x] `KeyboardShortcuts.Recorder`로 단축키 수정 UI 배치
+    - [x] 입력 즉시 저장됨 (`KeyboardShortcuts`가 UserDefaults에 바로 쓴다) — 재시작 없이 바로 먹는다
+    - [x] 창이 다른 앱 뒤로 숨지 않도록 `.windowLevel(.floating)` ([Notes.md](../Notes.md))
 - [ ] 방향키 4개를 십자 배치로 표현
 - [ ] 전체 초기화 버튼 — `KeyboardShortcuts.reset(...)`
 - [ ] 완료 버튼 = 창 닫기
+    - [ ] 신호등 버튼(닫기 · 최소화 · 확대)을 어디까지 없앨지 함께 결정 —
+      SwiftUI는 비활성(회색)까지, 숨기려면 AppKit `standardWindowButton(_:)?.isHidden`
+- [ ] **modifier 일치를 강제할지 결정** — 방향키만 다른 조합으로 바꾸면 드래그가 조용히 깨진다.
+  `Recorder`의 `validateShortcut`으로 거부할 수 있다
 - [ ] 창을 두 번 열어도 하나만 뜨는지 확인
 - [ ] v1 Requirements의 메뉴 3항목 표 갱신
 

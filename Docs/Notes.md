@@ -254,6 +254,9 @@ press left   물리키[J+ctrlL+optL]     ← J를 누르는 순간 U가 사라�
 - 앱이 비활성이라 `openWindow`만으로는 창이 다른 앱 뒤에 뜬다 — `NSApp.activate()`를 함께 부른다
 - 창을 닫아도 앱은 활성으로 남고, 되돌려줄 창이 없어 키보드 포커스가 어디에도 가지 않는다.
   `NSApp.hide(nil)`로 내리면 직전 앱이 포커스를 되찾는다 — 대신 다시 열 때 `NSApp.unhide(nil)`가 필요하다
+- 다른 앱을 클릭하면 창이 뒤로 간다. Dock 아이콘도 ⌘Tab 항목도 없어 되돌릴 길이 메뉴바뿐이라
+  `.windowLevel(.floating)`으로 위에 띄운다. `NSApp.setActivationPolicy(.regular)`로 일반 앱처럼 만드는 길도 있으나
+  그동안 Dock 아이콘과 App menu가 생겨 「미노출」 전제를 깬다
 - **창을 닫아도 `.onDisappear`는 불리지 않는다.** `Window` scene은 창이 닫혀도 콘텐츠 View를 살려둔다.
   SwiftUI에 창 닫힘을 알려주는 모디파이어도 없어(`onDisappear` 외에 창 이벤트가 없다)
   `NSWindow.willCloseNotification`을 직접 구독한다 — `Settings`의 `onWindowClose`

@@ -82,8 +82,6 @@ v1의 `PointerMover.moveToScreenCenter()`를 대체한다.
 - [ ] 완료 버튼 = 창 닫기
     - [ ] 신호등 버튼(닫기 · 최소화 · 확대)을 어디까지 없앨지 함께 결정 —
       SwiftUI는 비활성(회색)까지, 숨기려면 AppKit `standardWindowButton(_:)?.isHidden`
-- [ ] **modifier 일치를 강제할지 결정** — 방향키만 다른 조합으로 바꾸면 드래그가 조용히 깨진다.
-  `Recorder`의 `validateShortcut`으로 거부할 수 있다
 - [ ] 창을 두 번 열어도 하나만 뜨는지 확인
 - [ ] v1 Requirements의 메뉴 3항목 표 갱신
 

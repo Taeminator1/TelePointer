@@ -16,7 +16,9 @@ struct TelePointerApp: App {
 
         Window("Keyboard Shortcuts", id: ShortcutSettings.windowID) {
             ShortcutSettings()
+                .fillsHiddenTitleBar()
         }
+        .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
         .windowLevel(.floating)
         .defaultLaunchBehavior(.suppressed)

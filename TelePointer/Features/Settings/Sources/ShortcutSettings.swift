@@ -5,29 +5,88 @@ import SwiftUI
 public struct ShortcutSettings: View {
     public static let windowID = "shortcutSettings"
 
+    private static let recorderWidth: CGFloat = 120
+
+    @Environment(\.dismiss) private var dismiss
+
     public init() {}
 
     public var body: some View {
-        // TODO: 방향키 십자 배치 · 초기화 · 완료 버튼
-        Form {
-            Section("Screen") {
-                KeyboardShortcuts.Recorder("Move Pointer", name: .movePointer)
-            }
+        VStack(spacing: 0) {
+            Form {
+                Section("Screen") {
+                    KeyboardShortcuts.Recorder("Move Pointer", name: .movePointer)
+                }
 
-            Section("Direction") {
-                KeyboardShortcuts.Recorder("Up", name: .movePointerUp)
-                KeyboardShortcuts.Recorder("Left", name: .movePointerLeft)
-                KeyboardShortcuts.Recorder("Down", name: .movePointerDown)
-                KeyboardShortcuts.Recorder("Right", name: .movePointerRight)
-            }
+                Section("Direction") {
+                    directionCross
+                }
 
-            Section("Click & Drag") {
-                KeyboardShortcuts.Recorder("Left", name: .clickPointerLeft)
-                KeyboardShortcuts.Recorder("Right", name: .clickPointerRight)
+                Section("Click & Drag") {
+                    KeyboardShortcuts.Recorder("Left", name: .clickPointerLeft)
+                    KeyboardShortcuts.Recorder("Right", name: .clickPointerRight)
+                }
             }
+            .formStyle(.grouped)
+            .scrollDisabled(true)
+            .fixedSize(horizontal: false, vertical: true)
+
+            Divider()
+
+            HStack {
+                Button("Restore Defaults") {
+                    KeyboardShortcuts.reset(pointerShortcutNames)
+                }
+
+                Spacer()
+
+                Button("Done") {
+                    dismiss()
+                }
+                .keyboardShortcut(.defaultAction)
+            }
+            .padding(16)
         }
-        .formStyle(.grouped)
         .frame(width: 380)
+        .onWindowAttach { window in
+            window.isMovableByWindowBackground = true
+            window.standardWindowButton(.closeButton)?.isHidden = true
+            window.standardWindowButton(.miniaturizeButton)?.isHidden = true
+            window.standardWindowButton(.zoomButton)?.isHidden = true
+        }
         .onWindowClose { NSApp.hide(nil) }
     }
+
+    private var directionCross: some View {
+        Grid(horizontalSpacing: 8, verticalSpacing: 8) {
+            GridRow {
+                recorder(for: .movePointerUp)
+                    .gridCellColumns(3)
+            }
+
+            GridRow {
+                recorder(for: .movePointerLeft)
+
+                Image(systemName: "cursorarrow")
+                    .foregroundStyle(.secondary)
+
+                recorder(for: .movePointerRight)
+            }
+
+            GridRow {
+                recorder(for: .movePointerDown)
+                    .gridCellColumns(3)
+            }
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func recorder(for name: KeyboardShortcuts.Name) -> some View {
+        KeyboardShortcuts.Recorder(for: name)
+            .frame(width: Self.recorderWidth)
+    }
+}
+
+#Preview {
+    ShortcutSettings()
 }

@@ -3,6 +3,16 @@ import KeyboardShortcuts
 
 private let pointerModifiers: NSEvent.ModifierFlags = [.control, .option]
 
+let pointerShortcutNames: [KeyboardShortcuts.Name] = [
+    .movePointer,
+    .movePointerUp,
+    .movePointerLeft,
+    .movePointerDown,
+    .movePointerRight,
+    .clickPointerLeft,
+    .clickPointerRight,
+]
+
 extension KeyboardShortcuts.Name {
     public static let movePointer = Self(
         "movePointer",

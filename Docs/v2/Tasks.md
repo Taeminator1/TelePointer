@@ -77,13 +77,13 @@ v1의 `PointerMover.moveToScreenCenter()`를 대체한다.
 - [x] `KeyboardShortcuts.Recorder`로 단축키 수정 UI 배치
     - [x] 입력 즉시 저장됨 (`KeyboardShortcuts`가 UserDefaults에 바로 쓴다) — 재시작 없이 바로 먹는다
     - [x] 창이 다른 앱 뒤로 숨지 않도록 `.windowLevel(.floating)` ([Notes.md](../Notes.md))
-- [ ] 방향키 4개를 십자 배치로 표현
-- [ ] 전체 초기화 버튼 — `KeyboardShortcuts.reset(...)`
-- [ ] 완료 버튼 = 창 닫기
-    - [ ] 신호등 버튼(닫기 · 최소화 · 확대)을 어디까지 없앨지 함께 결정 —
-      SwiftUI는 비활성(회색)까지, 숨기려면 AppKit `standardWindowButton(_:)?.isHidden`
+- [x] 방향키 4개를 십자 배치로 표현 — `Grid` 3열, Recorder 폭은 120pt 고정
+- [x] 전체 초기화 버튼 — `KeyboardShortcuts.reset(...)`. `resetAll()`은 삭제라 쓰지 않는다 ([Notes.md](../Notes.md))
+- [x] 완료 버튼 = 창 닫기
+    - [x] 신호등 버튼(닫기 · 최소화 · 확대)을 어디까지 없앨지 함께 결정 —
+      셋 다 `standardWindowButton(_:)?.isHidden`으로 감춘다
 - [ ] 창을 두 번 열어도 하나만 뜨는지 확인
-- [ ] v1 Requirements의 메뉴 3항목 표 갱신
+- [x] v1 Requirements의 메뉴 3항목 표 갱신
 
 ## 6. App Store 제출 준비
 

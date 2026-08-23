@@ -38,7 +38,7 @@
 - 메뉴 항목은 `NSMenu`가 자기 창에 그리므로 캔버스 안에 렌더되지 않음
     - `Menu`로 감싸면 클릭해야 열리고, `NSHostingMenu` + `popUp()`으로 자동으로 띄워도 캔버스 위에 뜨는 별도 창
     - `MenuBarContent()`를 그대로 그리면 `Button`·`Toggle`이 일반 컨트롤이 되고, 단축키 글리프는 메뉴 밖에서 표시되지 않음
-- 설정 창처럼 일반 창 UI가 생기면 그때 다시 검토
+- 설정 창처럼 일반 창 UI가 생기면 그때 다시 검토 → v2의 `ShortcutSettings`에는 `#Preview`를 뒀다 (2026-08-23)
 
 ## warp은 이벤트를 발생시키지 않음
 
@@ -260,3 +260,23 @@ press left   물리키[J+ctrlL+optL]     ← J를 누르는 순간 U가 사라�
 - **창을 닫아도 `.onDisappear`는 불리지 않는다.** `Window` scene은 창이 닫혀도 콘텐츠 View를 살려둔다.
   SwiftUI에 창 닫힘을 알려주는 모디파이어도 없어(`onDisappear` 외에 창 이벤트가 없다)
   `NSWindow.willCloseNotification`을 직접 구독한다 — `Settings`의 `onWindowClose`
+
+## `resetAll()`은 기본값 복구가 아니다 (2026-08-23)
+
+- `KeyboardShortcuts.resetAll()`은 저장된 모든 단축키를 `nil`로 만든다 — 초기화가 아니라 삭제다
+- 기본값(`initial:`)으로 되돌리는 것은 `reset(_ names:)` 쪽이라, 설정 창의 초기화 버튼은 이름 목록을 넘긴다
+
+## 타이틀 바를 감춰도 그 높이는 예약된다 (2026-08-23)
+
+- `.windowStyle(.hiddenTitleBar)`는 바를 안 보이게 할 뿐, 창은 여전히 타이틀 바 높이를 safe area로 잡아둔다
+    - 그대로 두면 콘텐츠 위에 그만큼 빈 띠가 생긴다
+    - `.ignoresSafeArea(.container, edges: .top)`을 걸면 콘텐츠만 위로 붙고 창 높이는 그대로라, 같은 여백이 아래로 옮겨갈 뿐이다
+    - macOS 창에는 아래쪽 safe area가 없어 `edges`에 `.bottom`을 더해도 달라지지 않는다
+- 줄여야 하는 건 창 높이다. `padding(.top, -타이틀바높이)`로 콘텐츠가 보고하는 높이를 줄이면
+  `.windowResizability(.contentSize)`가 그만큼 짧은 창을 만들고, 콘텐츠는 예약 영역을 채운다
+- 높이는 `NSWindow.frameRect(forContentRect: .zero, styleMask: .titled).height`로 얻는다.
+  `.fullSizeContentView`를 함께 넘기면 콘텐츠가 창 전체를 쓰는 계산이라 0이 돌아온다
+- **보정은 `Window` scene 선언부에 건다.** View 안에 두면 `#Preview`에도 걸리는데,
+  프리뷰에는 예약 영역이 없어 콘텐츠 위쪽이 잘린다 — `Settings`의 `fillsHiddenTitleBar()`
+- `.windowStyle(.plain)`은 예약이 없지만 크롬을 통째로 걷어낸다. 모서리가 각지고 버튼 줄도 그려지지 않아 쓰지 않는다
+- 타이틀 바가 사라지면 창을 잡아 옮길 곳도 없어진다 — `isMovableByWindowBackground = true`

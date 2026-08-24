@@ -3,7 +3,6 @@ import AppKit
 @MainActor
 public enum PointerMover {
     private static let doubleClickRadius: CGFloat = 5
-    private static let centerTolerance: CGFloat = 2
     private static let watchdogTick = Duration.milliseconds(50)
 
     private static var lastClick: (at: ContinuousClock.Instant, point: CGPoint, button: PointerButton, state: Int64)?
@@ -15,8 +14,7 @@ public enum PointerMover {
 
         guard let target = targetFrame(
             for: NSEvent.mouseLocation,
-            among: NSScreen.screens.map(\.frame),
-            centerTolerance: centerTolerance
+            among: NSScreen.screens.map(\.frame)
         ) else { return }
 
         move(to: warpPoint(centerOf: target, primaryScreenHeight: primaryScreen.frame.height))

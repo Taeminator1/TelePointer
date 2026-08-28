@@ -1,9 +1,6 @@
 import CoreGraphics
 
-/// 0…1 단위 공간의 3차 베지어 이징 — x는 램프 구간의 진행도, y는 base에서 peak까지의 진행도.
-/// 양 끝점은 (0, 0)과 (1, 1)로 고정되고 두 제어점만 움직인다.
 public struct SpeedEasing: Equatable, Sendable, Codable {
-    /// `progress²` — 이징을 도입하기 전과 같은 곡선
     public static let `default` = SpeedEasing(
         first: CGPoint(x: 1.0 / 3, y: 0),
         second: CGPoint(x: 2.0 / 3, y: 1.0 / 3)
@@ -33,7 +30,6 @@ public struct SpeedEasing: Equatable, Sendable, Codable {
     private func sampleY(_ t: Double) -> Double { ((ay * t + by) * t + cy) * t }
     private func slopeX(_ t: Double) -> Double { (3 * ax * t + 2 * bx) * t + cx }
 
-    /// x는 t의 3차식이라 역함수가 없다 — Newton-Raphson으로 좁히고, 기울기가 죽으면 이분법으로 넘긴다
     private func t(forX x: Double) -> Double {
         let tolerance = 1e-7
         var t = x

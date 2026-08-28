@@ -3,10 +3,7 @@ import AppKit
 @MainActor
 public final class DirectionalMover {
     public struct Tuning {
-        /// 포인터를 다시 그리는 주기
         public var tick: Duration
-
-        /// 강제 정지까지의 시간
         public var holdLimit: Double
 
         public init(

@@ -2,7 +2,6 @@ import PointerCore
 import SwiftUI
 
 struct SpeedGraph: View {
-    /// 그래프로는 가속 모양만 바꾼다 — base · peak · rampDuration은 슬라이더가 소유한다
     private enum Handle: CaseIterable {
         case first
         case second
@@ -10,9 +9,6 @@ struct SpeedGraph: View {
 
     private static let height: CGFloat = 170
 
-    /// 축 라벨이 들어갈 자리 — 아래쪽은 시간 라벨 한 줄,
-    /// 왼쪽은 가장 긴 속도 라벨(`6000`, caption2에서 26.5pt)에 간격 6pt를 더한 값.
-    /// 값에 따라 재지 않고 최악의 경우로 고정한다 — 조작 중에 플롯 폭이 흔들리지 않아야 한다
     private static let insets = EdgeInsets(top: 8, leading: 44, bottom: 20, trailing: 10)
     private static let grabRadius: CGFloat = 20
 
@@ -20,7 +16,6 @@ struct SpeedGraph: View {
 
     @State private var dragging: Handle?
 
-    /// 축의 양 끝이 곧 곡선의 양 끝 — 램프의 시작점과 끝점이 좌측 하단 · 우측 상단 모서리에 닿는다
     private var timeRange: ClosedRange<Double> { 0...curve.rampDuration }
     private var speedRange: ClosedRange<Double> { curve.base...max(curve.peak, curve.base) }
 
@@ -70,12 +65,10 @@ struct SpeedGraph: View {
             let isFirst = index == 0
             let isLast = index == times.count - 1
 
-            // 양 끝의 눈금선은 그래프 테두리와 겹친다
             if !isFirst, !isLast {
                 drawGridLine(&context, from: CGPoint(x: x, y: plot.minY), to: CGPoint(x: x, y: plot.maxY))
             }
 
-            // 양 끝 라벨을 가운데 정렬하면 절반이 캔버스 밖으로 나간다 — 축 안쪽으로 붙인다
             let anchor: UnitPoint =
                 if isFirst { .topLeading } else if isLast { .topTrailing } else { .top }
 
@@ -95,9 +88,6 @@ struct SpeedGraph: View {
         )
     }
 
-    /// 축 구간이 값에 따라 변하므로 눈금 간격도 매번 고른다 — 1 · 2 · 5의 10의 거듭제곱 배.
-    /// 2.5배는 두지 않는다 — 시간축에서 0.025처럼 라벨이 소수점 세 자리로 늘어난다.
-    /// 양 끝은 곡선이 닿는 지점이라 반올림하지 않고 그대로 남기고, 거기 붙는 눈금은 라벨이 겹쳐 버린다
     private static func ticks(over range: ClosedRange<Double>, count: Double = 4) -> [Double] {
         let span = range.upperBound - range.lowerBound
         guard span > 0 else { return [range.lowerBound] }
@@ -247,7 +237,6 @@ struct SpeedGraph: View {
         )
     }
 
-    /// peak를 base까지 내리면 속도 구간이 0이 된다 — 0으로 나누지 않는다
     private static func span(of range: ClosedRange<Double>) -> Double {
         max(range.upperBound - range.lowerBound, 1e-6)
     }
@@ -259,7 +248,6 @@ struct SpeedGraph: View {
         }
     }
 
-    /// 단위 공간의 제어점을 램프 구간 안의 (시간, 속도)로 펼친다
     private func control(_ unit: CGPoint, in plot: CGRect) -> CGPoint {
         position(
             time: curve.rampDuration * Double(unit.x),

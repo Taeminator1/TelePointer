@@ -30,7 +30,6 @@ public struct MenuBarContent: View {
         .keyboardShortcut("q")
     }
 
-    /// `LSUIElement` 앱이라 창이 다른 앱 뒤에 뜬다 — 숨김을 풀고 앞으로 올린다
     private func settingsButton(_ title: LocalizedStringKey, windowID: String) -> some View {
         Button(title) {
             NSApp.unhide(nil)

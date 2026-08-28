@@ -6,6 +6,7 @@
 TelePointer (app)
   └─ MenuBar (staticFramework)
        ├─ Settings (staticFramework)
+       │    ├─ PointerCore (staticFramework)
        │    └─ KeyboardShortcuts (external)
        ├─ KeyboardShortcuts (external)
        ├─ PointerCore (staticFramework)
@@ -18,7 +19,7 @@ TelePointer (app)
 | `TelePointer` | `@main`, `MenuBarExtra` Scene 선언, 앱 리소스(AppIcon) |
 | `MenuBar` | 메뉴 UI, 핫키 등록 |
 | `Settings` | 설정 창 UI, 단축키 `Name`과 기본값 정의 |
-| `PointerCore` | 좌표 계산(순수), 커서 이동, 방향 이동 홀드 루프 |
+| `PointerCore` | 좌표 계산(순수), 커서 이동, 방향 이동 홀드 루프, 속도 곡선과 그 저장 |
 | `LaunchAtLogin` | 로그인 항목 조회·토글 |
 
 ## 디렉터리
@@ -76,13 +77,27 @@ App Store 배포에서 dylib 임베드·서명 단계가 생기지 않고, 메�
 `initial:`의 기본값도 초기화 버튼이 되돌리는 대상이라 소유자가 설정 쪽이다.
 `MenuBar`는 그 `Name`을 읽어 핫키를 등록하고 메뉴에 글리프를 표시한다 — `MenuBar → Settings` 방향.
 
+### 왜 속도 곡선은 `Settings`가 아니라 `PointerCore`에 두나
+
+단축키 `Name`은 기본값까지 `Settings`가 갖는다. 속도는 반대다 —
+`base` · `peak` · `rampDuration`은 홀드 루프가 매 tick 읽는 물리량이고, 기본값 400 → 2800pt/s는
+설정 화면이 아니라 이동 동작이 정하는 값이다. `Settings`에 두면 `PointerCore`가 자기 기본값을
+모르는 상태가 되어 화면 없이 테스트할 수 없다.
+
+그래서 `SpeedCurve`(값 · 기본값 · 허용 범위 · 계산)와 `SpeedSettings`(UserDefaults 저장)를
+`PointerCore`가 갖고, `Settings`는 그 값을 슬라이더에 바인딩만 한다 — `Settings → PointerCore` 방향.
+저장 키는 `SpeedSettings` 안에 감춰 화면이 키 이름을 알지 못하게 한다.
+
+곡선은 press 시점에 한 번 읽는다. 누르고 있는 도중에 설정을 바꿔도 그 이동은 원래 곡선으로 끝난다.
+
 ### 의존 방향
 
-`App → MenuBar → {Settings, PointerCore, LaunchAtLogin}` 단방향. 역방향과 우회 경로를 만들지 않는다.
+`App → MenuBar → {Settings, PointerCore, LaunchAtLogin}`, `Settings → PointerCore` 단방향.
+역방향과 우회 경로를 만들지 않는다.
 
 - `App`은 Core 모듈을 직접 참조하지 않는다 — `MenuBar`를 거친다
 - `PointerCore`와 `LaunchAtLogin`은 서로를 참조하지 않는다
-- Core 모듈은 SwiftUI를 쓰지 않는다
+- Core 모듈은 SwiftUI를 쓰지 않는다 — `Observation`은 쓴다
 - `KeyboardShortcuts`는 Feature 모듈 밖으로 노출하지 않는다 — Core 모듈과 `App`은 모른다
 
 `tuist graph --format dot`으로 확인할 수 있다.

@@ -75,6 +75,7 @@ let project = Project(
             name: "Settings",
             sources: ["TelePointer/Features/Settings/Sources"],
             dependencies: [
+                .target(name: "PointerCore"),
                 .external(name: "KeyboardShortcuts"),
             ]
         ),

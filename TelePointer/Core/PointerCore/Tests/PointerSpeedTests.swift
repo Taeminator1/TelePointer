@@ -44,4 +44,13 @@ struct RampedSpeedTests {
     func zeroRampDuration() {
         #expect(speed(elapsed: 0, rampDuration: 0) == peak)
     }
+
+    @Test("곡선을 거쳐도 같은 값")
+    func curveMatchesFunction() {
+        let curve = SpeedCurve(base: base, peak: peak, rampDuration: rampDuration)
+
+        #expect(curve.speed(at: 0) == base)
+        #expect(curve.speed(at: rampDuration) == peak)
+        #expect(curve.speed(at: rampDuration / 2) == speed(elapsed: rampDuration / 2))
+    }
 }

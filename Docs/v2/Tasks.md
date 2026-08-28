@@ -84,7 +84,37 @@ v1의 `PointerMover.moveToScreenCenter()`를 대체한다.
 - [ ] 창을 두 번 열어도 하나만 뜨는지 확인
 - [x] v1 Requirements의 메뉴 3항목 표 갱신
 
-## 6. App Store 제출 준비
+## 6. 속도 설정
+
+[Backlog.md](../Backlog.md)의 「포인터 속도 관련 함수」에서 옮겨왔다.
+
+- [x] 속도 값을 어느 모듈이 갖는지 결정 — `PointerCore`. 근거는 [Architecture.md](../Architecture.md)
+- [x] `SpeedCurve` — base · peak · rampDuration + 허용 범위 + 기본값
+- [x] `SpeedSettings` — UserDefaults 저장, 슬라이더를 놓는 즉시 반영
+    - [x] 범위를 벗어난 저장값은 읽을 때 당겨온다
+    - [x] 단위 테스트 (`SpeedSettingsTests`)
+- [x] `DirectionalMover.Tuning`에서 속도 3개를 떼어내고 press 시점에 곡선을 읽는다
+- [x] 설정 창에 Speed 섹션 — 슬라이더 3개, Restore Defaults가 속도까지 되돌린다
+- [x] 설정 창을 두 칸으로 — 왼쪽 단축키(360pt), 오른쪽 속도(400pt)
+- [ ] 실제 창에서 레이아웃 확인 — 두 칸의 높이 차이, 슬라이더와 수치가 잘리지 않는지
+- [x] 이징 곡선을 3차 베지어로 — `SpeedEasing`, 제어점 2개
+    - [x] 기본값은 지금의 `progress²`와 같은 (1/3, 0, 2/3, 1/3)
+    - [x] x는 t의 3차식이라 역함수가 없다 — Newton-Raphson + 이분법으로 t를 찾는다
+    - [x] 단위 테스트 (`SpeedEasingTests`) — 기본값이 `progress²`와, 대각선이 선형과 일치하는지
+- [x] 저장을 키 3개에서 Codable 한 덩어리로 — 이징 4개를 키로 늘리지 않는다
+- [x] 속도 그래프 — x축 시간, y축 속도
+    - [x] 램프 구간이 그대로 3차 베지어라 `addCurve` 한 번으로 그린다 — 샘플링하지 않는다
+    - [x] 드래그는 제어점 2개만 — base · peak · rampDuration은 슬라이더가 소유한다
+    - [x] 슬라이더를 움직이면 곡선도 따라온다 — 같은 값을 본다
+    - [x] 축을 세 값에 맞춰 늘린다 — 시간축 `0…rampDuration`, 속도축 `base…peak`.
+      곡선의 양 끝이 좌측 하단 · 우측 상단 모서리에 닿는다
+    - [x] 눈금 간격을 축 구간에서 고른다 (1 · 2 · 5 × 10ⁿ) — 양 끝은 반올림하지 않는다
+        - [x] 2.5배 간격은 버렸다 — 시간축에서 0.025 위치를 「0.02」로 표시했다
+        - [x] peak을 base까지 내리면 속도 구간이 0 — 0으로 나누지 않게 막았다
+- [ ] 그래프 조작감 확인 — 제어점 잡기, 슬라이더를 움직일 때 축이 변하는 느낌
+- [x] 임시로 넣은 「실행하자마자 설정 창」 되돌리기
+
+## 7. App Store 제출 준비
 
 v1에서 이관.
 
@@ -93,7 +123,7 @@ v1에서 이관.
 - [ ] App Store Connect에 앱 등록
 - [ ] 스크린샷 · 앱 설명 · 개인정보 처리방침 URL 준비
 
-## 7. 검증
+## 8. 검증
 
 v1에서 이관.
 

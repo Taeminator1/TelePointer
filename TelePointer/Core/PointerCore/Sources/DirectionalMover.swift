@@ -6,49 +6,38 @@ public final class DirectionalMover {
         /// 포인터를 다시 그리는 주기
         public var tick: Duration
 
-        /// 누른 직후의 속도
-        public var baseSpeed: Double
-
-        /// 도달 가능한 최고 속도
-        public var peakSpeed: Double
-
-        /// 최고 속도까지 걸리는 시간
-        public var rampDuration: Double
-
         /// 강제 정지까지의 시간
         public var holdLimit: Double
 
         public init(
             tick: Duration = .milliseconds(8),
-            baseSpeed: Double = 400,
-            peakSpeed: Double = 2800,
-            rampDuration: Double = 0.4,
             holdLimit: Double = 5
         ) {
             self.tick = tick
-            self.baseSpeed = baseSpeed
-            self.peakSpeed = peakSpeed
-            self.rampDuration = rampDuration
             self.holdLimit = holdLimit
         }
     }
 
     private let tuning: Tuning
+    private let settings: SpeedSettings
 
     private var active: [Direction: NSEvent.ModifierFlags] = [:]
     private var position: CGPoint?
     private var warpFrames: [CGRect] = []
+    private var curve: SpeedCurve = .default
     private var repeater: Task<Void, Never>?
     private var generation = 0
 
-    public init(tuning: Tuning = Tuning()) {
+    public init(tuning: Tuning = Tuning(), settings: SpeedSettings = .shared) {
         self.tuning = tuning
+        self.settings = settings
     }
 
     public func press(_ direction: Direction, requiredModifiers: NSEvent.ModifierFlags) {
         if active.isEmpty {
             position = PointerMover.currentLocation()
             warpFrames = PointerMover.screenWarpFrames()
+            curve = settings.curve
         }
 
         active[direction] = requiredModifiers
@@ -94,12 +83,7 @@ public final class DirectionalMover {
             let delta = seconds(from: previous, to: now)
             previous = now
 
-            let speed = rampedSpeed(
-                elapsed: elapsed,
-                base: tuning.baseSpeed,
-                peak: tuning.peakSpeed,
-                rampDuration: tuning.rampDuration
-            )
+            let speed = curve.speed(at: elapsed)
 
             step(normalizedVector(of: Set(active.keys)), distance: speed * delta)
 

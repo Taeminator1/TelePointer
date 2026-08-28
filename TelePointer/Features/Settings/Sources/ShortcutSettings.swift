@@ -1,11 +1,14 @@
 import AppKit
 import KeyboardShortcuts
+import PointerCore
 import SwiftUI
 
 public struct ShortcutSettings: View {
     public static let windowID = "shortcutSettings"
 
     private static let recorderWidth: CGFloat = 120
+    private static let shortcutColumnWidth: CGFloat = 360
+    private static let speedColumnWidth: CGFloat = 400
 
     @Environment(\.dismiss) private var dismiss
 
@@ -13,29 +16,35 @@ public struct ShortcutSettings: View {
 
     public var body: some View {
         VStack(spacing: 0) {
-            Form {
-                Section("Screen") {
-                    KeyboardShortcuts.Recorder("Move Pointer", name: .movePointer)
+            HStack(alignment: .top, spacing: 0) {
+                column(width: Self.shortcutColumnWidth) {
+                    Section("Screen") {
+                        KeyboardShortcuts.Recorder("Move Pointer", name: .movePointer)
+                    }
+
+                    Section("Direction") {
+                        directionCross
+                    }
+
+                    Section("Click & Drag") {
+                        KeyboardShortcuts.Recorder("Left", name: .clickPointerLeft)
+                        KeyboardShortcuts.Recorder("Right", name: .clickPointerRight)
+                    }
                 }
 
-                Section("Direction") {
-                    directionCross
-                }
-
-                Section("Click & Drag") {
-                    KeyboardShortcuts.Recorder("Left", name: .clickPointerLeft)
-                    KeyboardShortcuts.Recorder("Right", name: .clickPointerRight)
+                column(width: Self.speedColumnWidth) {
+                    Section("Speed") {
+                        SpeedSection(settings: .shared)
+                    }
                 }
             }
-            .formStyle(.grouped)
-            .scrollDisabled(true)
-            .fixedSize(horizontal: false, vertical: true)
 
             Divider()
 
             HStack {
                 Button("Restore Defaults") {
                     KeyboardShortcuts.reset(pointerShortcutNames)
+                    SpeedSettings.shared.reset()
                 }
 
                 Spacer()
@@ -47,7 +56,7 @@ public struct ShortcutSettings: View {
             }
             .padding(16)
         }
-        .frame(width: 380)
+        .frame(width: Self.shortcutColumnWidth + Self.speedColumnWidth)
         .onWindowAttach { window in
             window.isMovableByWindowBackground = true
             window.standardWindowButton(.closeButton)?.isHidden = true
@@ -55,6 +64,17 @@ public struct ShortcutSettings: View {
             window.standardWindowButton(.zoomButton)?.isHidden = true
         }
         .onWindowClose { NSApp.hide(nil) }
+    }
+
+    private func column(
+        width: CGFloat,
+        @ViewBuilder content: () -> some View
+    ) -> some View {
+        Form(content: content)
+            .formStyle(.grouped)
+            .scrollDisabled(true)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(width: width)
     }
 
     private var directionCross: some View {

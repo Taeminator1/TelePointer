@@ -8,21 +8,59 @@ extension View {
         padding(.top, -NSWindow.frameRect(forContentRect: .zero, styleMask: .titled).height)
     }
 
-    func onWindowAttach(_ action: @escaping @MainActor @Sendable (NSWindow) -> Void) -> some View {
-        background(WindowBridge(onAttach: action, onClose: nil))
+    /// 설정 창이 공유하는 창 다루기 — 배경으로 옮길 수 있게 하고, 신호등 버튼 셋을 감추고,
+    /// 초기 포커스를 풀어준다
+    func settingsWindowChrome() -> some View {
+        background(
+            WindowBridge(
+                onAttach: { window in
+                    window.isMovableByWindowBackground = true
+
+                    for button in [NSWindow.ButtonType.closeButton, .miniaturizeButton, .zoomButton] {
+                        window.standardWindowButton(button)?.isHidden = true
+                    }
+                },
+                onBecomeKey: { window in
+                    // AppKit은 창이 처음 key가 될 때 key view loop의 첫 컨트롤을 잡는다.
+                    // 설정 창은 아무것도 선택되지 않은 채로 열려야 하므로 그때 한 번만 풀어준다 —
+                    // 이후 Tab이나 클릭으로 잡는 포커스는 건드리지 않는다
+                    guard ClearedInitialFocus.shared.insert(window) else { return }
+
+                    window.makeFirstResponder(nil)
+                },
+                onClose: { window in
+                    // 다시 열면 초기 포커스도 다시 풀어야 한다
+                    ClearedInitialFocus.shared.remove(window)
+                }
+            )
+        )
+    }
+}
+
+/// 초기 포커스를 이미 푼 창 — 옵서버는 창이 key가 될 때마다 부르지만 처음 한 번만 풀어야 한다
+@MainActor
+private final class ClearedInitialFocus {
+    static let shared = ClearedInitialFocus()
+
+    private var identifiers: Set<ObjectIdentifier> = []
+
+    /// 처음 넣는 창이면 true
+    func insert(_ window: NSWindow) -> Bool {
+        identifiers.insert(ObjectIdentifier(window)).inserted
     }
 
-    func onWindowClose(_ action: @escaping @MainActor @Sendable () -> Void) -> some View {
-        background(WindowBridge(onAttach: nil, onClose: action))
+    func remove(_ window: NSWindow) {
+        identifiers.remove(ObjectIdentifier(window))
     }
 }
 
 private struct WindowBridge: NSViewRepresentable {
     let onAttach: (@MainActor @Sendable (NSWindow) -> Void)?
-    let onClose: (@MainActor @Sendable () -> Void)?
+    let onBecomeKey: (@MainActor @Sendable (NSWindow) -> Void)?
+    let onClose: (@MainActor @Sendable (NSWindow) -> Void)?
 
     func makeNSView(context: Context) -> NSView {
-        BridgeView(onAttach: onAttach, onClose: onClose)
+        BridgeView(onAttach: onAttach, onBecomeKey: onBecomeKey, onClose: onClose)
     }
 
     func updateNSView(_ nsView: NSView, context: Context) {}
@@ -30,14 +68,17 @@ private struct WindowBridge: NSViewRepresentable {
 
 private final class BridgeView: NSView {
     private let onAttach: (@MainActor @Sendable (NSWindow) -> Void)?
-    private let onClose: (@MainActor @Sendable () -> Void)?
-    private var observer: (any NSObjectProtocol)?
+    private let onBecomeKey: (@MainActor @Sendable (NSWindow) -> Void)?
+    private let onClose: (@MainActor @Sendable (NSWindow) -> Void)?
+    private var observers: [any NSObjectProtocol] = []
 
     init(
         onAttach: (@MainActor @Sendable (NSWindow) -> Void)?,
-        onClose: (@MainActor @Sendable () -> Void)?
+        onBecomeKey: (@MainActor @Sendable (NSWindow) -> Void)?,
+        onClose: (@MainActor @Sendable (NSWindow) -> Void)?
     ) {
         self.onAttach = onAttach
+        self.onBecomeKey = onBecomeKey
         self.onClose = onClose
         super.init(frame: .zero)
     }
@@ -50,23 +91,32 @@ private final class BridgeView: NSView {
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
 
-        if let observer {
+        for observer in observers {
             NotificationCenter.default.removeObserver(observer)
-            self.observer = nil
         }
+        observers.removeAll()
 
         guard let window else { return }
 
         onAttach?(window)
 
-        guard let onClose else { return }
+        observe(NSWindow.didBecomeKeyNotification, of: window, with: onBecomeKey)
+        observe(NSWindow.willCloseNotification, of: window, with: onClose)
+    }
 
-        observer = NotificationCenter.default.addObserver(
-            forName: NSWindow.willCloseNotification,
-            object: window,
-            queue: .main
-        ) { _ in
-            MainActor.assumeIsolated(onClose)
-        }
+    private func observe(
+        _ name: Notification.Name,
+        of window: NSWindow,
+        with action: (@MainActor @Sendable (NSWindow) -> Void)?
+    ) {
+        guard let action else { return }
+
+        observers.append(
+            NotificationCenter.default.addObserver(forName: name, object: window, queue: .main) { notification in
+                guard let window = notification.object as? NSWindow else { return }
+
+                MainActor.assumeIsolated { action(window) }
+            }
+        )
     }
 }

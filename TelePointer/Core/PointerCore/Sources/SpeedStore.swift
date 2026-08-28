@@ -3,8 +3,8 @@ import Observation
 
 @MainActor
 @Observable
-public final class SpeedSettings {
-    public static let shared = SpeedSettings()
+public final class SpeedStore {
+    public static let shared = SpeedStore()
 
     private static let key = "speedCurve"
 

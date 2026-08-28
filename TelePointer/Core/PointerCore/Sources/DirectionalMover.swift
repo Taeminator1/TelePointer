@@ -19,7 +19,7 @@ public final class DirectionalMover {
     }
 
     private let tuning: Tuning
-    private let settings: SpeedSettings
+    private let settings: SpeedStore
 
     private var active: [Direction: NSEvent.ModifierFlags] = [:]
     private var position: CGPoint?
@@ -28,7 +28,7 @@ public final class DirectionalMover {
     private var repeater: Task<Void, Never>?
     private var generation = 0
 
-    public init(tuning: Tuning = Tuning(), settings: SpeedSettings = .shared) {
+    public init(tuning: Tuning = Tuning(), settings: SpeedStore = .shared) {
         self.tuning = tuning
         self.settings = settings
     }

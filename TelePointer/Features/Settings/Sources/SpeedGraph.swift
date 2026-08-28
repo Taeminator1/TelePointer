@@ -10,7 +10,9 @@ struct SpeedGraph: View {
 
     private static let height: CGFloat = 170
 
-    /// 축 라벨이 들어갈 자리 — 아래쪽은 시간 라벨 한 줄, 왼쪽은 네 자리 속도 라벨
+    /// 축 라벨이 들어갈 자리 — 아래쪽은 시간 라벨 한 줄,
+    /// 왼쪽은 가장 긴 속도 라벨(`6000`, caption2에서 26.5pt)에 간격 6pt를 더한 값.
+    /// 값에 따라 재지 않고 최악의 경우로 고정한다 — 조작 중에 플롯 폭이 흔들리지 않아야 한다
     private static let insets = EdgeInsets(top: 8, leading: 44, bottom: 20, trailing: 10)
     private static let grabRadius: CGFloat = 20
 
@@ -46,10 +48,12 @@ struct SpeedGraph: View {
             lineWidth: 1
         )
 
-        for speed in Self.ticks(over: speedRange) {
+        let speeds = Self.ticks(over: speedRange)
+        for (index, speed) in speeds.enumerated() {
             let y = position(time: 0, speed: speed, in: plot).y
+            let isEnd = index == 0 || index == speeds.count - 1
 
-            if speed > speedRange.lowerBound, speed < speedRange.upperBound {
+            if !isEnd {
                 drawGridLine(&context, from: CGPoint(x: plot.minX, y: y), to: CGPoint(x: plot.maxX, y: y))
             }
 

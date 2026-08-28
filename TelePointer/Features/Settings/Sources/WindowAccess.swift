@@ -2,14 +2,11 @@ import AppKit
 import SwiftUI
 
 extension View {
-    /// `.hiddenTitleBar` 창이 예약해두는 타이틀 바 높이를 콘텐츠로 채운다
     @MainActor
     public func fillsHiddenTitleBar() -> some View {
         padding(.top, -NSWindow.frameRect(forContentRect: .zero, styleMask: .titled).height)
     }
 
-    /// 설정 창이 공유하는 창 다루기 — 배경으로 옮길 수 있게 하고, 신호등 버튼 셋을 감추고,
-    /// 초기 포커스를 풀어준다
     func settingsWindowChrome() -> some View {
         background(
             WindowBridge(
@@ -21,15 +18,13 @@ extension View {
                     }
                 },
                 onBecomeKey: { window in
-                    // AppKit은 창이 처음 key가 될 때 key view loop의 첫 컨트롤을 잡는다.
-                    // 설정 창은 아무것도 선택되지 않은 채로 열려야 하므로 그때 한 번만 풀어준다 —
-                    // 이후 Tab이나 클릭으로 잡는 포커스는 건드리지 않는다
                     guard ClearedInitialFocus.shared.insert(window) else { return }
 
-                    window.makeFirstResponder(nil)
+                    DispatchQueue.main.async {
+                        window.makeFirstResponder(nil)
+                    }
                 },
                 onClose: { window in
-                    // 다시 열면 초기 포커스도 다시 풀어야 한다
                     ClearedInitialFocus.shared.remove(window)
                 }
             )
@@ -37,14 +32,12 @@ extension View {
     }
 }
 
-/// 초기 포커스를 이미 푼 창 — 옵서버는 창이 key가 될 때마다 부르지만 처음 한 번만 풀어야 한다
 @MainActor
 private final class ClearedInitialFocus {
     static let shared = ClearedInitialFocus()
 
     private var identifiers: Set<ObjectIdentifier> = []
 
-    /// 처음 넣는 창이면 true
     func insert(_ window: NSWindow) -> Bool {
         identifiers.insert(ObjectIdentifier(window)).inserted
     }

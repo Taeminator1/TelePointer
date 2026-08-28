@@ -81,7 +81,7 @@ v1의 `PointerMover.moveToScreenCenter()`를 대체한다.
 - [x] 완료 버튼 = 창 닫기
     - [x] 신호등 버튼(닫기 · 최소화 · 확대)을 어디까지 없앨지 함께 결정 —
       셋 다 `standardWindowButton(_:)?.isHidden`으로 감춘다
-- [ ] 창을 두 번 열어도 하나만 뜨는지 확인
+- [x] 창을 두 번 열어도 하나만 뜨는지 확인
 - [x] v1 Requirements의 메뉴 3항목 표 갱신
 
 ## 6. 속도 설정
@@ -90,12 +90,17 @@ v1의 `PointerMover.moveToScreenCenter()`를 대체한다.
 
 - [x] 속도 값을 어느 모듈이 갖는지 결정 — `PointerCore`. 근거는 [Architecture.md](../Architecture.md)
 - [x] `SpeedCurve` — base · peak · rampDuration + 허용 범위 + 기본값
-- [x] `SpeedSettings` — UserDefaults 저장, 슬라이더를 놓는 즉시 반영
+- [x] `SpeedStore` — UserDefaults 저장, 슬라이더를 놓는 즉시 반영
     - [x] 범위를 벗어난 저장값은 읽을 때 당겨온다
-    - [x] 단위 테스트 (`SpeedSettingsTests`)
+    - [x] 단위 테스트 (`SpeedStoreTests`)
 - [x] `DirectionalMover.Tuning`에서 속도 3개를 떼어내고 press 시점에 곡선을 읽는다
 - [x] 설정 창에 Speed 섹션 — 슬라이더 3개, Restore Defaults가 속도까지 되돌린다
-- [x] 설정 창을 두 칸으로 — 왼쪽 단축키(360pt), 오른쪽 속도(400pt)
+- [x] ~~설정 창을 두 칸으로~~ → 창을 나눴다. `Speed`가 자기 창과 메뉴 항목을 갖는다
+    - 메뉴에서 `Keyboard Shortcuts…` 바로 아래
+    - 창 성질(타이틀 바 없음 · 내용 크기 고정 · floating)은 `Scene.settingsWindow()`로 공유
+- [x] 두 속도가 서로의 벽이 되게 — 슬라이더 범위를 상대 값으로 좁힌다
+    - `normalized()`는 어느 값이 움직였는지 모르므로 대칭을 만들 수 없다.
+      조작 중 규칙은 슬라이더가, 저장된 값의 안전망은 `normalized()`가 맡는다
 - [ ] 실제 창에서 레이아웃 확인 — 두 칸의 높이 차이, 슬라이더와 수치가 잘리지 않는지
 - [x] 이징 곡선을 3차 베지어로 — `SpeedEasing`, 제어점 2개
     - [x] 기본값은 지금의 `progress²`와 같은 (1/3, 0, 2/3, 1/3)

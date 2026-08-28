@@ -84,9 +84,9 @@ App Store 배포에서 dylib 임베드·서명 단계가 생기지 않고, 메�
 설정 화면이 아니라 이동 동작이 정하는 값이다. `Settings`에 두면 `PointerCore`가 자기 기본값을
 모르는 상태가 되어 화면 없이 테스트할 수 없다.
 
-그래서 `SpeedCurve`(값 · 기본값 · 허용 범위 · 계산)와 `SpeedSettings`(UserDefaults 저장)를
+그래서 `SpeedCurve`(값 · 기본값 · 허용 범위 · 계산)와 `SpeedStore`(UserDefaults 저장)를
 `PointerCore`가 갖고, `Settings`는 그 값을 슬라이더에 바인딩만 한다 — `Settings → PointerCore` 방향.
-저장 키는 `SpeedSettings` 안에 감춰 화면이 키 이름을 알지 못하게 한다.
+저장 키는 `SpeedStore` 안에 감춰 화면이 키 이름을 알지 못하게 한다.
 
 곡선은 press 시점에 한 번 읽는다. 누르고 있는 도중에 설정을 바꿔도 그 이동은 원래 곡선으로 끝난다.
 

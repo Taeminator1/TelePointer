@@ -41,7 +41,8 @@
 | Move Pointer | ⌃⌥C | 커서가 있는 화면의 중앙으로. 이미 중앙이면 다음 모니터로 ([v2/Requirements.md](../v2/Requirements.md)) |
 | Enable Click… | 단축키 없음 | 접근성 권한이 없을 때만 나타남 — 시스템 설정의 손쉬운 사용 패널을 연다 |
 | Open at Login | 단축키 없음 | 누를 때마다 왼쪽에 체크가 표시되었다가 사라졌다가 함 |
-| Keyboard Shortcuts… | 단축키 없음 | 설정 창을 연다 |
+| Keyboard Shortcuts… | 단축키 없음 | 단축키 설정 창을 연다 |
+| Pointer Speed… | 단축키 없음 | 속도 설정 창을 연다 |
 | Quit | ⌘Q | 앱 종료 |
 
 ## 동작 상세

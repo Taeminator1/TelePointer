@@ -76,3 +76,50 @@ struct SpeedCurveNormalizationTests {
         #expect(curve.peak == 1200)
     }
 }
+
+struct SpeedCurveAllowedRangeTests {
+    private func curve(base: Double, peak: Double) -> SpeedCurve {
+        SpeedCurve(base: base, peak: peak, rampDuration: 0.4)
+    }
+
+    @Test("base는 peak에서 멈춘다")
+    func baseStopsAtPeak() {
+        #expect(curve(base: 400, peak: 1000).allowedBaseRange.upperBound == 1000)
+    }
+
+    @Test("peak은 base에서 멈춘다")
+    func peakStopsAtBase() {
+        #expect(curve(base: 1000, peak: 2800).allowedPeakRange.lowerBound == 1000)
+    }
+
+    @Test("서로의 벽이 절대 범위를 넘지는 않는다")
+    func staysWithinAbsoluteRanges() {
+        let wide = curve(base: 100, peak: 6000)
+        #expect(wide.allowedBaseRange.upperBound == SpeedCurve.baseRange.upperBound)
+        #expect(wide.allowedPeakRange.lowerBound == SpeedCurve.peakRange.lowerBound)
+
+        let narrow = curve(base: 100, peak: 400)
+        #expect(narrow.allowedBaseRange.lowerBound == SpeedCurve.baseRange.lowerBound)
+        #expect(narrow.allowedPeakRange.upperBound == SpeedCurve.peakRange.upperBound)
+    }
+
+    @Test("두 값이 같아도 구간이 뒤집히지 않는다")
+    func neverInverts() {
+        for speed in [400.0, 1000, 2000] {
+            let curve = curve(base: speed, peak: speed)
+
+            #expect(curve.allowedBaseRange.lowerBound <= curve.allowedBaseRange.upperBound)
+            #expect(curve.allowedPeakRange.lowerBound <= curve.allowedPeakRange.upperBound)
+        }
+    }
+
+    @Test("정규화되지 않은 곡선에서도 구간이 뒤집히지 않는다")
+    func survivesUnnormalizedInput() {
+        for (base, peak) in [(-500.0, -500.0), (9999, 9999), (2000, 400), (100, 99_999)] {
+            let curve = curve(base: base, peak: peak)
+
+            #expect(curve.allowedBaseRange.lowerBound <= curve.allowedBaseRange.upperBound)
+            #expect(curve.allowedPeakRange.lowerBound <= curve.allowedPeakRange.upperBound)
+        }
+    }
+}

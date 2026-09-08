@@ -123,7 +123,15 @@ v1의 `PointerMover.moveToScreenCenter()`를 대체한다.
 
 v1에서 이관.
 
-- [ ] `AppIcon.appiconset` 에셋 추가 (현재 비어 있음)
+- [ ] 앱 아이콘 — Icon Composer로 `AppIcon.icon`을 만든다.
+  비어 있는 `AppIcon.appiconset`은 `.icon`이 대체하므로 지운다
+    - [x] 레이어 소스 4안 — [Design/Icon](../../Design/Icon/README.md).
+      배경·그림자·불투명도는 소스에 담지 않고 Icon Composer에서 준다
+    - [ ] 후보 확정 후 Liquid Glass 설정 — Default · Dark · Mono 모두 확인
+    - [ ] `tuist generate`가 `.icon`을 하나의 번들로 넘기는지 확인 (`buildableFolders` 사용 중)
+- [ ] 메뉴바 아이콘 교체 — 현재는 SF Symbol `cursorarrow.rays`
+    - [ ] 커스텀 에셋으로 바꾼다면 템플릿 이미지로 등록 — 라이트/다크와 메뉴바 틴트를 따라가야 한다
+    - [ ] 다른 메뉴바 항목과 눈에 보이는 크기가 맞는지
 - [ ] 코드 서명 팀 / provisioning profile 설정
 - [ ] App Store Connect에 앱 등록
 - [ ] 스크린샷 · 앱 설명 · 개인정보 처리방침 URL 준비

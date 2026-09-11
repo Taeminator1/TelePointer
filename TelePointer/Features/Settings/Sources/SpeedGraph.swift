@@ -38,7 +38,7 @@ struct SpeedGraph: View {
 
     private func drawAxes(_ context: inout GraphicsContext, _ plot: CGRect) {
         context.stroke(
-            Path(roundedRect: plot, cornerRadius: 6),
+            Path(plot),
             with: .color(.secondary.opacity(0.25)),
             lineWidth: 1
         )

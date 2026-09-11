@@ -5,13 +5,19 @@ public final class DirectionalMover {
     public struct Tuning {
         public var tick: Duration
         public var holdLimit: Double
+        public var steadyModifier: NSEvent.ModifierFlags
+        public var steadySpeed: Double
 
         public init(
             tick: Duration = .milliseconds(8),
-            holdLimit: Double = 5
+            holdLimit: Double = 5,
+            steadyModifier: NSEvent.ModifierFlags = .command,
+            steadySpeed: Double = 80
         ) {
             self.tick = tick
             self.holdLimit = holdLimit
+            self.steadyModifier = steadyModifier
+            self.steadySpeed = steadySpeed
         }
     }
 
@@ -37,7 +43,7 @@ public final class DirectionalMover {
             curve = settings.curve
         }
 
-        active[direction] = requiredModifiers
+        active[direction] = requiredModifiers.subtracting(tuning.steadyModifier)
 
         guard repeater == nil else { return }
 
@@ -68,19 +74,26 @@ public final class DirectionalMover {
         let clock = ContinuousClock()
         let began = clock.now
         var previous = began
+        var ramped = 0.0
 
         while !Task.isCancelled {
             active = active.filter { modifiersHeld($0.value) }
             guard !active.isEmpty else { break }
 
             let now = clock.now
-            let elapsed = seconds(from: began, to: now)
-            guard elapsed < tuning.holdLimit else { break }
+            guard seconds(from: began, to: now) < tuning.holdLimit else { break }
 
             let delta = seconds(from: previous, to: now)
             previous = now
 
-            let speed = curve.speed(at: elapsed)
+            let speed: Double
+            if modifiersHeld(tuning.steadyModifier) {
+                ramped = 0
+                speed = tuning.steadySpeed
+            } else {
+                ramped += delta
+                speed = curve.speed(at: ramped)
+            }
 
             step(normalizedVector(of: Set(active.keys)), distance: speed * delta)
 

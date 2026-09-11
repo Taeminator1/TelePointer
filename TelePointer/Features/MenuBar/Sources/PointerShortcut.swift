@@ -12,6 +12,10 @@ public enum PointerShortcut {
         (.movePointerLeft, .left),
         (.movePointerDown, .down),
         (.movePointerRight, .right),
+        (.movePointerUpSteadily, .up),
+        (.movePointerLeftSteadily, .left),
+        (.movePointerDownSteadily, .down),
+        (.movePointerRightSteadily, .right),
     ]
 
     private static let buttons: [(name: KeyboardShortcuts.Name, button: PointerButton)] = [

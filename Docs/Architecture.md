@@ -19,7 +19,7 @@ TelePointer (app)
 | `TelePointer` | `@main`, `MenuBarExtra` Scene 선언, 앱 리소스(AppIcon) |
 | `MenuBar` | 메뉴 UI, 핫키 등록 |
 | `Settings` | 설정 창 UI, 단축키 `Name`과 기본값 정의 |
-| `PointerCore` | 좌표 계산(순수), 커서 이동, 방향 이동 홀드 루프, 속도 곡선과 그 저장 |
+| `PointerCore` | 좌표 계산(순수), 커서 이동, 방향 이동 홀드 루프, 속도 값과 그 저장 |
 | `LaunchAtLogin` | 로그인 항목 조회·토글 |
 
 ## 디렉터리
@@ -77,7 +77,7 @@ App Store 배포에서 dylib 임베드·서명 단계가 생기지 않고, 메�
 `initial:`의 기본값도 초기화 버튼이 되돌리는 대상이라 소유자가 설정 쪽이다.
 `MenuBar`는 그 `Name`을 읽어 핫키를 등록하고 메뉴에 글리프를 표시한다 — `MenuBar → Settings` 방향.
 
-### 왜 속도 곡선은 `Settings`가 아니라 `PointerCore`에 두나
+### 왜 속도 값은 `Settings`가 아니라 `PointerCore`에 두나
 
 단축키 `Name`은 기본값까지 `Settings`가 갖는다. 속도는 반대다 —
 `base` · `peak` · `rampDuration`은 홀드 루프가 매 tick 읽는 물리량이고, 기본값 400 → 2800pt/s는
@@ -88,7 +88,11 @@ App Store 배포에서 dylib 임베드·서명 단계가 생기지 않고, 메�
 `PointerCore`가 갖고, `Settings`는 그 값을 슬라이더에 바인딩만 한다 — `Settings → PointerCore` 방향.
 저장 키는 `SpeedStore` 안에 감춰 화면이 키 이름을 알지 못하게 한다.
 
-곡선은 press 시점에 한 번 읽는다. 누르고 있는 도중에 설정을 바꿔도 그 이동은 원래 곡선으로 끝난다.
+일정 속도(`SteadySpeed`)도 같은 이유로 `PointerCore`에 둔다. 다만 `SpeedCurve`의 필드로 넣지 않고
+`SpeedStore`가 저장 키를 따로 갖는다. 곡선 위의 점이 아니라 곡선을 통째로 대신하는 상수이고,
+`SpeedCurve`는 `Codable`이라 필드를 더하면 이미 저장된 JSON이 디코딩에 실패해 기본값으로 돌아간다.
+
+두 값 모두 press 시점에 한 번 읽는다. 누르고 있는 도중에 설정을 바꿔도 그 이동은 원래 값으로 끝난다.
 
 ### 의존 방향
 

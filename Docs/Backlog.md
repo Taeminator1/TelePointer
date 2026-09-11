@@ -5,4 +5,7 @@
   ([v2/Requirements.md](./v2/Requirements.md)의 「드래그」). `Recorder`의 `validateShortcut`으로 거부할 수 있다
 - [ ] 탭 지원
 - [ ] 시스템 단축키랑 겹칠 때 확인
-- [ ] 시스템 설정 export/import
+- [ ] preset 기능 추가
+- [ ] Hovering
+    - [ ] Dock, Hot Corners
+- [ ] 스크롤

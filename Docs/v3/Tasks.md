@@ -3,7 +3,30 @@
 모듈 구조는 [Architecture.md](../Architecture.md), 미분류 항목은 [Backlog.md](../Backlog.md),
 작업 기록과 채택하지 않은 대안은 [Notes.md](../Notes.md) 참고.
 
-## 1. App Store 제출 준비
+## 1. 조금만 움직이기
+
+- [ ] 조작 방식 결정 — 방향 단축키에 보조 modifier를 얹을지, 단축키를 따로 둘지
+- [ ] 이동량 결정 — 누를 때마다 고정 거리인지, 속도 곡선을 배율로 눌러 쓰는지
+- [ ] `DirectionalMover`에 어떻게 얹을지 — `press`의 인자인지 별도 진입점인지
+- [ ] 설정에 노출할지 결정 — 노출한다면 어느 창에 두는지
+- [ ] 드래그 중에도 같은 방식으로 동작하는지 확인
+- [ ] 새 단축키가 기존 7개, 그리고 다른 앱과 충돌하지 않는지
+- [ ] 단위 테스트 (`PointerCoreTests`)
+
+## 2. 설정 export/import
+
+- [ ] 내보낼 범위 결정 — 단축키 + `SpeedCurve`. Open at Login 같은 시스템 상태는 뺀다
+- [ ] 파일 형식 결정 — JSON + 버전 필드, 확장자
+- [ ] 단축키를 읽고 쓰는 경로 확인 — `KeyboardShortcuts.getShortcut(for:)` · `setShortcut(_:for:)`
+- [ ] 직렬화 타입을 어느 모듈에 둘지 — 단축키 `Name`은 `Settings`, `SpeedCurve`는 `PointerCore`
+- [ ] 가져오기 실패 처리 결정 — 버전이 다르거나 값이 범위를 벗어난 파일
+    - [ ] 일부 항목만 든 파일은 나머지를 그대로 두는지, 기본값으로 되돌리는지
+- [ ] 설정 창에 Export · Import — `.fileExporter` · `.fileImporter`
+- [ ] 샌드박스에 `com.apple.security.files.user-selected.read-write` 추가 (`Project.swift`)
+- [ ] 가져온 뒤 재시작 없이 반영되는지 확인 — 핫키 재등록, 열려 있는 설정 창
+- [ ] 단위 테스트 — 인코딩 · 디코딩 왕복, 손상된 파일
+
+## 3. App Store 제출 준비
 
 v1 → v2를 거쳐 이관.
 
@@ -12,7 +35,7 @@ v1 → v2를 거쳐 이관.
 - [ ] App Store Connect에 앱 등록
 - [ ] 스크린샷 · 앱 설명 · 개인정보 처리방침 URL 준비
 
-## 2. 검증
+## 4. 검증
 
 v1 → v2를 거쳐 이관.
 

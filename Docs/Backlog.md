@@ -9,3 +9,4 @@
 - [ ] Hovering
     - [ ] Dock, Hot Corners
 - [ ] 스크롤
+- [ ] 그래프 각 꼭지점 확인

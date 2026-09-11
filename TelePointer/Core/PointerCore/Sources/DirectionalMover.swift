@@ -6,18 +6,15 @@ public final class DirectionalMover {
         public var tick: Duration
         public var holdLimit: Double
         public var steadyModifier: NSEvent.ModifierFlags
-        public var steadySpeed: Double
 
         public init(
             tick: Duration = .milliseconds(8),
             holdLimit: Double = 5,
-            steadyModifier: NSEvent.ModifierFlags = .command,
-            steadySpeed: Double = 80
+            steadyModifier: NSEvent.ModifierFlags = .command
         ) {
             self.tick = tick
             self.holdLimit = holdLimit
             self.steadyModifier = steadyModifier
-            self.steadySpeed = steadySpeed
         }
     }
 
@@ -28,6 +25,7 @@ public final class DirectionalMover {
     private var position: CGPoint?
     private var warpFrames: [CGRect] = []
     private var curve: SpeedCurve = .default
+    private var steady: Double = SteadySpeed.default
     private var repeater: Task<Void, Never>?
     private var generation = 0
 
@@ -41,6 +39,7 @@ public final class DirectionalMover {
             position = PointerMover.currentLocation()
             warpFrames = PointerMover.screenWarpFrames()
             curve = settings.curve
+            steady = settings.steadySpeed
         }
 
         active[direction] = requiredModifiers.subtracting(tuning.steadyModifier)
@@ -89,7 +88,7 @@ public final class DirectionalMover {
             let speed: Double
             if modifiersHeld(tuning.steadyModifier) {
                 ramped = 0
-                speed = tuning.steadySpeed
+                speed = steady
             } else {
                 ramped += delta
                 speed = curve.speed(at: ramped)

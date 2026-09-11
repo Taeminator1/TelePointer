@@ -16,7 +16,7 @@ public struct SpeedSettings: View {
     public var body: some View {
         VStack(spacing: 0) {
             Form {
-                Section("Pointer Speed") {
+                Section("Accelerating") {
                     SpeedGraph(curve: $settings.curve)
 
                     slider(
@@ -41,6 +41,23 @@ public struct SpeedSettings: View {
                         in: SpeedCurve.rampDurationRange,
                         step: 0.05
                     )
+                }
+
+                Section("Steady") {
+                    LabeledContent {
+                        Slider(
+                            value: $settings.steadySpeed.snapped(to: 10),
+                            in: SteadySpeed.range
+                        )
+                    } label: {
+                        HStack(spacing: 6) {
+                            Text("Speed")
+
+                            Text("\(settings.steadySpeed.formatted(.number.precision(.fractionLength(0)))) pt/s")
+                                .monospacedDigit()
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                 }
             }
             .formStyle(.grouped)
@@ -81,7 +98,7 @@ public struct SpeedSettings: View {
 }
 
 extension Binding<Double> {
-    fileprivate func snapped(to step: Double, within limit: ClosedRange<Double>?) -> Binding<Double> {
+    fileprivate func snapped(to step: Double, within limit: ClosedRange<Double>? = nil) -> Binding<Double> {
         Binding(
             get: { wrappedValue },
             set: { proposed in

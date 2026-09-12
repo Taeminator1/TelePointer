@@ -57,3 +57,66 @@ struct SpeedStoreTests {
         #expect(SpeedStore(defaults: defaults).curve == .default)
     }
 }
+
+@MainActor
+struct SteadySpeedStoreTests {
+    private let defaults = UserDefaults(suiteName: "SteadySpeedStoreTests")!
+
+    init() {
+        defaults.removePersistentDomain(forName: "SteadySpeedStoreTests")
+    }
+
+    @Test("저장된 값이 없으면 기본 속도")
+    func fallsBackToDefault() {
+        #expect(SpeedStore(defaults: defaults).steadySpeed == SteadySpeed.default)
+    }
+
+    @Test("바꾼 값은 다음 실행에서도 남는다")
+    func persistsAcrossInstances() {
+        SpeedStore(defaults: defaults).steadySpeed = 150
+
+        #expect(SpeedStore(defaults: defaults).steadySpeed == 150)
+    }
+
+    @Test("허용 범위를 벗어난 값은 저장 전에 당겨온다")
+    func clampsOnWrite() {
+        let settings = SpeedStore(defaults: defaults)
+
+        settings.steadySpeed = -50
+        #expect(settings.steadySpeed == SteadySpeed.range.lowerBound)
+
+        settings.steadySpeed = 99_999
+        #expect(settings.steadySpeed == SteadySpeed.range.upperBound)
+        #expect(SpeedStore(defaults: defaults).steadySpeed == SteadySpeed.range.upperBound)
+    }
+
+    @Test("깨진 저장값은 기본 속도로 본다")
+    func recoversFromGarbage() {
+        defaults.set("not a speed", forKey: "steadySpeed")
+
+        #expect(SpeedStore(defaults: defaults).steadySpeed == SteadySpeed.default)
+    }
+
+    @Test("초기화하면 기본 속도로 돌아간다")
+    func reset() {
+        let settings = SpeedStore(defaults: defaults)
+        settings.steadySpeed = 300
+
+        settings.reset()
+
+        #expect(settings.steadySpeed == SteadySpeed.default)
+        #expect(SpeedStore(defaults: defaults).steadySpeed == SteadySpeed.default)
+    }
+
+    @Test("곡선과 서로를 건드리지 않는다")
+    func staysApartFromCurve() {
+        let settings = SpeedStore(defaults: defaults)
+        let curve = SpeedCurve(base: 800, peak: 4000, rampDuration: 0.7)
+        settings.curve = curve
+
+        settings.steadySpeed = 200
+
+        #expect(settings.curve == curve)
+        #expect(SpeedStore(defaults: defaults).curve == curve)
+    }
+}

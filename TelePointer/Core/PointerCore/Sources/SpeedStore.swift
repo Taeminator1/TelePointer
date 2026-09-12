@@ -60,9 +60,11 @@ public final class SpeedStore {
     }
 
     private static func loadSteadySpeed(from defaults: UserDefaults) -> Double {
-        guard defaults.object(forKey: steadySpeedKey) != nil else { return SteadySpeed.default }
+        guard let speed = defaults.object(forKey: steadySpeedKey) as? Double else {
+            return SteadySpeed.default
+        }
 
-        return defaults.double(forKey: steadySpeedKey).clamped(to: SteadySpeed.range)
+        return speed.clamped(to: SteadySpeed.range)
     }
 
     private func save(_ curve: SpeedCurve) {

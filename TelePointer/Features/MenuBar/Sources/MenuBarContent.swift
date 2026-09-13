@@ -45,7 +45,7 @@ public struct MenuBarContent: View {
         Button(title) {
             NSApp.unhide(nil)
             openWindow(id: windowID)
-            NSApp.activate()
+            NSApp.activate(ignoringOtherApps: true)
         }
     }
 }

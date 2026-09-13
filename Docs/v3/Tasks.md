@@ -30,7 +30,25 @@
 - [ ] 가져온 뒤 재시작 없이 반영되는지 확인 — 핫키 재등록, 열려 있는 설정 창
 - [x] 단위 테스트 (`SettingsTests`) — 인코딩 · 디코딩 왕복, 손상된 파일
 
-## 3. App Store 제출 준비
+## 3. 설정 창 통합
+
+- [x] 메뉴바에 Settings… 추가 — `Window` scene 하나에 `NavigationSplitView`로 사이드바를 둔다
+- [x] 메뉴에서 열면 다른 앱 앞으로 오고 포커스를 가져온다 — `NSApp.activate()`는 거절되어 `activate(ignoringOtherApps:)`
+    - [ ] 창이 다른 앱 뒤에 뜬 적이 있다 — 재현 조건 확인
+- [x] 사이드바 너비 고정 · 숨기기 막기
+    - [x] 토글을 빼면 툴바가 사라져 사이드바가 신호등 아래로 내려간다 — `ToolbarSpacer`로 툴바를 남긴다
+    - [x] 경계선을 끌면 접힌다 — `canCollapse`를 KVO로 `false`에 묶는다 (`SidebarCollapseLock`)
+- [x] Shortcuts · Pointer Speed 탭, 탭마다 SF Symbol 아이콘
+- [x] 탭 타이틀을 툴바에 — `.hiddenTitleBar`가 타이틀을 숨겨 Settings 창은 기본 창 스타일을 쓴다
+- [x] 스크롤할 때 툴바 아래를 흐리게 — `scrollEdgeEffectStyle(.soft, for: .top)`
+- [x] 창 너비는 568pt로 고정, 높이는 탭을 바꿔도 그대로 두고 모자라면 탭 안에서 스크롤
+- [x] 탭 아래 버튼 줄은 Restore Defaults만 — 창을 닫던 Done은 뺀다
+- [ ] General 탭에 Import · Export — 메뉴바 항목은 뺀다
+- [x] 따로 뜨던 Keyboard Shortcuts · Pointer Speed 창과 창 전용 코드(`WindowAccess.swift`) 제거
+- [ ] 처음 열 때 컨트롤에 포커스 테두리가 잡히는지 확인 — 초기 포커스를 풀던 `ClearedInitialFocus`도 함께 사라졌다
+- [ ] [Architecture.md](../Architecture.md) · [Notes.md](../Notes.md) 반영 — 지운 창과 `WindowAccess` 설명이 남아 있다
+
+## 4. App Store 제출 준비
 
 v1 → v2를 거쳐 이관.
 
@@ -39,7 +57,7 @@ v1 → v2를 거쳐 이관.
 - [ ] App Store Connect에 앱 등록
 - [ ] 스크린샷 · 앱 설명 · 개인정보 처리방침 URL 준비
 
-## 4. 검증
+## 5. 검증
 
 v1 → v2를 거쳐 이관.
 

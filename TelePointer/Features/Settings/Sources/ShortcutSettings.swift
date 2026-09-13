@@ -3,12 +3,8 @@ import KeyboardShortcuts
 import SwiftUI
 
 public struct ShortcutSettings: View {
-    public static let windowID = "shortcutSettings"
-
     private static let recorderWidth: CGFloat = 120
     private static let directionPickerWidth: CGFloat = 180
-
-    @Environment(\.dismiss) private var dismiss
 
     @State private var directionMode: DirectionMode = .accelerating
 
@@ -46,27 +42,17 @@ public struct ShortcutSettings: View {
                 }
             }
             .formStyle(.grouped)
-            .scrollDisabled(true)
-            .fixedSize(horizontal: false, vertical: true)
-
-            Divider()
 
             HStack {
+                Spacer()
+                
                 Button("Restore Defaults") {
                     KeyboardShortcuts.reset(pointerShortcutNames)
                 }
-
-                Spacer()
-
-                Button("Done") {
-                    dismiss()
-                }
-                .keyboardShortcut(.defaultAction)
             }
             .padding(16)
         }
-        .frame(width: 380)
-        .settingsWindowChrome()
+        .frame(width: 400)
     }
 
     @ViewBuilder

@@ -3,10 +3,6 @@ import PointerCore
 import SwiftUI
 
 public struct SpeedSettings: View {
-    public static let windowID = "speedSettings"
-
-    @Environment(\.dismiss) private var dismiss
-
     @Bindable private var settings: SpeedStore
 
     public init(settings: SpeedStore = .shared) {
@@ -61,27 +57,17 @@ public struct SpeedSettings: View {
                 }
             }
             .formStyle(.grouped)
-            .scrollDisabled(true)
-            .fixedSize(horizontal: false, vertical: true)
-
-            Divider()
 
             HStack {
+                Spacer()
+                
                 Button("Restore Defaults") {
                     settings.reset()
                 }
-
-                Spacer()
-
-                Button("Done") {
-                    dismiss()
-                }
-                .keyboardShortcut(.defaultAction)
             }
             .padding(16)
         }
         .frame(width: 400)
-        .settingsWindowChrome()
     }
 
     private func slider(

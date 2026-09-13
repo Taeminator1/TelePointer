@@ -33,6 +33,23 @@ func module(
     )
 }
 
+func tests(
+    name: String,
+    sources: [BuildableFolder],
+    dependencies: [TargetDependency]
+) -> Target {
+    .target(
+        name: name,
+        destinations: .macOS,
+        product: .unitTests,
+        bundleId: "\(bundlePrefix).\(name)",
+        deploymentTargets: deploymentTargets,
+        infoPlist: .default,
+        buildableFolders: sources,
+        dependencies: dependencies
+    )
+}
+
 let project = Project(
     name: "TelePointer",
     settings: .settings(
@@ -80,20 +97,20 @@ let project = Project(
                 .external(name: "KeyboardShortcuts"),
             ]
         ),
+        tests(
+            name: "SettingsTests",
+            sources: ["TelePointer/Features/Settings/Tests"],
+            dependencies: [
+                .target(name: "Settings"),
+            ]
+        ),
         module(
             name: "PointerCore",
             sources: ["TelePointer/Core/PointerCore/Sources"]
         ),
-        .target(
+        tests(
             name: "PointerCoreTests",
-            destinations: .macOS,
-            product: .unitTests,
-            bundleId: "\(bundlePrefix).PointerCoreTests",
-            deploymentTargets: deploymentTargets,
-            infoPlist: .default,
-            buildableFolders: [
-                "TelePointer/Core/PointerCore/Tests",
-            ],
+            sources: ["TelePointer/Core/PointerCore/Tests"],
             dependencies: [
                 .target(name: "PointerCore"),
             ]

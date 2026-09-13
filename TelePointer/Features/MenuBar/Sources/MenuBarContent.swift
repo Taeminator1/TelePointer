@@ -19,6 +19,7 @@ public struct MenuBarContent: View {
         }
         .globalKeyboardShortcut(.movePointer)
 
+        settingsButton("Settings…", windowID: AppSettings.windowID)
         settingsButton("Keyboard Shortcuts…", windowID: ShortcutSettings.windowID)
         settingsButton("Pointer Speed…", windowID: SpeedSettings.windowID)
 

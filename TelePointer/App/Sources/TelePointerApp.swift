@@ -14,17 +14,24 @@ struct TelePointerApp: App {
         }
         .menuBarExtraStyle(.menu)
 
+        Window("Settings", id: AppSettings.windowID) {
+            AppSettings()
+        }
+        .settingsWindow()
+
         Window("Keyboard Shortcuts", id: ShortcutSettings.windowID) {
             ShortcutSettings()
                 .fillsHiddenTitleBar()
         }
         .settingsWindow()
+        .windowLevel(.floating)
 
         Window("Pointer Speed", id: SpeedSettings.windowID) {
             SpeedSettings()
                 .fillsHiddenTitleBar()
         }
         .settingsWindow()
+        .windowLevel(.floating)
     }
 }
 
@@ -32,7 +39,6 @@ extension Scene {
     fileprivate func settingsWindow() -> some Scene {
         windowStyle(.hiddenTitleBar)
             .windowResizability(.contentSize)
-            .windowLevel(.floating)
             .defaultLaunchBehavior(.suppressed)
             .restorationBehavior(.disabled)
     }

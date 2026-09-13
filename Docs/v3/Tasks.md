@@ -15,16 +15,20 @@
 
 ## 2. 설정 export/import
 
-- [ ] 내보낼 범위 결정 — 단축키 + `SpeedCurve`. Open at Login 같은 시스템 상태는 뺀다
-- [ ] 파일 형식 결정 — JSON + 버전 필드, 확장자
-- [ ] 단축키를 읽고 쓰는 경로 확인 — `KeyboardShortcuts.getShortcut(for:)` · `setShortcut(_:for:)`
-- [ ] 직렬화 타입을 어느 모듈에 둘지 — 단축키 `Name`은 `Settings`, `SpeedCurve`는 `PointerCore`
-- [ ] 가져오기 실패 처리 결정 — 버전이 다르거나 값이 범위를 벗어난 파일
-    - [ ] 일부 항목만 든 파일은 나머지를 그대로 두는지, 기본값으로 되돌리는지
-- [ ] 설정 창에 Export · Import — `.fileExporter` · `.fileImporter`
-- [ ] 샌드박스에 `com.apple.security.files.user-selected.read-write` 추가 (`Project.swift`)
+- [x] 내보낼 범위 결정 — 단축키 + `SpeedCurve` + `SteadySpeed`. Open at Login 같은 시스템 상태는 뺀다
+- [x] 파일 형식 결정 — JSON, 확장자는 `.json`. 버전 필드와 전용 UTType은 두지 않는다
+- [x] 단축키를 읽고 쓰는 경로 확인 — `KeyboardShortcuts.getShortcut(for:)` · `setShortcut(_:for:)`
+    - [x] `setShortcut`이 핫키 해제 · 저장 · 재등록과 Recorder 갱신 알림까지 한다
+    - [x] `Shortcut`은 `Codable` — `carbonKeyCode` · `carbonModifiers`로 인코딩된다
+- [x] 직렬화 타입은 `Settings`에 둔다 — `KeyboardShortcuts` 의존을 Feature 모듈 밖으로 내보내지 않는다
+    - [ ] 테스트 타깃 `SettingsTests`를 새로 만든다 (`PointerCore`는 `Settings`를 볼 수 없다)
+- [x] 가져오기 실패 처리 결정 — 범위를 벗어난 값은 허용 범위 안으로 조여서 받는다
+    - [x] 일부 항목만 든 파일은 빠진 항목을 그대로 둔다
+    - [x] 아는 항목이 하나도 없는 파일은 실패로 알린다 — 형식을 가릴 표식이 이것뿐이다
+- [x] 메뉴바 메뉴에 Import · Export — `NSOpenPanel` · `NSSavePanel`을 직접 띄운다
+- [x] 샌드박스에 `com.apple.security.files.user-selected.read-write` 추가 (`Project.swift`)
 - [ ] 가져온 뒤 재시작 없이 반영되는지 확인 — 핫키 재등록, 열려 있는 설정 창
-- [ ] 단위 테스트 — 인코딩 · 디코딩 왕복, 손상된 파일
+- [ ] 단위 테스트 (`SettingsTests`) — 인코딩 · 디코딩 왕복, 손상된 파일
 
 ## 3. App Store 제출 준비
 

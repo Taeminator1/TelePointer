@@ -55,6 +55,7 @@ let project = Project(
             ],
             entitlements: .dictionary([
                 "com.apple.security.app-sandbox": true,
+                "com.apple.security.files.user-selected.read-write": true,
             ]),
             dependencies: [
                 .target(name: "MenuBar"),

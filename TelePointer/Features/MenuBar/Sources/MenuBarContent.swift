@@ -24,6 +24,16 @@ public struct MenuBarContent: View {
 
         Divider()
 
+        Button("Import Settings…") {
+            SettingsTransfer.importFromFile()
+        }
+
+        Button("Export Settings…") {
+            SettingsTransfer.exportToFile()
+        }
+
+        Divider()
+
         Button("Quit") {
             NSApplication.shared.terminate(nil)
         }

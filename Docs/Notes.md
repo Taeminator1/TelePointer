@@ -56,6 +56,13 @@
     - 키보드로 맞춘 좌표가 손이 닿아 흔들리지 않는 편이 낫다
     - 전역 상태라 마우스를 캡처한 다른 앱(게임 · 원격 제어)의 입력까지 되돌려 놓는다
 
+## `.menu` 스타일 MenuBarExtra에서는 `.fileExporter`가 뜨지 않는다 (2026-09-13)
+
+- 항목을 누르면 메뉴가 닫히면서 모디파이어가 붙은 뷰가 사라져 패널이 뜰 자리가 없다
+- 설정 export/import는 `NSSavePanel` · `NSOpenPanel`을 직접 `runModal`로 띄운다
+- 실패 알림도 같은 이유로 SwiftUI `.alert`가 아니라 `NSAlert`
+- `LSUIElement` 앱이라 패널을 띄우기 전에 `NSApp.activate()`가 필요하다
+
 ## 핫키 충돌은 감지할 수 없음
 
 - 이미 다른 앱이나 시스템이 점유한 조합(예: Spotlight의 `⌘Space`)도 등록 자체는 성공

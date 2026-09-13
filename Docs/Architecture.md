@@ -7,7 +7,8 @@ TelePointer (app)
   └─ MenuBar (staticFramework)
        ├─ Settings (staticFramework)
        │    ├─ PointerCore (staticFramework)
-       │    └─ KeyboardShortcuts (external)
+       │    ├─ KeyboardShortcuts (external)
+       │    └─ SettingsTests (unitTests)
        ├─ KeyboardShortcuts (external)
        ├─ PointerCore (staticFramework)
        │    └─ PointerCoreTests (unitTests)
@@ -31,7 +32,9 @@ TelePointer/
 │   └── Resources/
 ├── Features/
 │   ├── MenuBar/Sources/
-│   └── Settings/Sources/
+│   └── Settings/
+│       ├── Sources/
+│       └── Tests/
 └── Core/
     ├── PointerCore/
     │   ├── Sources/
@@ -93,6 +96,14 @@ App Store 배포에서 dylib 임베드·서명 단계가 생기지 않고, 메�
 `SpeedCurve`는 `Codable`이라 필드를 더하면 이미 저장된 JSON이 디코딩에 실패해 기본값으로 돌아간다.
 
 두 값 모두 press 시점에 한 번 읽는다. 누르고 있는 도중에 설정을 바꿔도 그 이동은 원래 값으로 끝난다.
+
+### 왜 설정 파일 타입이 `Settings`에 있나
+
+내보내는 파일은 단축키와 속도를 함께 담는다. 단축키는 `KeyboardShortcuts.Shortcut`을 그대로 직렬화하는데,
+그 의존은 Feature 모듈 밖으로 내보내지 않기로 했으므로 타입이 앉을 자리는 `Settings`뿐이다.
+`PointerCore`로 내리려면 `Shortcut`을 대신할 표현을 따로 만들어야 하고, 커서를 움직이는 모듈이 단축키를 알게 된다.
+
+`PointerCore`는 `Settings`를 볼 수 없어 `PointerCoreTests`로는 이 타입을 검증할 수 없다. `SettingsTests`를 따로 둔 이유다.
 
 ### 의존 방향
 

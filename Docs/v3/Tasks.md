@@ -43,7 +43,7 @@
 - [x] 스크롤할 때 툴바 아래를 흐리게 — `scrollEdgeEffectStyle(.soft, for: .top)`
 - [x] 창 너비는 568pt로 고정, 높이는 탭을 바꿔도 그대로 두고 모자라면 탭 안에서 스크롤
 - [x] 탭 아래 버튼 줄은 Restore Defaults만 — 창을 닫던 Done은 뺀다
-- [ ] General 탭에 Import · Export — 메뉴바 항목은 뺀다
+- [x] General 탭에 Import · Export — 메뉴바 항목은 뺀다
 - [x] 따로 뜨던 Keyboard Shortcuts · Pointer Speed 창과 창 전용 코드(`WindowAccess.swift`) 제거
 - [ ] 처음 열 때 컨트롤에 포커스 테두리가 잡히는지 확인 — 초기 포커스를 풀던 `ClearedInitialFocus`도 함께 사라졌다
 - [ ] [Architecture.md](../Architecture.md) · [Notes.md](../Notes.md) 반영 — 지운 창과 `WindowAccess` 설명이 남아 있다

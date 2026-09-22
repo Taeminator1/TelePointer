@@ -61,6 +61,12 @@ public final class DirectionalMover {
         }
     }
 
+    public func releaseHeld() {
+        guard !active.isEmpty else { return }
+
+        stop()
+    }
+
     private func stop() {
         generation += 1
         repeater?.cancel()

@@ -60,4 +60,9 @@ public enum PointerShortcut {
             MainActor.assumeIsolated { PointerMover.releasePressed() }
         }
     }
+
+    static func releaseHeld() {
+        mover.releaseHeld()
+        PointerMover.releasePressed()
+    }
 }

@@ -6,6 +6,7 @@ import SwiftUI
 struct TelePointerApp: App {
     init() {
         PointerShortcut.registerHandler()
+        ShortcutExceptionGate.start()
     }
 
     var body: some Scene {

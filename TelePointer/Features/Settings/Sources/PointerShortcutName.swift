@@ -4,7 +4,7 @@ import KeyboardShortcuts
 private let pointerModifiers: NSEvent.ModifierFlags = [.control, .option]
 private let steadyPointerModifiers: NSEvent.ModifierFlags = [.control, .option, .command]
 
-let pointerShortcutNames: [KeyboardShortcuts.Name] = [
+public let pointerShortcutNames: [KeyboardShortcuts.Name] = [
     .movePointer,
     .movePointerUp,
     .movePointerLeft,

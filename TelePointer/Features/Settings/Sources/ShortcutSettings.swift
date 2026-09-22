@@ -1,19 +1,24 @@
 import AppKit
 import KeyboardShortcuts
+import ShortcutException
 import SwiftUI
 
 public struct ShortcutSettings: View {
     private static let recorderWidth: CGFloat = 120
     private static let directionPickerWidth: CGFloat = 180
 
+    private let exceptions: ShortcutExceptionStore
+
     @State private var directionMode: DirectionMode = .accelerating
 
-    public init() {}
+    public init(exceptions: ShortcutExceptionStore = .shared) {
+        self.exceptions = exceptions
+    }
 
     public var body: some View {
         Form {
             Section("Screen") {
-                KeyboardShortcuts.Recorder("Move Pointer", name: .movePointer)
+                row("Move Pointer", name: .movePointer)
             }
 
             Section {
@@ -36,8 +41,8 @@ public struct ShortcutSettings: View {
             }
 
             Section("Click & Drag") {
-                KeyboardShortcuts.Recorder("Left", name: .clickPointerLeft)
-                KeyboardShortcuts.Recorder("Right", name: .clickPointerRight)
+                row("Left", name: .clickPointerLeft)
+                row("Right", name: .clickPointerRight)
             }
         }
         .formStyle(.grouped)
@@ -96,9 +101,19 @@ public struct ShortcutSettings: View {
         .frame(maxWidth: .infinity)
     }
 
+    private func row(_ title: LocalizedStringKey, name: KeyboardShortcuts.Name) -> some View {
+        LabeledContent(title) {
+            recorder(for: name)
+        }
+    }
+
     private func recorder(for name: KeyboardShortcuts.Name) -> some View {
-        KeyboardShortcuts.Recorder(for: name)
-            .frame(width: Self.recorderWidth)
+        HStack(spacing: 4) {
+            KeyboardShortcuts.Recorder(for: name)
+                .frame(width: Self.recorderWidth)
+
+            ShortcutExceptionButton(name: name, store: exceptions)
+        }
     }
 }
 

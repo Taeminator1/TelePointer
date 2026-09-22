@@ -68,6 +68,37 @@
 - 이미 다른 앱이나 시스템이 점유한 조합(예: Spotlight의 `⌘Space`)도 등록 자체는 성공
 - 충돌이 나면 오류 없이 조용히 동작하지 않음
 - 안전한 조합(`⌃⌥⌘C`)을 고정하는 것으로 대응
+- 반대 방향(우리가 다른 앱의 단축키를 가로채는 경우)은 아래 앱별 예외로 대응
+
+## Carbon 핫키는 조건부로 통과시킬 수 없다 (2026-09-22)
+
+앱별 예외를 핸들러 안에서 "이번엔 무시"로 구현할 수 없다.
+
+- `RegisterEventHotKey`로 등록한 조합은 일치하면 무조건 우리 앱이 삼킨다 — 앞 앱은 키를 보지 못한다
+- 핸들러가 아무것도 하지 않아도 키는 이미 소비된 상태다
+- 그래서 키를 앞 앱에 넘기려면 등록을 실제로 해제해야 한다 — `KeyboardShortcuts.disable(_:)`
+    - `disable`은 `disabledNames`에 넣고 같은 조합을 쓰는 활성 이름이 없으면 Carbon 등록을 해제한다
+    - `enable`은 핸들러가 남아 있어 재등록만 한다 — `onKeyDown`을 다시 붙일 필요가 없다
+- 앞 앱 감지는 `NSWorkspace.didActivateApplicationNotification` — 샌드박스에서도 bundle ID가 들어온다
+    - `Notification`은 `Sendable`이 아니라 `MainActor.assumeIsolated`에 그대로 넘기면 컴파일이 막힌다.
+      bundle ID(`String`)를 먼저 꺼내서 넘긴다
+- bundle ID는 LaunchServices가 대소문자를 가리지 않으므로 저장·디코딩 시점에 소문자로 맞춘다
+- 제외로 전환될 때 잡고 있던 것을 먼저 푼다 (`PointerShortcut.releaseHeld()`)
+    - disable 뒤에는 keyUp 핸들러가 오지 않아 버튼이 눌린 채, 이동이 도는 채 남는다
+    - 특히 `clickPointerLeft`의 마우스 다운이 다른 앱을 활성화시키면 그 앱이 예외일 때 바로 이 상황이 된다.
+      드래그가 단일 클릭으로 끝나지만 이미 소비된 키를 되돌릴 수는 없다
+
+## 앱 선택은 `NSOpenPanel`로 받는다 (2026-09-22)
+
+- 실행 중인 앱 목록(`NSWorkspace.runningApplications`)이 아니라 `/Applications`를 여는 패널을 쓴다 —
+  실행 중이 아닌 앱도 고를 수 있어야 한다
+- `allowedContentTypes = [.application]`, `prompt = "Add"`, `directoryURL`로 `/Applications`를 지정
+- 고른 `.app`에서 `Bundle(url:)`로 bundle ID와 표시 이름을 읽는다 —
+  `com.apple.security.files.user-selected.read-write`가 있어 샌드박스에서도 읽힌다
+- 아이콘은 저장하지 않고 `urlForApplication(withBundleIdentifier:)` → `icon(forFile:)`으로 그때그때 찾는다.
+  샌드박스에서도 해석된다. 못 찾으면 `app.dashed` 심볼로 떨어진다
+- 팝오버에서 패널을 띄우면 팝오버가 닫힌다 — 모달 패널이 창의 key 상태를 가져간다.
+  닫힌 뒤 다시 열어 주려 했으나 동작하지 않아 포기했고, 버튼의 개수 배지가 결과를 알려주는 역할을 한다
 
 ## `initial:` 단축키는 첫 실행에만 적용된다 (2026-08-22)
 

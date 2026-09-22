@@ -48,7 +48,25 @@
 - [ ] 처음 열 때 컨트롤에 포커스 테두리가 잡히는지 확인 — 초기 포커스를 풀던 `ClearedInitialFocus`도 함께 사라졌다
 - [ ] [Architecture.md](../Architecture.md) · [Notes.md](../Notes.md) 반영 — 지운 창과 `WindowAccess` 설명이 남아 있다
 
-## 4. App Store 제출 준비
+## 4. 단축키별 앱 예외
+
+- [x] 구현 방식 결정 — 핸들러 안에서 무시할 수 없어 앞 앱이 바뀔 때 `disable` · `enable`로 등록을 여닫는다
+    - [x] 샌드박스에서 `didActivateApplicationNotification`이 bundle ID를 주는지 확인 — 준다
+    - [x] 제외로 전환될 때 잡고 있던 버튼 · 이동을 먼저 푼다
+- [x] 데이터 모델 — 단축키 `rawValue` → 앱 목록(bundle ID + 표시 이름), UserDefaults 키 하나에 JSON
+    - [x] Core 모듈 `ShortcutException`으로 분리 — `KeyboardShortcuts`와 SwiftUI를 모른다
+    - [x] bundle ID는 소문자로 정규화해 비교를 단순하게 둔다
+- [x] UI — Shortcuts 탭의 레코더마다 예외 버튼, 누르면 앱 목록 팝오버
+    - [x] 앱 추가는 `/Applications`를 여는 `NSOpenPanel`
+    - [x] Restore Defaults는 키 조합만 되돌린다 — 예외 목록은 건드리지 않는다
+- [x] export/import에 포함 — 단축키별로 덮어쓰고 빠진 단축키는 그대로 둔다
+    - [x] 빈 목록은 그 단축키의 예외를 지우는 뜻으로 받는다
+    - [x] 모르는 단축키 이름의 예외만 든 파일은 설정 파일로 보지 않는다
+- [x] 단위 테스트 (`ShortcutExceptionTests` · `SettingsTests`)
+- [ ] 실제 충돌 앱에서 손으로 확인 — 예외에 넣은 앱에서 그 앱의 단축키가 동작하는지
+- [ ] 예외가 걸린 앱을 앞에 둔 채 내보낸 뒤 가져오면 재시작 없이 반영되는지
+
+## 5. App Store 제출 준비
 
 v1 → v2를 거쳐 이관.
 
@@ -57,7 +75,7 @@ v1 → v2를 거쳐 이관.
 - [ ] App Store Connect에 앱 등록
 - [ ] 스크린샷 · 앱 설명 · 개인정보 처리방침 URL 준비
 
-## 5. 검증
+## 6. 검증
 
 v1 → v2를 거쳐 이관.
 

@@ -7,20 +7,24 @@ TelePointer (app)
   └─ MenuBar (staticFramework)
        ├─ Settings (staticFramework)
        │    ├─ PointerCore (staticFramework)
+       │    ├─ ShortcutException (staticFramework)
        │    ├─ KeyboardShortcuts (external)
        │    └─ SettingsTests (unitTests)
        ├─ KeyboardShortcuts (external)
        ├─ PointerCore (staticFramework)
        │    └─ PointerCoreTests (unitTests)
+       ├─ ShortcutException (staticFramework)
+       │    └─ ShortcutExceptionTests (unitTests)
        └─ LaunchAtLogin (staticFramework)
 ```
 
 | 모듈 | 책임 |
 | --- | --- |
 | `TelePointer` | `@main`, `MenuBarExtra` Scene 선언, 앱 리소스(AppIcon) |
-| `MenuBar` | 메뉴 UI, 핫키 등록 |
+| `MenuBar` | 메뉴 UI, 핫키 등록, 앞 앱에 따른 핫키 on/off |
 | `Settings` | 설정 창 UI, 단축키 `Name`과 기본값 정의 |
 | `PointerCore` | 좌표 계산(순수), 커서 이동, 방향 이동 홀드 루프, 속도 값과 그 저장 |
+| `ShortcutException` | 단축키를 무시할 앱 목록과 그 저장, 앞 앱 조회 |
 | `LaunchAtLogin` | 로그인 항목 조회·토글 |
 
 ## 디렉터리
@@ -37,6 +41,9 @@ TelePointer/
 │       └── Tests/
 └── Core/
     ├── PointerCore/
+    │   ├── Sources/
+    │   └── Tests/
+    ├── ShortcutException/
     │   ├── Sources/
     │   └── Tests/
     └── LaunchAtLogin/
@@ -97,6 +104,19 @@ App Store 배포에서 dylib 임베드·서명 단계가 생기지 않고, 메�
 
 두 값 모두 press 시점에 한 번 읽는다. 누르고 있는 도중에 설정을 바꿔도 그 이동은 원래 값으로 끝난다.
 
+### 왜 단축키 예외를 Core 모듈로 뺐나
+
+단축키를 무시할 앱 목록은 `Settings`에 둘 수도 있었다. 화면이 편집하고 내보내는 값이니까.
+그렇게 하지 않은 이유는 이 값을 실제로 쓰는 쪽이 `MenuBar`의 핫키 등록이라는 것이다 —
+앞 앱이 바뀔 때마다 목록을 읽어 `KeyboardShortcuts.disable` · `enable`을 부른다.
+
+`ShortcutException`은 `KeyboardShortcuts`를 모르고 SwiftUI도 쓰지 않는다. 단축키를 `Name`이 아니라
+`rawValue` 문자열로 받는 것도 그래서다 — 그 대가로 화면 없이 `ShortcutExceptionTests`가 돈다.
+`Name`을 다루는 쪽(`pointerShortcutNames`로 순회하며 disable 목록을 만드는 일)은 `MenuBar`에 남는다.
+
+앞 앱 조회(`FrontmostApp`)도 같은 모듈에 둔다. 예외 판정 말고는 쓸 데가 없고,
+`NSWorkspace` 알림 하나라 `MenuBar`에 두면 게이트 코드에 섞인다.
+
 ### 왜 설정 파일 타입이 `Settings`에 있나
 
 내보내는 파일은 단축키와 속도를 함께 담는다. 단축키는 `KeyboardShortcuts.Shortcut`을 그대로 직렬화하는데,
@@ -107,11 +127,11 @@ App Store 배포에서 dylib 임베드·서명 단계가 생기지 않고, 메�
 
 ### 의존 방향
 
-`App → MenuBar → {Settings, PointerCore, LaunchAtLogin}`, `Settings → PointerCore` 단방향.
-역방향과 우회 경로를 만들지 않는다.
+`App → MenuBar → {Settings, PointerCore, ShortcutException, LaunchAtLogin}`,
+`Settings → {PointerCore, ShortcutException}` 단방향. 역방향과 우회 경로를 만들지 않는다.
 
 - `App`은 Core 모듈을 직접 참조하지 않는다 — `MenuBar`를 거친다
-- `PointerCore`와 `LaunchAtLogin`은 서로를 참조하지 않는다
+- Core 모듈은 서로를 참조하지 않는다
 - Core 모듈은 SwiftUI를 쓰지 않는다 — `Observation`은 쓴다
 - `KeyboardShortcuts`는 Feature 모듈 밖으로 노출하지 않는다 — Core 모듈과 `App`은 모른다
 

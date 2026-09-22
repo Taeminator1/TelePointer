@@ -18,15 +18,8 @@ struct ShortcutExceptionButton: View {
         Button {
             isPresented = true
         } label: {
-            HStack(spacing: 2) {
-                Image(systemName: "nosign")
-
-                if !apps.isEmpty {
-                    Text(apps.count.formatted())
-                        .monospacedDigit()
-                }
-            }
-            .foregroundStyle(apps.isEmpty ? Color.secondary : Color.accentColor)
+            Image(systemName: "nosign")
+                .foregroundStyle(apps.isEmpty ? Color.secondary : Color.accentColor)
         }
         .buttonStyle(.borderless)
         .help("Apps that ignore this shortcut")

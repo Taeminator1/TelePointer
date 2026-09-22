@@ -4,7 +4,6 @@ import ShortcutException
 import SwiftUI
 
 public struct ShortcutSettings: View {
-    private static let recorderWidth: CGFloat = 120
     private static let directionPickerWidth: CGFloat = 180
 
     private let exceptions: ShortcutExceptionStore
@@ -110,7 +109,6 @@ public struct ShortcutSettings: View {
     private func recorder(for name: KeyboardShortcuts.Name) -> some View {
         HStack(spacing: 4) {
             KeyboardShortcuts.Recorder(for: name)
-                .frame(width: Self.recorderWidth)
 
             ShortcutExceptionButton(name: name, store: exceptions)
         }

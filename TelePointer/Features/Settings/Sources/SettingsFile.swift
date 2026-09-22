@@ -1,6 +1,7 @@
 import Foundation
 import KeyboardShortcuts
 import PointerCore
+import ShortcutException
 
 struct SettingsFile: Equatable, Codable {
     enum Failure: Error, Equatable {
@@ -14,6 +15,7 @@ struct SettingsFile: Equatable, Codable {
     }
 
     var shortcuts: [String: KeyboardShortcuts.Shortcut?]?
+    var exceptions: [String: [ExcludedApp]]?
     var speed: Speed?
 }
 
@@ -36,7 +38,7 @@ extension SettingsFile {
     }
 
     var isEmpty: Bool {
-        knownShortcuts.isEmpty && speed?.curve == nil && speed?.steady == nil
+        knownShortcuts.isEmpty && knownExceptions.isEmpty && speed?.curve == nil && speed?.steady == nil
     }
 
     private var knownShortcuts: [(name: KeyboardShortcuts.Name, shortcut: KeyboardShortcuts.Shortcut?)] {
@@ -48,33 +50,49 @@ extension SettingsFile {
             return (name, shortcut)
         }
     }
+
+    private var knownExceptions: [String: [ExcludedApp]] {
+        guard let exceptions else { return [:] }
+
+        return exceptions.filter { name, _ in
+            pointerShortcutNames.contains { $0.rawValue == name }
+        }
+    }
 }
 
 extension SettingsFile {
     @MainActor
-    static func current(speed store: SpeedStore) -> SettingsFile {
+    static func current(
+        speed speedStore: SpeedStore,
+        exceptions exceptionStore: ShortcutExceptionStore
+    ) -> SettingsFile {
         SettingsFile(
             shortcuts: Dictionary(
                 uniqueKeysWithValues: pointerShortcutNames.map {
                     ($0.rawValue, KeyboardShortcuts.getShortcut(for: $0))
                 }
             ),
-            speed: Speed(curve: store.curve, steady: store.steadySpeed)
+            exceptions: exceptionStore.all,
+            speed: Speed(curve: speedStore.curve, steady: speedStore.steadySpeed)
         )
     }
 
     @MainActor
-    func apply(speed store: SpeedStore) {
+    func apply(speed speedStore: SpeedStore, exceptions exceptionStore: ShortcutExceptionStore) {
         for (name, shortcut) in knownShortcuts {
             KeyboardShortcuts.setShortcut(shortcut, for: name)
         }
 
+        if !knownExceptions.isEmpty {
+            exceptionStore.all = exceptionStore.all.merging(knownExceptions) { _, imported in imported }
+        }
+
         if let curve = speed?.curve {
-            store.curve = curve
+            speedStore.curve = curve
         }
 
         if let steady = speed?.steady {
-            store.steadySpeed = steady
+            speedStore.steadySpeed = steady
         }
     }
 }

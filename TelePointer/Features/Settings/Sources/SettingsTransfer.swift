@@ -1,13 +1,17 @@
 import AppKit
 import Foundation
 import PointerCore
+import ShortcutException
 import UniformTypeIdentifiers
 
 @MainActor
 public enum SettingsTransfer {
     private static let fileName = "TelePointer Settings.json"
 
-    public static func exportToFile(speed store: SpeedStore = .shared) {
+    public static func exportToFile(
+        speed speedStore: SpeedStore = .shared,
+        exceptions exceptionStore: ShortcutExceptionStore = .shared
+    ) {
         let panel = NSSavePanel()
         panel.allowedContentTypes = [.json]
         panel.nameFieldStringValue = fileName
@@ -16,13 +20,18 @@ public enum SettingsTransfer {
         guard let url = url(from: panel) else { return }
 
         do {
-            try SettingsFile.current(speed: store).encoded().write(to: url)
+            try SettingsFile.current(speed: speedStore, exceptions: exceptionStore)
+                .encoded()
+                .write(to: url)
         } catch {
             report("Couldn’t export settings.", error)
         }
     }
 
-    public static func importFromFile(speed store: SpeedStore = .shared) {
+    public static func importFromFile(
+        speed speedStore: SpeedStore = .shared,
+        exceptions exceptionStore: ShortcutExceptionStore = .shared
+    ) {
         let panel = NSOpenPanel()
         panel.allowedContentTypes = [.json]
         panel.allowsMultipleSelection = false
@@ -31,7 +40,8 @@ public enum SettingsTransfer {
         guard let url = url(from: panel) else { return }
 
         do {
-            try SettingsFile.decoded(from: Data(contentsOf: url)).apply(speed: store)
+            try SettingsFile.decoded(from: Data(contentsOf: url))
+                .apply(speed: speedStore, exceptions: exceptionStore)
         } catch {
             report("Couldn’t import settings.", error)
         }

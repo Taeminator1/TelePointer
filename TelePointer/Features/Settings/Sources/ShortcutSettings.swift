@@ -11,46 +11,38 @@ public struct ShortcutSettings: View {
     public init() {}
 
     public var body: some View {
-        VStack(spacing: 0) {
-            Form {
-                Section("Screen") {
-                    KeyboardShortcuts.Recorder("Move Pointer", name: .movePointer)
-                }
+        Form {
+            Section("Screen") {
+                KeyboardShortcuts.Recorder("Move Pointer", name: .movePointer)
+            }
 
-                Section {
-                    directionCross
-                } header: {
-                    HStack {
-                        Text("Direction")
+            Section {
+                directionCross
+            } header: {
+                HStack {
+                    Text("Direction")
 
-                        Spacer()
+                    Spacer()
 
-                        Picker("Direction", selection: $directionMode) {
-                            ForEach(DirectionMode.allCases, id: \.self) { mode in
-                                Text(mode.title)
-                            }
+                    Picker("Direction", selection: $directionMode) {
+                        ForEach(DirectionMode.allCases, id: \.self) { mode in
+                            Text(mode.title)
                         }
-                        .pickerStyle(.segmented)
-                        .labelsHidden()
-                        .frame(width: Self.directionPickerWidth)
                     }
-                }
-
-                Section("Click & Drag") {
-                    KeyboardShortcuts.Recorder("Left", name: .clickPointerLeft)
-                    KeyboardShortcuts.Recorder("Right", name: .clickPointerRight)
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                    .frame(width: Self.directionPickerWidth)
                 }
             }
-            .formStyle(.grouped)
 
-            HStack {
-                Spacer()
-                
-                Button("Restore Defaults") {
-                    KeyboardShortcuts.reset(pointerShortcutNames)
-                }
+            Section("Click & Drag") {
+                KeyboardShortcuts.Recorder("Left", name: .clickPointerLeft)
+                KeyboardShortcuts.Recorder("Right", name: .clickPointerRight)
             }
-            .padding(16)
+        }
+        .formStyle(.grouped)
+        .restoreDefaultsBar {
+            KeyboardShortcuts.reset(pointerShortcutNames)
         }
         .frame(width: 400)
     }

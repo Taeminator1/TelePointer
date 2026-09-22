@@ -10,62 +10,54 @@ public struct SpeedSettings: View {
     }
 
     public var body: some View {
-        VStack(spacing: 0) {
-            Form {
-                Section("Accelerating") {
-                    SpeedGraph(curve: $settings.curve)
+        Form {
+            Section("Accelerating") {
+                SpeedGraph(curve: $settings.curve)
 
-                    slider(
-                        "Base Speed",
-                        value: $settings.curve.base,
-                        in: SpeedCurve.baseRange,
-                        limitedTo: settings.curve.allowedBaseRange,
-                        step: 50
+                slider(
+                    "Base Speed",
+                    value: $settings.curve.base,
+                    in: SpeedCurve.baseRange,
+                    limitedTo: settings.curve.allowedBaseRange,
+                    step: 50
+                )
+
+                slider(
+                    "Peak Speed",
+                    value: $settings.curve.peak,
+                    in: SpeedCurve.peakRange,
+                    limitedTo: settings.curve.allowedPeakRange,
+                    step: 50
+                )
+
+                slider(
+                    "Ramp Duration",
+                    value: $settings.curve.rampDuration,
+                    in: SpeedCurve.rampDurationRange,
+                    step: 0.05
+                )
+            }
+
+            Section("Steady") {
+                LabeledContent {
+                    Slider(
+                        value: $settings.steadySpeed.snapped(to: 10),
+                        in: SteadySpeed.range
                     )
+                } label: {
+                    HStack(spacing: 6) {
+                        Text("Speed")
 
-                    slider(
-                        "Peak Speed",
-                        value: $settings.curve.peak,
-                        in: SpeedCurve.peakRange,
-                        limitedTo: settings.curve.allowedPeakRange,
-                        step: 50
-                    )
-
-                    slider(
-                        "Ramp Duration",
-                        value: $settings.curve.rampDuration,
-                        in: SpeedCurve.rampDurationRange,
-                        step: 0.05
-                    )
-                }
-
-                Section("Steady") {
-                    LabeledContent {
-                        Slider(
-                            value: $settings.steadySpeed.snapped(to: 10),
-                            in: SteadySpeed.range
-                        )
-                    } label: {
-                        HStack(spacing: 6) {
-                            Text("Speed")
-
-                            Text("\(settings.steadySpeed.formatted(.number.precision(.fractionLength(0)))) pt/s")
-                                .monospacedDigit()
-                                .foregroundStyle(.secondary)
-                        }
+                        Text("\(settings.steadySpeed.formatted(.number.precision(.fractionLength(0)))) pt/s")
+                            .monospacedDigit()
+                            .foregroundStyle(.secondary)
                     }
                 }
             }
-            .formStyle(.grouped)
-
-            HStack {
-                Spacer()
-                
-                Button("Restore Defaults") {
-                    settings.reset()
-                }
-            }
-            .padding(16)
+        }
+        .formStyle(.grouped)
+        .restoreDefaultsBar {
+            settings.reset()
         }
         .frame(width: 400)
     }

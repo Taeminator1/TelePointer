@@ -86,6 +86,7 @@ let project = Project(
                 .target(name: "PointerCore"),
                 .target(name: "LaunchAtLogin"),
                 .target(name: "Settings"),
+                .target(name: "ShortcutException"),
                 .external(name: "KeyboardShortcuts"),
             ]
         ),
@@ -94,6 +95,7 @@ let project = Project(
             sources: ["TelePointer/Features/Settings/Sources"],
             dependencies: [
                 .target(name: "PointerCore"),
+                .target(name: "ShortcutException"),
                 .external(name: "KeyboardShortcuts"),
             ]
         ),
@@ -113,6 +115,17 @@ let project = Project(
             sources: ["TelePointer/Core/PointerCore/Tests"],
             dependencies: [
                 .target(name: "PointerCore"),
+            ]
+        ),
+        module(
+            name: "ShortcutException",
+            sources: ["TelePointer/Core/ShortcutException/Sources"]
+        ),
+        tests(
+            name: "ShortcutExceptionTests",
+            sources: ["TelePointer/Core/ShortcutException/Tests"],
+            dependencies: [
+                .target(name: "ShortcutException"),
             ]
         ),
         module(

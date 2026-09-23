@@ -63,6 +63,18 @@
 - 실패 알림도 같은 이유로 SwiftUI `.alert`가 아니라 `NSAlert`
 - `LSUIElement` 앱이라 패널을 띄우기 전에 `NSApp.activate()`가 필요하다
 
+## 전용 확장자는 UTType 선언이 있어야 쓸 수 있다 (2026-09-23)
+
+- 파일 패널의 `allowedContentTypes`는 등록된 타입만 받는다. 확장자만 `.telepointer`로 바꾸면
+  시스템이 모르는 타입이라 내보낸 파일을 가져오기 패널에서 고를 수 없다
+- 그래서 앱 `Info.plist`에 `UTExportedTypeDeclarations`로 `com.taeminyun.TelePointer.settings`를 선언한다
+  (`Project.swift`의 `appInfoPlist`)
+- 내용은 JSON 그대로여서 `public.json`을 준수시킨다 — 텍스트 편집기로도 열린다
+- 대가: `.json` 파일은 우리 타입을 준수하지 않는다(준수는 한 방향이다).
+  전에 `.json`으로 내보낸 파일은 확장자를 바꿔야 가져오기 패널에 보인다
+- `UTType(exportedAs:)`는 식별자가 선언되어 있지 않으면 트랩한다.
+  선언은 앱 번들에만 있으므로 `#Preview`나 테스트에서 이 값을 만들면 안 된다
+
 ## 핫키 충돌은 감지할 수 없음
 
 - 이미 다른 앱이나 시스템이 점유한 조합(예: Spotlight의 `⌘Space`)도 등록 자체는 성공

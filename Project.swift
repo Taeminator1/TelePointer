@@ -2,6 +2,7 @@ import ProjectDescription
 
 let deploymentTargets: DeploymentTargets = .macOS("26.0")
 let bundlePrefix = "com.taeminyun.TelePointer"
+let settingsFileType = "\(bundlePrefix).settings"
 
 let appInfoPlist: [String: Plist.Value] = [
     "CFBundleDevelopmentRegion": "$(DEVELOPMENT_LANGUAGE)",
@@ -15,6 +16,16 @@ let appInfoPlist: [String: Plist.Value] = [
     "LSMinimumSystemVersion": "$(MACOSX_DEPLOYMENT_TARGET)",
     "NSPrincipalClass": "NSApplication",
     "LSUIElement": true,
+    "UTExportedTypeDeclarations": [
+        [
+            "UTTypeIdentifier": .string(settingsFileType),
+            "UTTypeDescription": "TelePointer Settings",
+            "UTTypeConformsTo": ["public.json"],
+            "UTTypeTagSpecification": [
+                "public.filename-extension": ["telepointer"],
+            ],
+        ],
+    ],
 ]
 
 func module(

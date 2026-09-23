@@ -6,14 +6,15 @@ import UniformTypeIdentifiers
 
 @MainActor
 public enum SettingsTransfer {
-    private static let fileName = "TelePointer Settings.json"
+    private static let fileType = UTType(exportedAs: "com.taeminyun.TelePointer.settings")
+    private static let fileName = "Settings.telepointer"
 
     public static func exportToFile(
         speed speedStore: SpeedStore = .shared,
         exceptions exceptionStore: ShortcutExceptionStore = .shared
     ) {
         let panel = NSSavePanel()
-        panel.allowedContentTypes = [.json]
+        panel.allowedContentTypes = [fileType]
         panel.nameFieldStringValue = fileName
         panel.canCreateDirectories = true
 
@@ -33,7 +34,7 @@ public enum SettingsTransfer {
         exceptions exceptionStore: ShortcutExceptionStore = .shared
     ) {
         let panel = NSOpenPanel()
-        panel.allowedContentTypes = [.json]
+        panel.allowedContentTypes = [fileType]
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = false
 
@@ -69,7 +70,7 @@ public enum SettingsTransfer {
         }
 
         return switch failure {
-        case .unreadable: "The file isn’t valid JSON."
+        case .unreadable: "The file is damaged."
         case .unrecognized: "The file doesn’t contain any TelePointer settings."
         }
     }

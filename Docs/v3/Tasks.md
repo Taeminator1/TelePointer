@@ -16,7 +16,7 @@
 ## 2. 설정 export/import
 
 - [x] 내보낼 범위 결정 — 단축키 + `SpeedCurve` + `SteadySpeed`. Open at Login 같은 시스템 상태는 뺀다
-- [x] 파일 형식 결정 — JSON, 확장자는 `.json`. 버전 필드와 전용 UTType은 두지 않는다
+- [x] 파일 형식 결정 — 내용은 JSON, 확장자는 `.telepointer`. 전용 UTType을 선언하고 버전 필드는 두지 않는다
 - [x] 단축키를 읽고 쓰는 경로 확인 — `KeyboardShortcuts.getShortcut(for:)` · `setShortcut(_:for:)`
     - [x] `setShortcut`이 핫키 해제 · 저장 · 재등록과 Recorder 갱신 알림까지 한다
     - [x] `Shortcut`은 `Codable` — `carbonKeyCode` · `carbonModifiers`로 인코딩된다

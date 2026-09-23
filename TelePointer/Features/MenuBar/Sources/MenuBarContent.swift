@@ -14,26 +14,36 @@ public struct MenuBarContent: View {
         
         Divider()
         
-        Button("Move Pointer") {
+        Button {
             PointerMover.cycleScreenCenter()
+        } label: {
+            Label("Move Pointer", systemImage: "pointer.arrow.and.square.on.square.dashed")
         }
         .globalKeyboardShortcut(.movePointer)
 
-        settingsButton("Settings…", windowID: AppSettings.windowID)
+        settingsButton("Settings…", systemImage: "gearshape", windowID: AppSettings.windowID)
 
         Divider()
 
-        Button("Quit") {
+        Button {
             NSApplication.shared.terminate(nil)
+        } label: {
+            Label("Quit", systemImage: "xmark.rectangle")
         }
         .keyboardShortcut("q")
     }
 
-    private func settingsButton(_ title: LocalizedStringKey, windowID: String) -> some View {
-        Button(title) {
+    private func settingsButton(
+        _ title: LocalizedStringKey,
+        systemImage: String,
+        windowID: String
+    ) -> some View {
+        Button {
             NSApp.unhide(nil)
             openWindow(id: windowID)
             NSApp.activate(ignoringOtherApps: true)
+        } label: {
+            Label(title, systemImage: systemImage)
         }
     }
 }

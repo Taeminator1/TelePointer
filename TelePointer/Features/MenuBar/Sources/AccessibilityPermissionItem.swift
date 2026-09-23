@@ -4,8 +4,10 @@ import SwiftUI
 struct AccessibilityPermissionItem: View {
     var body: some View {
         if !AccessibilityPermission.isGranted {
-            Button("Enable Click…") {
+            Button {
                 AccessibilityPermission.openSystemSettings()
+            } label: {
+                Label("Enable Click…", systemImage: "accessibility")
             }
         }
     }

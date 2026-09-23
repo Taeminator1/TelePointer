@@ -6,10 +6,12 @@ struct LoginItemToggle: View {
     @State private var state = LoginItem.state
 
     var body: some View {
-        Toggle("Open at Login", isOn: Binding(
+        Toggle(isOn: Binding(
             get: { state == .enabled },
             set: { setEnabled($0) }
-        ))
+        )) {
+            Label("Open at Login", systemImage: "arrow.up.forward.app")
+        }
         .onAppear { state = LoginItem.state }
     }
 

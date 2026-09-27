@@ -37,7 +37,7 @@ v1 이후 항목은 [Backlog.md](../Backlog.md), 작업 기록과 채택하지 �
 ## 3. 앱 골격
 
 - [x] `TelePointerApp.swift`의 `WindowGroup` → `MenuBarExtra` + `.menuBarExtraStyle(.menu)`로 교체
-- [x] 메뉴바 아이콘 설정 (SF Symbol `cursorarrow.rays`)
+- [x] 메뉴바 아이콘 설정 (원을 두른 커스텀 이미지 `MenuBarIcon`)
 - [x] `ContentView.swift` 제거 (템플릿 잔재)
 - [x] 메뉴 3개 항목 배치: Move Pointer / Open at Login / Quit
 

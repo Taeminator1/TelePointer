@@ -10,7 +10,7 @@ struct TelePointerApp: App {
     }
 
     var body: some Scene {
-        MenuBarExtra("TelePointer", systemImage: "pointer.arrow") {
+        MenuBarExtra("TelePointer", image: "MenuBarIcon") {
             MenuBarContent()
         }
         .menuBarExtraStyle(.menu)

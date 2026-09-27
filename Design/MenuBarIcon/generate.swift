@@ -2,10 +2,30 @@ import AppKit
 import CoreImage
 
 let side: CGFloat = 18
-let radius: CGFloat = 7.9, ring: CGFloat = 1.1
-let symbolSize: CGFloat = 10
-let gap: CGFloat = 1.2
 let master: CGFloat = 32
+let gap: CGFloat = 0.9
+let count = 3
+let frontSize: CGFloat = 13
+let ratio: CGFloat = 1
+let frontStep = CGVector(dx: 3.95, dy: -0.8)
+
+let pointers: [(size: CGFloat, tip: CGPoint)] = {
+    var result: [(size: CGFloat, tip: CGPoint)] = []
+    var tip = CGPoint.zero
+    for i in 0..<count {
+        let shrink = pow(ratio, CGFloat(count - 1 - i))
+        if i > 0 {
+            tip.x += frontStep.dx / shrink
+            tip.y += frontStep.dy / shrink
+        }
+        result.append((frontSize / shrink, tip))
+    }
+    return result
+}()
+
+let px = Int(side * master)
+let workPx = px * 2
+let full = CGRect(x: 0, y: 0, width: workPx, height: workPx)
 
 func bitmap(_ px: Int, _ draw: (CGContext) -> Void) -> CGImage {
     let ctx = CGContext(data: nil, width: px, height: px, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
@@ -14,31 +34,69 @@ func bitmap(_ px: Int, _ draw: (CGContext) -> Void) -> CGImage {
     return ctx.makeImage()!
 }
 
-let px = Int(side * master)
-let c = CGPoint(x: side / 2 * master, y: side / 2 * master)
-
-let symbol = bitmap(px) { ctx in
-    let config = NSImage.SymbolConfiguration(pointSize: symbolSize * master, weight: .regular)
+func pointer(size: CGFloat, tip: CGPoint) -> CGImage {
+    let config = NSImage.SymbolConfiguration(pointSize: size * master, weight: .regular)
     let sym = NSImage(systemSymbolName: "pointer.arrow", accessibilityDescription: nil)!.withSymbolConfiguration(config)!
-    let s = sym.size
-    NSGraphicsContext.current = NSGraphicsContext(cgContext: ctx, flipped: false)
-    sym.draw(in: CGRect(x: c.x - s.width / 2, y: c.y - s.height / 2, width: s.width, height: s.height))
-    NSGraphicsContext.current = nil
+    let drawn = bitmap(workPx) { ctx in
+        NSGraphicsContext.current = NSGraphicsContext(cgContext: ctx, flipped: false)
+        sym.draw(in: CGRect(origin: .zero, size: sym.size))
+        NSGraphicsContext.current = nil
+    }
+    let symbolTip = topmostPixel(drawn)
+    let target = CGPoint(x: px.cgFloat / 2 + tip.x * master, y: px.cgFloat / 2 - tip.y * master)
+    return bitmap(workPx) { ctx in
+        ctx.draw(drawn, in: full.offsetBy(dx: target.x - symbolTip.x, dy: symbolTip.y - target.y))
+    }
 }
 
-let ci = CIContext()
-let dilated = CIImage(cgImage: symbol).applyingFilter("CIMorphologyMaximum", parameters: [kCIInputRadiusKey: gap * master])
-let halo = ci.createCGImage(dilated, from: CGRect(x: 0, y: 0, width: px, height: px))!
+func topmostPixel(_ image: CGImage) -> CGPoint {
+    let data = image.dataProvider!.data! as Data
+    let bpr = image.bytesPerRow
+    for y in 0..<image.height {
+        for x in 0..<image.width where data[y * bpr + x * 4 + 3] > 0 {
+            return CGPoint(x: x, y: y)
+        }
+    }
+    fatalError("empty image")
+}
 
-let full = CGRect(x: 0, y: 0, width: px, height: px)
-let composed = bitmap(px) { ctx in
-    ctx.setStrokeColor(.black)
-    ctx.setLineWidth(ring * master)
-    ctx.strokeEllipse(in: CGRect(x: c.x - radius * master, y: c.y - radius * master, width: 2 * radius * master, height: 2 * radius * master))
-    ctx.setBlendMode(.destinationOut)
-    ctx.draw(halo, in: full)
-    ctx.setBlendMode(.normal)
-    ctx.draw(symbol, in: full)
+extension Int { var cgFloat: CGFloat { CGFloat(self) } }
+
+let ci = CIContext()
+let layers = pointers.map { pointer(size: $0.size, tip: $0.tip) }
+let halos = layers.map { layer in
+    ci.createCGImage(CIImage(cgImage: layer).applyingFilter("CIMorphologyMaximum", parameters: [kCIInputRadiusKey: gap * master]), from: full)!
+}
+
+func alphaBox(_ image: CGImage) -> CGRect {
+    let data = image.dataProvider!.data! as Data
+    let bpr = image.bytesPerRow
+    var minX = image.width, maxX = 0, minY = image.height, maxY = 0
+    for y in 0..<image.height {
+        for x in 0..<image.width where data[y * bpr + x * 4 + 3] > 0 {
+            minX = min(minX, x); maxX = max(maxX, x); minY = min(minY, y); maxY = max(maxY, y)
+        }
+    }
+    return CGRect(x: minX, y: minY, width: maxX - minX + 1, height: maxY - minY + 1)
+}
+
+let composed = bitmap(workPx) { ctx in
+    for (layer, halo) in zip(layers, halos) {
+        ctx.setBlendMode(.destinationOut)
+        ctx.draw(halo, in: full)
+        ctx.setBlendMode(.normal)
+        ctx.draw(layer, in: full)
+    }
+}
+
+let box = alphaBox(composed)
+
+precondition(box.width <= px.cgFloat && box.height <= px.cgFloat, "\(box.size) exceeds \(px)")
+
+let centered = bitmap(px) { ctx in
+    let offsetX = px.cgFloat / 2 - box.midX
+    let offsetY = px.cgFloat / 2 - (workPx.cgFloat - box.midY)
+    ctx.draw(composed, in: full.offsetBy(dx: offsetX, dy: offsetY))
 }
 
 func write(_ image: CGImage, scale: CGFloat, to name: String) {
@@ -49,6 +107,6 @@ func write(_ image: CGImage, scale: CGFloat, to name: String) {
     try! rep.representation(using: .png, properties: [:])!.write(to: URL(fileURLWithPath: name))
 }
 
-write(composed, scale: 1, to: "MenuBarIcon.png")
-write(composed, scale: 2, to: "MenuBarIcon@2x.png")
-write(composed, scale: 3, to: "MenuBarIcon@3x.png")
+write(centered, scale: 1, to: "MenuBarIcon.png")
+write(centered, scale: 2, to: "MenuBarIcon@2x.png")
+write(centered, scale: 3, to: "MenuBarIcon@3x.png")

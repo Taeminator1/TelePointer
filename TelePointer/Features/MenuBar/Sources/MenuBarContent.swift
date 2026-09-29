@@ -53,7 +53,6 @@ public struct MenuBarContent: View {
         windowID: String
     ) -> some View {
         Button {
-            NSApp.unhide(nil)
             openWindow(id: windowID)
             NSApp.activate(ignoringOtherApps: true)
         } label: {

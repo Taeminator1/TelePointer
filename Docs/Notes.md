@@ -302,15 +302,19 @@ press left   물리키[J+ctrlL+optL]     ← J를 누르는 순간 U가 사라�
 - scene은 `App.body`에만 놓을 수 있다. `Window` scene은 App 타깃에 선언하고 루트 View만 `Settings` 모듈에서 `public`으로 내보낸다
 - 창이 이것 하나뿐이라 그대로 두면 실행 직후 뜬다 — `.defaultLaunchBehavior(.suppressed)`로 막는다
 - `.restorationBehavior(.disabled)`는 종료 시점에 열려 있던 창이 다음 실행에서 복원되는 것을 막는다
-- 앱이 비활성이라 `openWindow`만으로는 창이 다른 앱 뒤에 뜬다 — `NSApp.activate()`를 함께 부른다
+- 앱이 비활성이라 `openWindow`만으로는 창이 다른 앱 뒤에 뜬다 — 앱을 함께 활성화한다.
+  메뉴바 메뉴에서 부른 `NSApp.activate()`는 거절되어, 폐기 예정인 `activate(ignoringOtherApps:)`를 쓴다 (2026-09-13)
 - 창을 닫아도 앱은 활성으로 남고, 되돌려줄 창이 없어 키보드 포커스가 어디에도 가지 않는다.
   `NSApp.hide(nil)`로 내리면 직전 앱이 포커스를 되찾는다 — 대신 다시 열 때 `NSApp.unhide(nil)`가 필요하다
+    - 2026-08-28에 `hide`를 걷어냈다 — 창 하나가 아니라 앱 전체를 숨겨 다른 설정 창까지 사라졌다
 - 다른 앱을 클릭하면 창이 뒤로 간다. Dock 아이콘도 ⌘Tab 항목도 없어 되돌릴 길이 메뉴바뿐이라
   `.windowLevel(.floating)`으로 위에 띄운다. `NSApp.setActivationPolicy(.regular)`로 일반 앱처럼 만드는 길도 있으나
   그동안 Dock 아이콘과 App menu가 생겨 「미노출」 전제를 깬다
+    - 2026-09-14에 창을 하나로 합치며 `.floating`도 뺐다
 - **창을 닫아도 `.onDisappear`는 불리지 않는다.** `Window` scene은 창이 닫혀도 콘텐츠 View를 살려둔다.
   SwiftUI에 창 닫힘을 알려주는 모디파이어도 없어(`onDisappear` 외에 창 이벤트가 없다)
-  `NSWindow.willCloseNotification`을 직접 구독한다 — `Settings`의 `onWindowClose`
+  `NSWindow.willCloseNotification`을 직접 구독한다
+    - 구독하던 `WindowAccess`는 2026-09-14에 지웠다 — 지금은 창 닫힘을 받는 코드가 없다
 
 ## `resetAll()`은 기본값 복구가 아니다 (2026-08-23)
 
@@ -331,6 +335,8 @@ press left   물리키[J+ctrlL+optL]     ← J를 누르는 순간 U가 사라�
   프리뷰에는 예약 영역이 없어 콘텐츠 위쪽이 잘린다 — `Settings`의 `fillsHiddenTitleBar()`
 - `.windowStyle(.plain)`은 예약이 없지만 크롬을 통째로 걷어낸다. 모서리가 각지고 버튼 줄도 그려지지 않아 쓰지 않는다
 - 타이틀 바가 사라지면 창을 잡아 옮길 곳도 없어진다 — `isMovableByWindowBackground = true`
+- 2026-09-14에 설정 창을 하나로 합치며 `.hiddenTitleBar`와 위 보정을 모두 걷어냈다 —
+  창 타이틀을 숨기면 탭 타이틀이 툴바에 뜨지 않아 기본 창 스타일로 돌아갔다
 
 ## 모니터 간 이동에서 중앙 판정을 걷어냈다 (2026-08-25)
 
@@ -349,6 +355,7 @@ press left   물리키[J+ctrlL+optL]     ← J를 누르는 순간 U가 사라�
     - 로그로 확인한 순서: 뷰가 창에 붙음(first responder는 창) → `didBecomeKey`(그대로 창) → 첫 슬라이더가 잡음
 - 푸는 것은 창마다 한 번뿐이다. 이후 Tab이나 클릭으로 잡은 포커스는 그대로 둔다 —
   창을 닫을 때 기록을 지워 다시 열면 또 푼다 (`ClearedInitialFocus`)
+- 2026-09-14에 설정 창을 하나로 합치며 `WindowAccess`와 함께 걷어냈다
 
 ## 슬라이더의 트랙과 벽은 다른 것이다 (2026-08-28)
 

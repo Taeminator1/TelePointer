@@ -27,14 +27,14 @@
     - [x] 아는 항목이 하나도 없는 파일은 실패로 알린다 — 형식을 가릴 표식이 이것뿐이다
 - [x] 메뉴바 메뉴에 Import · Export — `NSOpenPanel` · `NSSavePanel`을 직접 띄운다
 - [x] 샌드박스에 `com.apple.security.files.user-selected.read-write` 추가 (`Project.swift`)
-- [ ] 가져온 뒤 재시작 없이 반영되는지 확인 — 핫키 재등록, 열려 있는 설정 창
+- [x] 가져온 뒤 재시작 없이 반영되는지 확인 — 핫키 재등록, 열려 있는 설정 창
 - [x] 단위 테스트 (`SettingsTests`) — 인코딩 · 디코딩 왕복, 손상된 파일
 
 ## 3. 설정 창 통합
 
 - [x] 메뉴바에 Settings… 추가 — `Window` scene 하나에 `NavigationSplitView`로 사이드바를 둔다
 - [x] 메뉴에서 열면 다른 앱 앞으로 오고 포커스를 가져온다 — `NSApp.activate()`는 거절되어 `activate(ignoringOtherApps:)`
-    - [ ] 창이 다른 앱 뒤에 뜬 적이 있다 — 재현 조건 확인
+    - [x] 창이 다른 앱 뒤에 뜬 적이 있다 — 재현 조건 확인
 - [x] 사이드바 너비 고정 · 숨기기 막기
     - [x] 토글을 빼면 툴바가 사라져 사이드바가 신호등 아래로 내려간다 — `ToolbarSpacer`로 툴바를 남긴다
     - [x] 경계선을 끌면 접힌다 — `canCollapse`를 KVO로 `false`에 묶는다 (`SidebarCollapseLock`)
@@ -45,8 +45,8 @@
 - [x] 탭 아래 버튼 줄은 Restore Defaults만 — 창을 닫던 Done은 뺀다
 - [x] Import · Export는 메뉴바 메뉴에 둔다 — 한때 General 탭으로 옮겼으나 되돌렸고, 빈 General 탭은 없앴다
 - [x] 따로 뜨던 Keyboard Shortcuts · Pointer Speed 창과 창 전용 코드(`WindowAccess.swift`) 제거
-- [ ] 처음 열 때 컨트롤에 포커스 테두리가 잡히는지 확인 — 초기 포커스를 풀던 `ClearedInitialFocus`도 함께 사라졌다
-- [ ] [Architecture.md](../Architecture.md) · [Notes.md](../Notes.md) 반영 — 지운 창과 `WindowAccess` 설명이 남아 있다
+- [x] 처음 열 때 컨트롤에 포커스 테두리가 잡히는지 확인 — 초기 포커스를 풀던 `ClearedInitialFocus`도 함께 사라졌다
+- [x] [Architecture.md](../Architecture.md) · [Notes.md](../Notes.md) 반영 — 지운 창과 `WindowAccess` 설명이 남아 있다
 
 ## 4. 단축키별 앱 예외
 
@@ -63,14 +63,14 @@
     - [x] 빈 목록은 그 단축키의 예외를 지우는 뜻으로 받는다
     - [x] 모르는 단축키 이름의 예외만 든 파일은 설정 파일로 보지 않는다
 - [x] 단위 테스트 (`ShortcutExceptionTests` · `SettingsTests`)
-- [ ] 실제 충돌 앱에서 손으로 확인 — 예외에 넣은 앱에서 그 앱의 단축키가 동작하는지
-- [ ] 예외가 걸린 앱을 앞에 둔 채 내보낸 뒤 가져오면 재시작 없이 반영되는지
+- [x] 실제 충돌 앱에서 손으로 확인 — 예외에 넣은 앱에서 그 앱의 단축키가 동작하는지
+- [x] 예외가 걸린 앱을 앞에 둔 채 내보낸 뒤 가져오면 재시작 없이 반영되는지
 
 ## 5. App Store 제출 준비
 
 v1 → v2를 거쳐 이관.
 
-- [ ] `AppIcon.appiconset` 에셋 추가 (현재 비어 있음)
+- [x] 앱 아이콘 추가 — Icon Composer로 만든 `AppIcon.icon`
 - [ ] 코드 서명 팀 / provisioning profile 설정
 - [ ] App Store Connect에 앱 등록
 - [ ] 스크린샷 · 앱 설명 · 개인정보 처리방침 URL 준비

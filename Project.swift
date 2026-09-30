@@ -88,7 +88,14 @@ let project = Project(
             dependencies: [
                 .target(name: "MenuBar"),
                 .target(name: "Settings"),
-            ]
+            ],
+            settings: .settings(
+                base: [
+                    "DEVELOPMENT_TEAM": "LGU69RG34G",
+                    "CODE_SIGN_STYLE": "Automatic",
+                    "CODE_SIGN_IDENTITY": "Apple Development",
+                ]
+            )
         ),
         module(
             name: "MenuBar",

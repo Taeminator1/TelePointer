@@ -71,7 +71,7 @@
 v1 → v2를 거쳐 이관.
 
 - [x] 앱 아이콘 추가 — Icon Composer로 만든 `AppIcon.icon`
-- [ ] 코드 서명 팀 / provisioning profile 설정
+- [x] 코드 서명 팀 / provisioning profile 설정 — profile은 업로드할 때 자동 서명이 만든다
 - [ ] App Store Connect에 앱 등록
 - [ ] 스크린샷 · 앱 설명 · 개인정보 처리방침 URL 준비
 

@@ -16,6 +16,8 @@ let appInfoPlist: [String: Plist.Value] = [
     "LSMinimumSystemVersion": "$(MACOSX_DEPLOYMENT_TARGET)",
     "NSPrincipalClass": "NSApplication",
     "LSUIElement": true,
+    "LSApplicationCategoryType": "public.app-category.utilities",
+    "ITSAppUsesNonExemptEncryption": false,
     "UTExportedTypeDeclarations": [
         [
             "UTTypeIdentifier": .string(settingsFileType),

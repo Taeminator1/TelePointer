@@ -234,7 +234,8 @@ tccutil reset Accessibility com.taeminyun.TelePointer
 - ad-hoc에서 팀 서명(Apple Development)으로 넘어올 때 이 상태가 한 번 생겼다.
   지우고 다시 등록한 뒤에는 `CFBundleVersion`만 바꿔 같은 인증서로 다시 서명한 빌드
   (cdhash가 다른 빌드)에서도 클릭이 동작했다
-- App Store 빌드는 Apple이 다시 서명하므로 요구사항이 또 달라진다 — TestFlight 빌드에서 확인이 남아 있다
+- App Store 빌드는 Apple이 다시 서명하므로 요구사항이 또 달라진다. Xcode 빌드에서 넘어올 때는 권한을 지우고 다시 등록해야 한다
+    - TestFlight에서 빌드 번호만 올린 업데이트를 받은 뒤에도 권한이 그대로 유지됐다 (2026-09-30)
 
 ## Mac App Store와 접근성 권한 (2026-08-22)
 

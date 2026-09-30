@@ -12,7 +12,7 @@ let appInfoPlist: [String: Plist.Value] = [
     "CFBundleName": "$(PRODUCT_NAME)",
     "CFBundlePackageType": "APPL",
     "CFBundleShortVersionString": "1.0.0",
-    "CFBundleVersion": "1",
+    "CFBundleVersion": "2",
     "LSMinimumSystemVersion": "$(MACOSX_DEPLOYMENT_TARGET)",
     "NSPrincipalClass": "NSApplication",
     "LSUIElement": true,

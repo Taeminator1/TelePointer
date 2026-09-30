@@ -85,6 +85,7 @@ v1 → v2를 거쳐 이관.
 - [x] 다른 앱 포커스 상태에서 핫키 동작 확인 (부작용 없이 커서만 이동)
 - [x] 샌드박스 빌드에서 핫키·커서 이동 동작 확인
 - [ ] 릴리스 서명(Developer ID 또는 App Store)에서도 접근성 권한이 유지되는지 확인
+    - [x] Apple Development 서명은 재빌드해도 유지된다 — ad-hoc에서 넘어올 때 한 번은 지우고 다시 등록해야 한다
 - [x] 커서 이동 직후 hover가 갱신되지 않는 것이 수용 가능한 수준인지 확인
-- [ ] **Open at Login은 `/Applications`에 설치 후 검증** — Xcode DerivedData에서 실행하면 `notFound` 반환
+- [x] **Open at Login은 `/Applications`에 설치 후 검증** — Xcode DerivedData에서 실행하면 `notFound` 반환
 - [x] 시스템 설정에서 로그인 항목을 끈 뒤 메뉴를 다시 열면 체크가 풀리는지

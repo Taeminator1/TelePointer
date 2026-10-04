@@ -147,5 +147,5 @@ App Store 배포에서 dylib 임베드·서명 단계가 생기지 않고, 메�
 
 ## 관련 문서
 
-- [Requirements.md](./v1/Requirements.md) — v1 요구사항
-- [Tasks.md](./v1/Tasks.md) — v1 구현 작업 목록
+- [Requirements.md](./v1.0/Requirements.md) — v1.0 요구사항
+- [Tasks.md](./v1.0/Tasks.md) — v1.0 작업 목록

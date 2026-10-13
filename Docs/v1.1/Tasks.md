@@ -5,9 +5,10 @@
 
 ## 1. 최소 지원 버전 검토
 
-- [ ] macOS 26 전용 API를 쓰는 곳 확인
-- [ ] 낮출 버전 결정
-- [ ] `Project.swift`의 `deploymentTargets` 반영
+- [x] macOS 26 전용 API를 쓰는 곳 확인
+- [x] 낮출 버전 결정
+- [x] `Project.swift`의 `deploymentTargets` 반영
+- [ ] macOS 15에서 테스트
 
 ## 2. 한국어 지원
 

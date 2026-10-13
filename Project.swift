@@ -1,6 +1,6 @@
 import ProjectDescription
 
-let deploymentTargets: DeploymentTargets = .macOS("26.0")
+let deploymentTargets: DeploymentTargets = .macOS("15.0")
 let bundlePrefix = "com.taeminyun.TelePointer"
 let settingsFileType = "\(bundlePrefix).settings"
 

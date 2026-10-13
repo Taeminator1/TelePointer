@@ -32,11 +32,13 @@ public struct AppSettings: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .scrollEdgeEffectStyle(.soft, for: .top)
+            .softScrollEdgeEffect(for: .top)
             .navigationTitle(selection.title)
         }
         .toolbar {
-            ToolbarSpacer(.flexible)
+            if #available(macOS 26, *) {
+                ToolbarSpacer(.flexible)
+            }
         }
         .frame(width: Self.windowWidth)
     }

@@ -1,15 +1,30 @@
 import SwiftUI
 
 extension View {
+    @ViewBuilder
     func restoreDefaultsBar(action: @escaping () -> Void) -> some View {
-        safeAreaBar(edge: .bottom) {
-            HStack {
-                Spacer()
-
-                Button("Restore Defaults", action: action)
+        if #available(macOS 26, *) {
+            safeAreaBar(edge: .bottom) {
+                RestoreDefaultsButton(action: action)
             }
-            .padding(16)
+            .softScrollEdgeEffect(for: .bottom)
+        } else {
+            safeAreaInset(edge: .bottom) {
+                RestoreDefaultsButton(action: action)
+            }
         }
-        .scrollEdgeEffectStyle(.soft, for: .bottom)
+    }
+}
+
+private struct RestoreDefaultsButton: View {
+    let action: () -> Void
+
+    var body: some View {
+        HStack {
+            Spacer()
+
+            Button("Restore Defaults", action: action)
+        }
+        .padding(16)
     }
 }

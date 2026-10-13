@@ -65,6 +65,10 @@ func tests(
 
 let project = Project(
     name: "TelePointer",
+    options: .options(
+        defaultKnownRegions: ["en", "ko"],
+        developmentRegion: "en"
+    ),
     settings: .settings(
         base: [
             "SWIFT_VERSION": "6.0",

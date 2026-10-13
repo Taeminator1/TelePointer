@@ -18,6 +18,7 @@
 
 ## 관련 문서
 
+- [Tasks.md](./Tasks.md) — v1.1 작업 목록
 - [Architecture.md](../Architecture.md) — 모듈 구조와 결정 근거
 - [Backlog.md](../Backlog.md) — 미분류 항목
 - [Notes.md](../Notes.md) — 작업 중 남긴 기록과 채택하지 않은 대안

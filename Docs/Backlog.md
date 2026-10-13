@@ -5,7 +5,7 @@
   ([Notes.md](./Notes.md)의 「클릭 단축키에 modifier를 더 붙이면 드래그가 깨진다」). `Recorder`의 `validateShortcut`으로 거부할 수 있다
 - [x] 탭 지원
 - [x] 시스템 단축키랑 겹칠 때 확인
-- [ ] preset 기능 추가
+- [x] preset 기능 추가
 - [x] Hovering
     - [x] Dock, Hot Corners
 - [x] 스크롤

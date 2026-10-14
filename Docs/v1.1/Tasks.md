@@ -27,16 +27,7 @@
 - [x] 상 · 하 · 좌 · 우 스크롤을 위한 단축키 추가
 - [x] 커서 위치에서 스크롤되는지 확인
 
-## 5. 시스템 단축키 겹침 확인
-
-- [ ] 설정 창에서 단축키를 바꿀 때 macOS 시스템 단축키와 겹치면 알려준다
-
-## 6. Preset
-
-- [ ] preset을 여러 개 추가한다
-- [ ] preset마다 별명을 붙인다
-
-## 7. App Store Connect 메타데이터 정정
+## 5. App Store Connect 메타데이터 정정
 
 [AppStoreConnect.md](../AppStoreConnect.md)
 

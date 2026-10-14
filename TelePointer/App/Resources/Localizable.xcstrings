@@ -1,6 +1,96 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Accelerating" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가속"
+          }
+        }
+      }
+    },
+    "Add" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "추가"
+          }
+        }
+      }
+    },
+    "Apps that ignore this shortcut" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 단축키를 무시하는 앱"
+          }
+        }
+      }
+    },
+    "Base Speed" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기본 속도"
+          }
+        }
+      }
+    },
+    "Click & Drag" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "클릭 및 드래그"
+          }
+        }
+      }
+    },
+    "Couldn’t add “%@”." : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” 앱을 추가할 수 없습니다."
+          }
+        }
+      }
+    },
+    "Couldn’t export settings." : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정을 내보낼 수 없습니다."
+          }
+        }
+      }
+    },
+    "Couldn’t import settings." : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정을 가져올 수 없습니다."
+          }
+        }
+      }
+    },
+    "Direction" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "방향"
+          }
+        }
+      }
+    },
     "Enable Click…" : {
       "localizations" : {
         "ko" : {
@@ -21,12 +111,32 @@
         }
       }
     },
+    "Ignored in" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "무시하는 앱"
+          }
+        }
+      }
+    },
     "Import Settings…" : {
       "localizations" : {
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "설정 가져오기…"
+          }
+        }
+      }
+    },
+    "Left" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "왼쪽"
           }
         }
       }
@@ -41,12 +151,42 @@
         }
       }
     },
+    "No apps yet." : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 앱이 없습니다."
+          }
+        }
+      }
+    },
     "Open at Login" : {
       "localizations" : {
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "로그인 시 열기"
+          }
+        }
+      }
+    },
+    "Peak Speed" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최고 속도"
+          }
+        }
+      }
+    },
+    "Pointer Speed" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "포인터 속도"
           }
         }
       }
@@ -61,12 +201,122 @@
         }
       }
     },
+    "Ramp Duration" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가속 시간"
+          }
+        }
+      }
+    },
+    "Restore Defaults" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기본값으로 복원"
+          }
+        }
+      }
+    },
+    "Right" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오른쪽"
+          }
+        }
+      }
+    },
+    "Screen" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "화면"
+          }
+        }
+      }
+    },
+    "Settings" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정"
+          }
+        }
+      }
+    },
     "Settings…" : {
       "localizations" : {
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "설정…"
+          }
+        }
+      }
+    },
+    "Shortcuts" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "단축키"
+          }
+        }
+      }
+    },
+    "Speed" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "속도"
+          }
+        }
+      }
+    },
+    "Steady" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "등속"
+          }
+        }
+      }
+    },
+    "The app doesn’t have a bundle identifier." : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱에 번들 식별자가 없습니다."
+          }
+        }
+      }
+    },
+    "The file doesn’t contain any TelePointer settings." : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일에 TelePointer 설정이 없습니다."
+          }
+        }
+      }
+    },
+    "The file is damaged." : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일이 손상되었습니다."
           }
         }
       }

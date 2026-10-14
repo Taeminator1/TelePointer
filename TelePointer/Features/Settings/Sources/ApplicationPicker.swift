@@ -10,7 +10,7 @@ enum ApplicationPicker {
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = false
         panel.directoryURL = URL(filePath: "/Applications")
-        panel.prompt = "Add"
+        panel.prompt = String(localized: "Add")
 
         NSApp.activate()
 
@@ -27,8 +27,8 @@ enum ApplicationPicker {
     private static func report(_ url: URL) {
         let alert = NSAlert()
         alert.alertStyle = .warning
-        alert.messageText = "Couldn’t add “\(url.deletingPathExtension().lastPathComponent)”."
-        alert.informativeText = "The app doesn’t have a bundle identifier."
+        alert.messageText = String(localized: "Couldn’t add “\(url.deletingPathExtension().lastPathComponent)”.")
+        alert.informativeText = String(localized: "The app doesn’t have a bundle identifier.")
         alert.runModal()
     }
 }

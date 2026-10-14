@@ -48,7 +48,7 @@ private enum SettingsPane: CaseIterable {
     case shortcuts
     case speed
 
-    var title: String {
+    var title: LocalizedStringKey {
         switch self {
         case .shortcuts: "Shortcuts"
         case .speed: "Pointer Speed"

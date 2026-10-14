@@ -119,7 +119,7 @@ private enum DirectionMode: CaseIterable {
     case accelerating
     case steady
 
-    var title: String {
+    var title: LocalizedStringKey {
         switch self {
         case .accelerating: "Accelerating"
         case .steady: "Steady"

@@ -25,7 +25,7 @@ public enum SettingsTransfer {
                 .encoded()
                 .write(to: url)
         } catch {
-            report("Couldn’t export settings.", error)
+            report(String(localized: "Couldn’t export settings."), error)
         }
     }
 
@@ -44,7 +44,7 @@ public enum SettingsTransfer {
             try SettingsFile.decoded(from: Data(contentsOf: url))
                 .apply(speed: speedStore, exceptions: exceptionStore)
         } catch {
-            report("Couldn’t import settings.", error)
+            report(String(localized: "Couldn’t import settings."), error)
         }
     }
 
@@ -70,8 +70,8 @@ public enum SettingsTransfer {
         }
 
         return switch failure {
-        case .unreadable: "The file is damaged."
-        case .unrecognized: "The file doesn’t contain any TelePointer settings."
+        case .unreadable: String(localized: "The file is damaged.")
+        case .unrecognized: String(localized: "The file doesn’t contain any TelePointer settings.")
         }
     }
 }

@@ -2,6 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     "Accelerating" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -12,6 +13,7 @@
       }
     },
     "Add" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -22,6 +24,7 @@
       }
     },
     "Apps that ignore this shortcut" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -32,6 +35,7 @@
       }
     },
     "Base Speed" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -42,6 +46,7 @@
       }
     },
     "Click & Drag" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -52,6 +57,7 @@
       }
     },
     "Couldn’t add “%@”." : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -62,6 +68,7 @@
       }
     },
     "Couldn’t export settings." : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -72,6 +79,7 @@
       }
     },
     "Couldn’t import settings." : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -82,6 +90,7 @@
       }
     },
     "Direction" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -92,6 +101,7 @@
       }
     },
     "Enable Click…" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -102,6 +112,7 @@
       }
     },
     "Export Settings…" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -112,6 +123,7 @@
       }
     },
     "Ignored in" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -122,6 +134,7 @@
       }
     },
     "Import Settings…" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -132,6 +145,7 @@
       }
     },
     "Left" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -142,6 +156,7 @@
       }
     },
     "Move Pointer" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -152,6 +167,7 @@
       }
     },
     "No apps yet." : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -162,6 +178,7 @@
       }
     },
     "Open at Login" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -172,6 +189,7 @@
       }
     },
     "Peak Speed" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -182,6 +200,7 @@
       }
     },
     "Pointer Speed" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -192,6 +211,7 @@
       }
     },
     "Quit" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -202,6 +222,7 @@
       }
     },
     "Ramp Duration" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -212,6 +233,7 @@
       }
     },
     "Restore Defaults" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -222,6 +244,7 @@
       }
     },
     "Right" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -232,6 +255,7 @@
       }
     },
     "Screen" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -242,6 +266,7 @@
       }
     },
     "Settings" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -252,6 +277,7 @@
       }
     },
     "Settings…" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -262,6 +288,7 @@
       }
     },
     "Shortcuts" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -272,6 +299,7 @@
       }
     },
     "Speed" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -282,6 +310,7 @@
       }
     },
     "Steady" : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -292,6 +321,7 @@
       }
     },
     "The app doesn’t have a bundle identifier." : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -302,6 +332,7 @@
       }
     },
     "The file doesn’t contain any TelePointer settings." : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
@@ -312,6 +343,7 @@
       }
     },
     "The file is damaged." : {
+      "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {

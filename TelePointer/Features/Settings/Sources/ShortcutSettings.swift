@@ -35,7 +35,7 @@ public struct ShortcutSettings: View {
                     }
                     .pickerStyle(.segmented)
                     .labelsHidden()
-                    .frame(width: Self.directionPickerWidth)
+                    .frame(width: Self.directionPickerWidth, alignment: .trailing)
                 }
             }
 

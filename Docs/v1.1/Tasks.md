@@ -31,7 +31,7 @@
 
 [AppStoreConnect.md](../AppStoreConnect.md)
 
-- [ ] Support URL이 개인정보 처리방침 주소다 — `TelePointer/support`로 바꾼다
-- [ ] Keywords 맨 앞의 공백을 지운다
-- [ ] Keywords의 `pointer`가 Subtitle과 겹친다 — `mouse`로 바꾼다
-- [ ] App Review Notes 정리 — 2.4.5 소명 문단을 새 버전에 맞게 고치고 Mouse Keys 경로 중복을 줄인다
+- [x] Support URL이 개인정보 처리방침 주소다 — `TelePointer/support`로 바꾼다
+- [x] Keywords 맨 앞의 공백을 지운다
+- [x] Keywords의 `pointer`가 Subtitle과 겹친다 — `mouse`로 바꾼다
+- [x] App Review Notes 정리 — 2.4.5 소명 문단을 새 버전에 맞게 고치고 Mouse Keys 경로 중복을 줄인다

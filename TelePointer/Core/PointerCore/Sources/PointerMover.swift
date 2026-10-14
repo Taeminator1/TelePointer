@@ -50,6 +50,7 @@ public enum PointerMover {
     static func move(to point: CGPoint) {
         guard let current = pressed else {
             CGWarpMouseCursorPosition(point)
+            post(.mouseMoved, at: point)
             return
         }
 
@@ -101,7 +102,12 @@ public enum PointerMover {
         return state
     }
 
-    private static func post(_ type: CGEventType, button: PointerButton, state: Int64, at point: CGPoint) {
+    private static func post(
+        _ type: CGEventType,
+        button: PointerButton = .left,
+        state: Int64 = 0,
+        at point: CGPoint
+    ) {
         guard let event = CGEvent(
             mouseEventSource: nil,
             mouseType: type,

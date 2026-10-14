@@ -39,9 +39,10 @@ public struct ShortcutSettings: View {
                 }
             }
 
-            Section("Click & Drag") {
+            Section("Click & Scroll") {
                 row("Left", name: .clickPointerLeft)
                 row("Right", name: .clickPointerRight)
+                row("Scroll", name: .scrollPointer)
             }
         }
         .formStyle(.grouped)

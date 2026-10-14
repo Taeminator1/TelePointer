@@ -111,6 +111,11 @@ public final class DirectionalMover {
     }
 
     private func step(_ vector: CGVector, distance: Double) {
+        guard !PointerMover.isScrolling else {
+            PointerMover.scroll(by: CGVector(dx: vector.dx * distance, dy: vector.dy * distance))
+            return
+        }
+
         guard let current = position else { return }
 
         let moved = CGPoint(

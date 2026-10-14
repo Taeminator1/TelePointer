@@ -8,6 +8,10 @@ public enum PointerMover {
     private static var lastClick: (at: ContinuousClock.Instant, point: CGPoint, button: PointerButton, state: Int64)?
     private static var pressed: (button: PointerButton, state: Int64)?
     private static var watchdog: Task<Void, Never>?
+    private static var scrollWatchdog: Task<Void, Never>?
+    private static var scrollRemainder = CGVector.zero
+
+    static private(set) var isScrolling = false
 
     public static func cycleScreenCenter() {
         guard let primaryScreen = NSScreen.screens.first else { return }
@@ -27,7 +31,7 @@ public enum PointerMover {
         pressed = (button, state)
         post(button.downType, button: button, state: state, at: location)
 
-        watchdog = Task { await watchModifiers(requiredModifiers) }
+        watchdog = Task { await watchModifiers(requiredModifiers, onRelease: releasePressed) }
     }
 
     public static func release(_ button: PointerButton) {
@@ -45,6 +49,39 @@ public enum PointerMover {
         guard let current = pressed else { return }
 
         release(current.button)
+    }
+
+    public static func beginScroll(requiredModifiers: NSEvent.ModifierFlags) {
+        guard !isScrolling else { return }
+
+        isScrolling = true
+        scrollRemainder = .zero
+        scrollWatchdog = Task { await watchModifiers(requiredModifiers, onRelease: endScroll) }
+    }
+
+    public static func endScroll() {
+        scrollWatchdog?.cancel()
+        scrollWatchdog = nil
+        isScrolling = false
+    }
+
+    static func scroll(by offset: CGVector) {
+        let total = CGVector(dx: scrollRemainder.dx - offset.dx, dy: scrollRemainder.dy - offset.dy)
+        let wheel = (x: total.dx.rounded(.towardZero), y: total.dy.rounded(.towardZero))
+        scrollRemainder = CGVector(dx: total.dx - wheel.x, dy: total.dy - wheel.y)
+
+        guard wheel.x != 0 || wheel.y != 0, let event = CGEvent(
+            scrollWheelEvent2Source: nil,
+            units: .pixel,
+            wheelCount: 2,
+            wheel1: Int32(wheel.y),
+            wheel2: Int32(wheel.x),
+            wheel3: 0
+        ) else { return }
+
+        event.flags = []
+        event.setIntegerValueField(.scrollWheelEventIsContinuous, value: 1)
+        event.post(tap: .cghidEventTap)
     }
 
     static func move(to point: CGPoint) {
@@ -69,7 +106,7 @@ public enum PointerMover {
         }
     }
 
-    private static func watchModifiers(_ required: NSEvent.ModifierFlags) async {
+    private static func watchModifiers(_ required: NSEvent.ModifierFlags, onRelease: () -> Void) async {
         guard !required.isEmpty else { return }
 
         while !Task.isCancelled {
@@ -78,7 +115,7 @@ public enum PointerMover {
             guard !Task.isCancelled else { return }
 
             guard modifiersHeld(required) else {
-                releasePressed()
+                onRelease()
                 return
             }
         }

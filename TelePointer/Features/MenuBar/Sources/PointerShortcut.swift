@@ -40,6 +40,15 @@ public enum PointerShortcut {
             }
         }
 
+        KeyboardShortcuts.onKeyDown(for: .scrollPointer) {
+            PointerMover.beginScroll(
+                requiredModifiers: KeyboardShortcuts.getShortcut(for: .scrollPointer)?.modifiers ?? []
+            )
+        }
+        KeyboardShortcuts.onKeyUp(for: .scrollPointer) {
+            PointerMover.endScroll()
+        }
+
         for (name, direction) in directions {
             KeyboardShortcuts.onKeyDown(for: name) {
                 mover.press(
@@ -64,5 +73,6 @@ public enum PointerShortcut {
     static func releaseHeld() {
         mover.releaseHeld()
         PointerMover.releasePressed()
+        PointerMover.endScroll()
     }
 }

@@ -45,13 +45,13 @@
         }
       }
     },
-    "Click & Drag" : {
+    "Click & Scroll" : {
       "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "클릭 및 드래그"
+            "value" : "클릭 및 스크롤"
           }
         }
       }
@@ -261,6 +261,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "화면"
+          }
+        }
+      }
+    },
+    "Scroll" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스크롤"
           }
         }
       }

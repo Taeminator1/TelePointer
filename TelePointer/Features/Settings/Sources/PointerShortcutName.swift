@@ -16,6 +16,7 @@ public let pointerShortcutNames: [KeyboardShortcuts.Name] = [
     .movePointerRightSteadily,
     .clickPointerLeft,
     .clickPointerRight,
+    .scrollPointer,
 ]
 
 extension KeyboardShortcuts.Name {
@@ -32,6 +33,11 @@ extension KeyboardShortcuts.Name {
     public static let clickPointerRight = Self(
         "clickPointerRight",
         initial: .init(.v, modifiers: pointerModifiers)
+    )
+
+    public static let scrollPointer = Self(
+        "scrollPointer",
+        initial: .init(.z, modifiers: pointerModifiers)
     )
 
     public static let movePointerUp = Self(

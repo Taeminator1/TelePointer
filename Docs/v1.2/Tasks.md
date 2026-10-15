@@ -16,7 +16,12 @@
 
 ## 2. Preset
 
-- [ ] preset을 여러 개 추가한다
+- [ ] Import · Export에 Playground 실험 설정을 넣는다
+- [ ] 설정 창 맨 위에 General 탭을 만든다
+- [ ] Import · Export를 메뉴바 메뉴에서 General 탭으로 옮긴다
+- [ ] General 탭의 Import · Export 아래에 Presets를 둔다
+- [ ] preset을 추가한다
+- [ ] preset을 삭제한다
 - [ ] preset마다 별명을 붙인다
 
 ## 3. 부드러운 커서 이동

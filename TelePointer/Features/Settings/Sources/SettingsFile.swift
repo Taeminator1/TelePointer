@@ -14,9 +14,16 @@ struct SettingsFile: Equatable, Codable {
         var steady: Double?
     }
 
+    struct Experiments: Equatable, Codable {
+        var smoothTurning: SmoothTurning?
+        var slowOnTurn: SlowOnTurn?
+        var noHoldLimit: Bool?
+    }
+
     var shortcuts: [String: KeyboardShortcuts.Shortcut?]?
     var exceptions: [String: [ExcludedApp]]?
     var speed: Speed?
+    var experiments: Experiments?
 }
 
 extension SettingsFile {
@@ -39,6 +46,8 @@ extension SettingsFile {
 
     var isEmpty: Bool {
         knownShortcuts.isEmpty && knownExceptions.isEmpty && speed?.curve == nil && speed?.steady == nil
+            && experiments?.smoothTurning == nil && experiments?.slowOnTurn == nil
+            && experiments?.noHoldLimit == nil
     }
 
     private var knownShortcuts: [(name: KeyboardShortcuts.Name, shortcut: KeyboardShortcuts.Shortcut?)] {
@@ -64,7 +73,8 @@ extension SettingsFile {
     @MainActor
     static func current(
         speed speedStore: SpeedStore,
-        exceptions exceptionStore: ShortcutExceptionStore
+        exceptions exceptionStore: ShortcutExceptionStore,
+        experiments experimentStore: ExperimentStore
     ) -> SettingsFile {
         SettingsFile(
             shortcuts: Dictionary(
@@ -73,12 +83,21 @@ extension SettingsFile {
                 }
             ),
             exceptions: exceptionStore.all,
-            speed: Speed(curve: speedStore.curve, steady: speedStore.steadySpeed)
+            speed: Speed(curve: speedStore.curve, steady: speedStore.steadySpeed),
+            experiments: Experiments(
+                smoothTurning: experimentStore.smoothTurning,
+                slowOnTurn: experimentStore.slowOnTurn,
+                noHoldLimit: experimentStore.noHoldLimit
+            )
         )
     }
 
     @MainActor
-    func apply(speed speedStore: SpeedStore, exceptions exceptionStore: ShortcutExceptionStore) {
+    func apply(
+        speed speedStore: SpeedStore,
+        exceptions exceptionStore: ShortcutExceptionStore,
+        experiments experimentStore: ExperimentStore
+    ) {
         for (name, shortcut) in knownShortcuts {
             KeyboardShortcuts.setShortcut(shortcut, for: name)
         }
@@ -93,6 +112,18 @@ extension SettingsFile {
 
         if let steady = speed?.steady {
             speedStore.steadySpeed = steady
+        }
+
+        if let smoothTurning = experiments?.smoothTurning {
+            experimentStore.smoothTurning = smoothTurning
+        }
+
+        if let slowOnTurn = experiments?.slowOnTurn {
+            experimentStore.slowOnTurn = slowOnTurn
+        }
+
+        if let noHoldLimit = experiments?.noHoldLimit {
+            experimentStore.noHoldLimit = noHoldLimit
         }
     }
 }

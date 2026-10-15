@@ -25,7 +25,12 @@ struct SettingsFileTests {
                 "movePointerUp": nil,
             ],
             exceptions: ["movePointerLeft": [code, xcode]],
-            speed: SettingsFile.Speed(curve: .default, steady: 120)
+            speed: SettingsFile.Speed(curve: .default, steady: 120),
+            experiments: SettingsFile.Experiments(
+                smoothTurning: .headingBlend,
+                slowOnTurn: .dip,
+                noHoldLimit: true
+            )
         )
 
         #expect(try SettingsFile.decoded(from: file.encoded()) == file)
@@ -38,13 +43,17 @@ struct SettingsFileTests {
 
         let file = SettingsFile.current(
             speed: SpeedStore(defaults: defaults),
-            exceptions: exceptions
+            exceptions: exceptions,
+            experiments: ExperimentStore(defaults: defaults)
         )
 
         #expect(file.shortcuts?.count == pointerShortcutNames.count)
         #expect(file.exceptions == ["movePointerLeft": [code]])
         #expect(file.speed?.curve == .default)
         #expect(file.speed?.steady == SteadySpeed.default)
+        #expect(file.experiments?.smoothTurning == .default)
+        #expect(file.experiments?.slowOnTurn == .default)
+        #expect(file.experiments?.noHoldLimit == false)
     }
 
     @Test("지운 단축키는 지워진 채로 왕복한다")
@@ -93,7 +102,11 @@ struct SettingsFileTests {
         exceptions.add(code, for: "movePointerLeft")
 
         SettingsFile(shortcuts: nil, speed: SettingsFile.Speed(curve: .default, steady: nil))
-            .apply(speed: store, exceptions: exceptions)
+            .apply(
+                speed: store,
+                exceptions: exceptions,
+                experiments: ExperimentStore(defaults: defaults)
+            )
 
         #expect(store.steadySpeed == 200)
         #expect(exceptions.apps(for: "movePointerLeft") == [code])
@@ -110,7 +123,11 @@ struct SettingsFileTests {
                 steady: 99_999
             )
         )
-        .apply(speed: store, exceptions: ShortcutExceptionStore(defaults: defaults))
+        .apply(
+            speed: store,
+            exceptions: ShortcutExceptionStore(defaults: defaults),
+            experiments: ExperimentStore(defaults: defaults)
+        )
 
         #expect(store.curve.base == SpeedCurve.baseRange.lowerBound)
         #expect(store.curve.peak == SpeedCurve.peakRange.upperBound)
@@ -142,7 +159,11 @@ struct SettingsFileTests {
         exceptions.add(code, for: "movePointerLeft")
 
         SettingsFile(exceptions: ["movePointer": [xcode]])
-            .apply(speed: SpeedStore(defaults: defaults), exceptions: exceptions)
+            .apply(
+                speed: SpeedStore(defaults: defaults),
+                exceptions: exceptions,
+                experiments: ExperimentStore(defaults: defaults)
+            )
 
         #expect(exceptions.apps(for: "movePointer") == [xcode])
         #expect(exceptions.apps(for: "movePointerLeft") == [code])
@@ -154,8 +175,36 @@ struct SettingsFileTests {
         exceptions.add(code, for: "movePointer")
 
         SettingsFile(exceptions: ["movePointer": []])
-            .apply(speed: SpeedStore(defaults: defaults), exceptions: exceptions)
+            .apply(
+                speed: SpeedStore(defaults: defaults),
+                exceptions: exceptions,
+                experiments: ExperimentStore(defaults: defaults)
+            )
 
         #expect(exceptions.all.isEmpty)
+    }
+
+    @Test("실험 설정만 든 파일도 설정 파일로 읽는다")
+    func acceptsExperimentsOnlyFile() throws {
+        let file = try SettingsFile.decoded(from: Data(#"{"experiments": {"noHoldLimit": true}}"#.utf8))
+
+        #expect(file.experiments?.noHoldLimit == true)
+    }
+
+    @Test("실험 설정은 든 항목만 적용한다")
+    func appliesPresentExperiments() {
+        let experiments = ExperimentStore(defaults: defaults)
+        experiments.slowOnTurn = .dip
+
+        SettingsFile(experiments: SettingsFile.Experiments(smoothTurning: .off, noHoldLimit: true))
+            .apply(
+                speed: SpeedStore(defaults: defaults),
+                exceptions: ShortcutExceptionStore(defaults: defaults),
+                experiments: experiments
+            )
+
+        #expect(experiments.smoothTurning == .off)
+        #expect(experiments.slowOnTurn == .dip)
+        #expect(experiments.noHoldLimit == true)
     }
 }

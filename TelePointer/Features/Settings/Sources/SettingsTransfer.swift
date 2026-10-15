@@ -11,7 +11,8 @@ public enum SettingsTransfer {
 
     public static func exportToFile(
         speed speedStore: SpeedStore = .shared,
-        exceptions exceptionStore: ShortcutExceptionStore = .shared
+        exceptions exceptionStore: ShortcutExceptionStore = .shared,
+        experiments experimentStore: ExperimentStore = .shared
     ) {
         let panel = NSSavePanel()
         panel.allowedContentTypes = [fileType]
@@ -21,9 +22,13 @@ public enum SettingsTransfer {
         guard let url = url(from: panel) else { return }
 
         do {
-            try SettingsFile.current(speed: speedStore, exceptions: exceptionStore)
-                .encoded()
-                .write(to: url)
+            try SettingsFile.current(
+                speed: speedStore,
+                exceptions: exceptionStore,
+                experiments: experimentStore
+            )
+            .encoded()
+            .write(to: url)
         } catch {
             report(String(localized: "Couldn’t export settings."), error)
         }
@@ -31,7 +36,8 @@ public enum SettingsTransfer {
 
     public static func importFromFile(
         speed speedStore: SpeedStore = .shared,
-        exceptions exceptionStore: ShortcutExceptionStore = .shared
+        exceptions exceptionStore: ShortcutExceptionStore = .shared,
+        experiments experimentStore: ExperimentStore = .shared
     ) {
         let panel = NSOpenPanel()
         panel.allowedContentTypes = [fileType]
@@ -42,7 +48,7 @@ public enum SettingsTransfer {
 
         do {
             try SettingsFile.decoded(from: Data(contentsOf: url))
-                .apply(speed: speedStore, exceptions: exceptionStore)
+                .apply(speed: speedStore, exceptions: exceptionStore, experiments: experimentStore)
         } catch {
             report(String(localized: "Couldn’t import settings."), error)
         }

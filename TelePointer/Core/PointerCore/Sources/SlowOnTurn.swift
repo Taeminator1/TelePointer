@@ -1,4 +1,4 @@
-public enum SlowOnTurn: String, CaseIterable, Sendable {
+public enum SlowOnTurn: String, CaseIterable, Codable, Sendable {
     case off
     case dip
     case restartRamp

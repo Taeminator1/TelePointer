@@ -1,4 +1,4 @@
-public enum SmoothTurning: String, CaseIterable, Sendable {
+public enum SmoothTurning: String, CaseIterable, Codable, Sendable {
     case off
     case headingBlend
     case overshootReturn

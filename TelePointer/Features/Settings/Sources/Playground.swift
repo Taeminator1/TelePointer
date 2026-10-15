@@ -13,7 +13,7 @@ public struct Playground: View {
     ]
     private static let keyOrder = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
     private static let gridSpacing: CGFloat = 10
-    private static let gridScales: [Int?] = [2, 4, 8, 16, nil]
+    private static let gridScales: [Int?] = [4, 8, 16, 32, nil]
 
     @State private var strokes: [Stroke] = []
     @State private var hovering = false

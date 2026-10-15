@@ -29,8 +29,10 @@ public struct AppSettings: View {
                     ShortcutSettings()
                 case .speed:
                     SpeedSettings()
+                #if DEBUG
                 case .playground:
                     PlaygroundSettings()
+                #endif
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -49,13 +51,17 @@ public struct AppSettings: View {
 private enum SettingsPane: CaseIterable {
     case shortcuts
     case speed
+    #if DEBUG
     case playground
+    #endif
 
     var title: LocalizedStringKey {
         switch self {
         case .shortcuts: "Shortcuts"
         case .speed: "Pointer Speed"
+        #if DEBUG
         case .playground: "Playground"
+        #endif
         }
     }
 
@@ -63,7 +69,9 @@ private enum SettingsPane: CaseIterable {
         switch self {
         case .shortcuts: "keyboard"
         case .speed: "cursorarrow.motionlines"
+        #if DEBUG
         case .playground: "scribble"
+        #endif
         }
     }
 }

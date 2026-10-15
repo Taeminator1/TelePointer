@@ -20,11 +20,13 @@ struct TelePointerApp: App {
         }
         .settingsWindow()
 
+        #if DEBUG
         Window("Playground", id: Playground.windowID) {
             Playground()
         }
         .defaultLaunchBehavior(.suppressed)
         .restorationBehavior(.disabled)
+        #endif
     }
 }
 

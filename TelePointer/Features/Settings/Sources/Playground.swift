@@ -1,3 +1,4 @@
+#if DEBUG
 import SwiftUI
 
 public struct Playground: View {
@@ -69,3 +70,4 @@ struct PlaygroundSettings: View {
 #Preview {
     Playground()
 }
+#endif

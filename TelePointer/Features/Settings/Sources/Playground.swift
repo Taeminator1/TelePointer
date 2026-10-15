@@ -9,19 +9,20 @@ public struct Playground: View {
         nil, .black, .red, .orange, .yellow, .green, .mint, .blue, .purple, .brown,
     ]
     private static let keyOrder = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
-    private static let gridSpacing: CGFloat = 20
+    private static let gridSpacing: CGFloat = 10
+    private static let gridScales: [Int?] = [2, 4, 8, 16, nil]
 
     @State private var strokes: [Stroke] = []
     @State private var hovering = false
     @State private var colorIndex = 1
-    @State private var showsGrid = true
+    @State private var gridScaleIndex = 0
 
     public init() {}
 
     public var body: some View {
         Canvas { context, size in
-            if showsGrid {
-                context.stroke(gridPath(in: size), with: .color(.black.opacity(0.08)), lineWidth: 1)
+            if let gridScale {
+                context.stroke(gridPath(in: size, scale: gridScale), with: .color(.black.opacity(0.08)), lineWidth: 1)
             }
 
             for stroke in strokes {
@@ -46,7 +47,7 @@ public struct Playground: View {
         }
         .overlay(alignment: .bottomTrailing) {
             VStack(alignment: .leading, spacing: 4) {
-                shortcutRow("g", "grid")
+                shortcutRow("g", gridScale.map { "grid ×\($0)" } ?? "grid off")
                 shortcutRow("c", "clear")
                 shortcutRow("0–9", "change color")
 
@@ -78,7 +79,7 @@ public struct Playground: View {
                 Button("Clear", action: clear)
                     .keyboardShortcut("c", modifiers: [])
 
-                Button("Grid") { showsGrid.toggle() }
+                Button("Grid") { gridScaleIndex = (gridScaleIndex + 1) % Self.gridScales.count }
                     .keyboardShortcut("g", modifiers: [])
 
                 ForEach(Self.palette.indices, id: \.self) { index in
@@ -93,15 +94,20 @@ public struct Playground: View {
         .frame(minWidth: 600, minHeight: 400)
     }
 
-    private func gridPath(in size: CGSize) -> Path {
+    private var gridScale: Int? {
+        Self.gridScales[gridScaleIndex]
+    }
+
+    private func gridPath(in size: CGSize, scale: Int) -> Path {
+        let spacing = Self.gridSpacing * CGFloat(scale)
         var path = Path()
 
-        for x in stride(from: 0, through: size.width, by: Self.gridSpacing) {
+        for x in stride(from: 0, through: size.width, by: spacing) {
             path.move(to: CGPoint(x: x, y: 0))
             path.addLine(to: CGPoint(x: x, y: size.height))
         }
 
-        for y in stride(from: 0, through: size.height, by: Self.gridSpacing) {
+        for y in stride(from: 0, through: size.height, by: spacing) {
             path.move(to: CGPoint(x: 0, y: y))
             path.addLine(to: CGPoint(x: size.width, y: y))
         }

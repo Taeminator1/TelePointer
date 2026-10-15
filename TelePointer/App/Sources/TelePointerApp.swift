@@ -19,6 +19,12 @@ struct TelePointerApp: App {
             AppSettings()
         }
         .settingsWindow()
+
+        Window("Playground", id: Playground.windowID) {
+            Playground()
+        }
+        .defaultLaunchBehavior(.suppressed)
+        .restorationBehavior(.disabled)
     }
 }
 

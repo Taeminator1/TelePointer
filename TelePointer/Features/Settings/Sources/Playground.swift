@@ -206,7 +206,11 @@ struct PlaygroundSettings: View {
 
     var body: some View {
         Form {
-            Toggle("Smooth Turning", isOn: $experiments.smoothTurning)
+            Picker("Smooth Turning", selection: $experiments.smoothTurning) {
+                ForEach(SmoothTurning.allCases, id: \.self) { mode in
+                    Text(mode.label).tag(mode)
+                }
+            }
             Toggle("No Hold Limit", isOn: $experiments.noHoldLimit)
         }
         .formStyle(.grouped)
@@ -214,6 +218,16 @@ struct PlaygroundSettings: View {
             openWindow(id: Playground.windowID)
         }
         .frame(width: 400)
+    }
+}
+
+extension SmoothTurning {
+    fileprivate var label: String {
+        switch self {
+        case .off: "Off"
+        case .headingBlend: "Heading Blend"
+        case .overshootReturn: "Overshoot Return"
+        }
     }
 }
 

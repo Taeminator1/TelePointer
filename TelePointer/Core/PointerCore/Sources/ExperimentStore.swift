@@ -11,8 +11,8 @@ public final class ExperimentStore {
 
     @ObservationIgnored private let defaults: UserDefaults
 
-    public var smoothTurning: Bool {
-        didSet { defaults.set(smoothTurning, forKey: Self.smoothTurningKey) }
+    public var smoothTurning: SmoothTurning {
+        didSet { defaults.set(smoothTurning.rawValue, forKey: Self.smoothTurningKey) }
     }
 
     public var noHoldLimit: Bool {
@@ -21,7 +21,7 @@ public final class ExperimentStore {
 
     public init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
-        smoothTurning = defaults.object(forKey: Self.smoothTurningKey) as? Bool ?? true
+        smoothTurning = defaults.string(forKey: Self.smoothTurningKey).flatMap(SmoothTurning.init) ?? .default
         noHoldLimit = defaults.bool(forKey: Self.noHoldLimitKey)
     }
 }

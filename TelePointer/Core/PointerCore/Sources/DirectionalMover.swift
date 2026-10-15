@@ -30,9 +30,11 @@ public final class DirectionalMover {
     private var warpFrames: [CGRect] = []
     private var curve: SpeedCurve = .default
     private var steady: Double = SteadySpeed.default
-    private var smoothTurning = true
+    private var smoothTurning = SmoothTurning.default
     private var noHoldLimit = false
     private var heading: CGVector?
+    private var offset = CGVector.zero
+    private var offsetVelocity = CGVector.zero
     private var repeater: Task<Void, Never>?
     private var generation = 0
 
@@ -88,6 +90,8 @@ public final class DirectionalMover {
         active.removeAll()
         position = nil
         heading = nil
+        offset = .zero
+        offsetVelocity = .zero
     }
 
     private func run(token: Int) async {
@@ -115,8 +119,8 @@ public final class DirectionalMover {
                 speed = curve.speed(at: ramped)
             }
 
-            let vector = turn(toward: normalizedVector(of: Set(active.keys)), over: delta)
-            step(vector, distance: speed * delta)
+            let displacement = turn(toward: normalizedVector(of: Set(active.keys)), speed: speed, over: delta)
+            step(displacement)
 
             try? await Task.sleep(for: tuning.tick)
         }
@@ -126,33 +130,71 @@ public final class DirectionalMover {
         }
     }
 
-    private func turn(toward target: CGVector, over delta: Double) -> CGVector {
-        guard smoothTurning, let current = heading else {
-            heading = target
-            return target
+    private func turn(toward target: CGVector, speed: Double, over delta: Double) -> CGVector {
+        switch smoothTurning {
+        case .off:
+            CGVector(dx: target.dx * speed * delta, dy: target.dy * speed * delta)
+        case .headingBlend:
+            blendHeading(toward: target, speed: speed, over: delta)
+        case .overshootReturn:
+            returnOvershoot(toward: target, speed: speed, over: delta)
         }
-
-        let blend = 1 - exp(-delta / tuning.turnDuration)
-        let turned = CGVector(
-            dx: current.dx + (target.dx - current.dx) * blend,
-            dy: current.dy + (target.dy - current.dy) * blend
-        )
-
-        heading = turned
-        return turned
     }
 
-    private func step(_ vector: CGVector, distance: Double) {
+    private func blendHeading(toward target: CGVector, speed: Double, over delta: Double) -> CGVector {
+        let turned: CGVector
+        if let current = heading {
+            let blend = 1 - exp(-delta / tuning.turnDuration)
+            turned = CGVector(
+                dx: current.dx + (target.dx - current.dx) * blend,
+                dy: current.dy + (target.dy - current.dy) * blend
+            )
+        } else {
+            turned = target
+        }
+
+        heading = turned
+        return CGVector(dx: turned.dx * speed * delta, dy: turned.dy * speed * delta)
+    }
+
+    private func returnOvershoot(toward target: CGVector, speed: Double, over delta: Double) -> CGVector {
+        let ideal = CGVector(dx: target.dx * speed * delta, dy: target.dy * speed * delta)
+
+        if let previous = heading {
+            offsetVelocity.dx -= (target.dx - previous.dx) * speed
+            offsetVelocity.dy -= (target.dy - previous.dy) * speed
+        }
+        heading = target
+
+        let (dx, vx) = settle(offset.dx, velocity: offsetVelocity.dx, over: delta)
+        let (dy, vy) = settle(offset.dy, velocity: offsetVelocity.dy, over: delta)
+        let moved = CGVector(dx: dx - offset.dx, dy: dy - offset.dy)
+
+        offset = CGVector(dx: dx, dy: dy)
+        offsetVelocity = CGVector(dx: vx, dy: vy)
+
+        return CGVector(dx: ideal.dx + moved.dx, dy: ideal.dy + moved.dy)
+    }
+
+    private func settle(_ offset: Double, velocity: Double, over delta: Double) -> (Double, Double) {
+        let rate = 1 / tuning.turnDuration
+        let decay = exp(-rate * delta)
+        let carry = velocity + rate * offset
+
+        return ((offset + carry * delta) * decay, (velocity - rate * carry * delta) * decay)
+    }
+
+    private func step(_ displacement: CGVector) {
         guard !PointerMover.isScrolling else {
-            PointerMover.scroll(by: CGVector(dx: vector.dx * distance, dy: vector.dy * distance))
+            PointerMover.scroll(by: displacement)
             return
         }
 
         guard let current = position else { return }
 
         let moved = CGPoint(
-            x: current.x + vector.dx * distance,
-            y: current.y + vector.dy * distance
+            x: current.x + displacement.dx,
+            y: current.y + displacement.dy
         )
         let target = clamped(moved, to: warpFrames)
 

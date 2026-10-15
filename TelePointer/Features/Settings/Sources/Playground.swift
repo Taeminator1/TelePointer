@@ -6,7 +6,7 @@ public struct Playground: View {
     public static let windowID = "playground"
 
     private static let palette: [Color?] = [
-        nil, .black, .red, .orange, .yellow, .green, .mint, .blue, .purple, .brown,
+        nil, .primary, .red, .orange, .yellow, .green, .mint, .blue, .purple, .brown,
     ]
     private static let keyOrder = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
     private static let gridSpacing: CGFloat = 10
@@ -22,7 +22,7 @@ public struct Playground: View {
     public var body: some View {
         Canvas { context, size in
             if let gridScale {
-                context.stroke(gridPath(in: size, scale: gridScale), with: .color(.black.opacity(0.08)), lineWidth: 1)
+                context.stroke(gridPath(in: size, scale: gridScale), with: .color(.primary.opacity(0.08)), lineWidth: 1)
             }
 
             for stroke in strokes {
@@ -66,14 +66,14 @@ public struct Playground: View {
             }
             .fixedSize()
             .font(.callout)
-            .foregroundStyle(.black.opacity(0.6))
+            .foregroundStyle(.secondary)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .floatingPanel()
             .padding(16)
             .allowsHitTesting(false)
         }
-        .background(Color.white.ignoresSafeArea())
+        .background(Color(nsColor: .textBackgroundColor).ignoresSafeArea())
         .background {
             Group {
                 Button("Clear", action: clear)
@@ -168,7 +168,7 @@ extension View {
         if #available(macOS 26, *) {
             glassEffect(.regular, in: .rect(cornerRadius: 12))
         } else {
-            background(.white, in: .rect(cornerRadius: 12))
+            background(.background, in: .rect(cornerRadius: 12))
                 .shadow(color: .black.opacity(0.15), radius: 8, y: 2)
         }
     }

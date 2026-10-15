@@ -6,17 +6,20 @@ public final class DirectionalMover {
         public var tick: Duration
         public var holdLimit: Double
         public var turnDuration: Double
+        public var turnSlowdown: Double
         public var steadyModifier: NSEvent.ModifierFlags
 
         public init(
             tick: Duration = .milliseconds(8),
             holdLimit: Double = 5,
             turnDuration: Double = 0.08,
+            turnSlowdown: Double = 0.8,
             steadyModifier: NSEvent.ModifierFlags = .command
         ) {
             self.tick = tick
             self.holdLimit = holdLimit
             self.turnDuration = turnDuration
+            self.turnSlowdown = turnSlowdown
             self.steadyModifier = steadyModifier
         }
     }
@@ -31,6 +34,7 @@ public final class DirectionalMover {
     private var curve: SpeedCurve = .default
     private var steady: Double = SteadySpeed.default
     private var smoothTurning = SmoothTurning.default
+    private var slowOnTurn = SlowOnTurn.default
     private var noHoldLimit = false
     private var heading: CGVector?
     private var offset = CGVector.zero
@@ -55,6 +59,7 @@ public final class DirectionalMover {
             curve = settings.curve
             steady = settings.steadySpeed
             smoothTurning = experiments.smoothTurning
+            slowOnTurn = experiments.slowOnTurn
             noHoldLimit = experiments.noHoldLimit
         }
 
@@ -99,6 +104,8 @@ public final class DirectionalMover {
         let began = clock.now
         var previous = began
         var ramped = 0.0
+        var lastTarget: CGVector?
+        var sinceTurn: Double?
 
         while !Task.isCancelled {
             active = active.filter { modifiersHeld($0.value) }
@@ -110,7 +117,18 @@ public final class DirectionalMover {
             let delta = seconds(from: previous, to: now)
             previous = now
 
-            let speed: Double
+            let target = normalizedVector(of: Set(active.keys))
+            sinceTurn = sinceTurn.map { $0 + delta }
+            if let lastTarget, lastTarget != target {
+                switch slowOnTurn {
+                case .off: break
+                case .dip: sinceTurn = 0
+                case .restartRamp: ramped = 0
+                }
+            }
+            lastTarget = target
+
+            var speed: Double
             if modifiersHeld(tuning.steadyModifier) {
                 ramped = 0
                 speed = steady
@@ -119,7 +137,11 @@ public final class DirectionalMover {
                 speed = curve.speed(at: ramped)
             }
 
-            let displacement = turn(toward: normalizedVector(of: Set(active.keys)), speed: speed, over: delta)
+            if let sinceTurn {
+                speed *= slowdown(at: sinceTurn)
+            }
+
+            let displacement = turn(toward: target, speed: speed, over: delta)
             step(displacement)
 
             try? await Task.sleep(for: tuning.tick)
@@ -128,6 +150,11 @@ public final class DirectionalMover {
         if token == generation {
             stop()
         }
+    }
+
+    private func slowdown(at elapsed: Double) -> Double {
+        let progress = elapsed / tuning.turnDuration
+        return 1 - tuning.turnSlowdown * progress * exp(1 - progress)
     }
 
     private func turn(toward target: CGVector, speed: Double, over delta: Double) -> CGVector {

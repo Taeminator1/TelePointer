@@ -211,6 +211,11 @@ struct PlaygroundSettings: View {
                     Text(mode.label).tag(mode)
                 }
             }
+            Picker("Slow on Turn", selection: $experiments.slowOnTurn) {
+                ForEach(SlowOnTurn.allCases, id: \.self) { mode in
+                    Text(mode.label).tag(mode)
+                }
+            }
             Toggle("No Hold Limit", isOn: $experiments.noHoldLimit)
         }
         .formStyle(.grouped)
@@ -227,6 +232,16 @@ extension SmoothTurning {
         case .off: "Off"
         case .headingBlend: "Heading Blend"
         case .overshootReturn: "Overshoot Return"
+        }
+    }
+}
+
+extension SlowOnTurn {
+    fileprivate var label: String {
+        switch self {
+        case .off: "Off"
+        case .dip: "Dip"
+        case .restartRamp: "Restart Ramp"
         }
     }
 }

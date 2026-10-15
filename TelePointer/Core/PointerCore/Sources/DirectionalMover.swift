@@ -31,6 +31,7 @@ public final class DirectionalMover {
     private var curve: SpeedCurve = .default
     private var steady: Double = SteadySpeed.default
     private var smoothTurning = true
+    private var noHoldLimit = false
     private var heading: CGVector?
     private var repeater: Task<Void, Never>?
     private var generation = 0
@@ -52,6 +53,7 @@ public final class DirectionalMover {
             curve = settings.curve
             steady = settings.steadySpeed
             smoothTurning = experiments.smoothTurning
+            noHoldLimit = experiments.noHoldLimit
         }
 
         active[direction] = requiredModifiers.subtracting(tuning.steadyModifier)
@@ -99,7 +101,7 @@ public final class DirectionalMover {
             guard !active.isEmpty else { break }
 
             let now = clock.now
-            guard seconds(from: began, to: now) < tuning.holdLimit else { break }
+            guard noHoldLimit || seconds(from: began, to: now) < tuning.holdLimit else { break }
 
             let delta = seconds(from: previous, to: now)
             previous = now

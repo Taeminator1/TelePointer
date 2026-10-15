@@ -181,6 +181,7 @@ struct PlaygroundSettings: View {
     var body: some View {
         Form {
             Toggle("Smooth Turning", isOn: $experiments.smoothTurning)
+            Toggle("No Hold Limit", isOn: $experiments.noHoldLimit)
         }
         .formStyle(.grouped)
         .bottomButtonBar("Open Playground") {

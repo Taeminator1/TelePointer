@@ -28,13 +28,27 @@ public struct Playground: View {
                 hovering = false
             }
         }
-        .background(Color.white.ignoresSafeArea())
-        .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
-        .onDisappear {
-            strokes.removeAll()
-            hovering = false
+        .overlay(alignment: .bottomTrailing) {
+            Text("Press esc to clear")
+                .font(.callout)
+                .foregroundStyle(.black.opacity(0.3))
+                .padding(12)
+                .allowsHitTesting(false)
         }
+        .background(Color.white.ignoresSafeArea())
+        .background {
+            Button("Clear", action: clear)
+                .keyboardShortcut(.cancelAction)
+                .opacity(0)
+        }
+        .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+        .onDisappear(perform: clear)
         .frame(minWidth: 600, minHeight: 400)
+    }
+
+    private func clear() {
+        strokes.removeAll()
+        hovering = false
     }
 }
 

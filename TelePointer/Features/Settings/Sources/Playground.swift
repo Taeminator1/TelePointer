@@ -206,17 +206,26 @@ struct PlaygroundSettings: View {
 
     var body: some View {
         Form {
-            Picker("Smooth Turning", selection: $experiments.smoothTurning) {
+            Picker(selection: $experiments.smoothTurning) {
                 ForEach(SmoothTurning.allCases, id: \.self) { mode in
                     Text(mode.label).tag(mode)
                 }
+            } label: {
+                Text("Smooth Turning")
+                Text(experiments.smoothTurning.summary)
             }
-            Picker("Slow on Turn", selection: $experiments.slowOnTurn) {
+            Picker(selection: $experiments.slowOnTurn) {
                 ForEach(SlowOnTurn.allCases, id: \.self) { mode in
                     Text(mode.label).tag(mode)
                 }
+            } label: {
+                Text("Slow on Turn")
+                Text(experiments.slowOnTurn.summary)
             }
-            Toggle("No Hold Limit", isOn: $experiments.noHoldLimit)
+            Toggle(isOn: $experiments.noHoldLimit) {
+                Text("No Hold Limit")
+                Text("Keeps moving no matter how long the keys are held.")
+            }
         }
         .formStyle(.grouped)
         .bottomButtonBar("Open Playground") {
@@ -234,6 +243,14 @@ extension SmoothTurning {
         case .overshootReturn: "Overshoot Return"
         }
     }
+
+    fileprivate var summary: String {
+        switch self {
+        case .off: "Changes direction instantly."
+        case .headingBlend: "Gradually rotates the heading, leaving the new path offset past the turn point."
+        case .overshootReturn: "Swings slightly past the corner, then settles back onto the line."
+        }
+    }
 }
 
 extension SlowOnTurn {
@@ -242,6 +259,14 @@ extension SlowOnTurn {
         case .off: "Off"
         case .dip: "Dip"
         case .restartRamp: "Restart Ramp"
+        }
+    }
+
+    fileprivate var summary: String {
+        switch self {
+        case .off: "Keeps the current speed when turning."
+        case .dip: "Briefly slows down while turning, then recovers."
+        case .restartRamp: "Drops to the base speed and accelerates again."
         }
     }
 }

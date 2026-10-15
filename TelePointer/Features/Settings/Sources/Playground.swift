@@ -5,8 +5,11 @@ import SwiftUI
 public struct Playground: View {
     public static let windowID = "playground"
 
+    private static let ink = Color(nsColor: NSColor(name: nil) { appearance in
+        appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua ? .white : .black
+    })
     private static let palette: [Color?] = [
-        nil, .primary, .red, .orange, .yellow, .green, .mint, .blue, .purple, .brown,
+        nil, ink, .red, .orange, .yellow, .green, .mint, .blue, .purple, .brown,
     ]
     private static let keyOrder = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
     private static let gridSpacing: CGFloat = 10
@@ -15,6 +18,7 @@ public struct Playground: View {
     @State private var strokes: [Stroke] = []
     @State private var hovering = false
     @State private var colorIndex = 1
+    @State private var hiddenColors: Set<Int> = []
     @State private var gridScaleIndex = 0
 
     public init() {}
@@ -25,19 +29,21 @@ public struct Playground: View {
                 context.stroke(gridPath(in: size, scale: gridScale), with: .color(.primary.opacity(0.08)), lineWidth: 1)
             }
 
-            for stroke in strokes {
+            for stroke in strokes where !hiddenColors.contains(stroke.colorIndex) {
+                guard let color = Self.palette[stroke.colorIndex] else { continue }
+
                 var path = Path()
                 path.addLines(stroke.points)
-                context.stroke(path, with: .color(stroke.color), lineWidth: 2)
+                context.stroke(path, with: .color(color), lineWidth: 2)
             }
         }
         .onContinuousHover(coordinateSpace: .local) { phase in
             switch phase {
             case .active(let location):
-                guard let color = Self.palette[colorIndex] else { return }
+                guard canDraw else { return }
 
                 if !hovering {
-                    strokes.append(Stroke(color: color))
+                    strokes.append(Stroke(colorIndex: colorIndex))
                     hovering = true
                 }
                 strokes[strokes.count - 1].points.append(location)
@@ -51,15 +57,19 @@ public struct Playground: View {
                 shortcutRow("c", "clear")
                 shortcutRow("0–9", "change color")
 
-                HStack(spacing: 4) {
+                HStack(spacing: 6) {
+                    let drawnColors = Set(strokes.map(\.colorIndex))
+
                     ForEach(Self.keyOrder, id: \.self) { index in
                         colorDot(index)
-                            .opacity(index == colorIndex ? 1 : 0.25)
-                            .shadow(
-                                color: .black.opacity(index == colorIndex ? 0.35 : 0),
-                                radius: 1.5,
-                                y: 1
-                            )
+                            .opacity(isShown(index, drawnColors: drawnColors) ? 1 : 0.25)
+                            .overlay {
+                                if index == colorIndex {
+                                    Circle()
+                                        .strokeBorder(Self.palette[index] ?? .secondary, lineWidth: 1)
+                                        .padding(-3)
+                                }
+                            }
                     }
                 }
                 .padding(.top, 4)
@@ -115,19 +125,35 @@ public struct Playground: View {
         return path
     }
 
+    private var canDraw: Bool {
+        Self.palette[colorIndex] != nil
+    }
+
+    private func isShown(_ index: Int, drawnColors: Set<Int>) -> Bool {
+        guard index != 0 else { return true }
+
+        return !hiddenColors.contains(index) && (index == colorIndex || drawnColors.contains(index))
+    }
+
     private func selectColor(_ index: Int) {
-        guard index != colorIndex else { return }
+        if index == colorIndex {
+            guard index != 0 else { return }
 
-        colorIndex = index
+            hiddenColors.insert(index)
+            colorIndex = 0
+        } else {
+            colorIndex = index
+            hiddenColors.remove(index)
+        }
 
-        guard hovering, let last = strokes.last?.points.last else { return }
+        guard hovering else { return }
 
-        guard let color = Self.palette[index] else {
+        guard canDraw, let last = strokes.last?.points.last else {
             hovering = false
             return
         }
 
-        strokes.append(Stroke(color: color, points: [last]))
+        strokes.append(Stroke(colorIndex: colorIndex, points: [last]))
     }
 
     private func shortcutRow(_ key: LocalizedStringKey, _ description: LocalizedStringKey) -> some View {
@@ -158,7 +184,7 @@ public struct Playground: View {
 }
 
 private struct Stroke {
-    var color: Color
+    var colorIndex: Int
     var points: [CGPoint] = []
 }
 

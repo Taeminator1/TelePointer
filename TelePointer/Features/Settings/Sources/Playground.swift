@@ -6,17 +6,24 @@ public struct Playground: View {
     public static let windowID = "playground"
 
     private static let palette: [Color?] = [
-        nil, .black, .red, .orange, .yellow, .green, .mint, .blue, .purple, .pink,
+        nil, .black, .red, .orange, .yellow, .green, .mint, .blue, .purple, .brown,
     ]
+    private static let keyOrder = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+    private static let gridSpacing: CGFloat = 20
 
     @State private var strokes: [Stroke] = []
     @State private var hovering = false
     @State private var colorIndex = 1
+    @State private var showsGrid = true
 
     public init() {}
 
     public var body: some View {
-        Canvas { context, _ in
+        Canvas { context, size in
+            if showsGrid {
+                context.stroke(gridPath(in: size), with: .color(.black.opacity(0.08)), lineWidth: 1)
+            }
+
             for stroke in strokes {
                 var path = Path()
                 path.addLines(stroke.points)
@@ -39,18 +46,24 @@ public struct Playground: View {
         }
         .overlay(alignment: .bottomTrailing) {
             VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 8) {
-                    Text("**0–9** change color")
+                shortcutRow("g", "grid")
+                shortcutRow("c", "clear")
+                shortcutRow("0–9", "change color")
 
-                    HStack(spacing: 2) {
-                        Text("(")
-                        colorIndicator
-                        Text(", \(colorIndex))")
+                HStack(spacing: 4) {
+                    ForEach(Self.keyOrder, id: \.self) { index in
+                        colorDot(index)
+                            .opacity(index == colorIndex ? 1 : 0.25)
+                            .shadow(
+                                color: .black.opacity(index == colorIndex ? 0.35 : 0),
+                                radius: 1.5,
+                                y: 1
+                            )
                     }
                 }
-
-                Text("**esc** clear")
+                .padding(.top, 4)
             }
+            .fixedSize()
             .font(.callout)
             .foregroundStyle(.black.opacity(0.6))
             .padding(.horizontal, 12)
@@ -63,7 +76,10 @@ public struct Playground: View {
         .background {
             Group {
                 Button("Clear", action: clear)
-                    .keyboardShortcut(.cancelAction)
+                    .keyboardShortcut("c", modifiers: [])
+
+                Button("Grid") { showsGrid.toggle() }
+                    .keyboardShortcut("g", modifiers: [])
 
                 ForEach(Self.palette.indices, id: \.self) { index in
                     Button("Color \(index)") { selectColor(index) }
@@ -75,6 +91,22 @@ public struct Playground: View {
         .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
         .onDisappear(perform: clear)
         .frame(minWidth: 600, minHeight: 400)
+    }
+
+    private func gridPath(in size: CGSize) -> Path {
+        var path = Path()
+
+        for x in stride(from: 0, through: size.width, by: Self.gridSpacing) {
+            path.move(to: CGPoint(x: x, y: 0))
+            path.addLine(to: CGPoint(x: x, y: size.height))
+        }
+
+        for y in stride(from: 0, through: size.height, by: Self.gridSpacing) {
+            path.move(to: CGPoint(x: 0, y: y))
+            path.addLine(to: CGPoint(x: size.width, y: y))
+        }
+
+        return path
     }
 
     private func selectColor(_ index: Int) {
@@ -92,9 +124,17 @@ public struct Playground: View {
         strokes.append(Stroke(color: color, points: [last]))
     }
 
+    private func shortcutRow(_ key: LocalizedStringKey, _ description: LocalizedStringKey) -> some View {
+        HStack {
+            Text(key).bold()
+            Spacer()
+            Text(description)
+        }
+    }
+
     @ViewBuilder
-    private var colorIndicator: some View {
-        if let color = Self.palette[colorIndex] {
+    private func colorDot(_ index: Int) -> some View {
+        if let color = Self.palette[index] {
             Circle()
                 .fill(color)
                 .frame(width: 10, height: 10)

@@ -174,13 +174,12 @@ struct PlaygroundSettings: View {
 
     var body: some View {
         Form {
-            Button("Open Playground") {
-                openWindow(id: Playground.windowID)
-            }
-
             Toggle("Smooth Turning", isOn: $experiments.smoothTurning)
         }
         .formStyle(.grouped)
+        .bottomButtonBar("Open Playground") {
+            openWindow(id: Playground.windowID)
+        }
         .frame(width: 400)
     }
 }

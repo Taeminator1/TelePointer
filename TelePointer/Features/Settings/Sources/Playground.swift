@@ -1,4 +1,5 @@
 #if DEBUG
+import PointerCore
 import SwiftUI
 
 public struct Playground: View {
@@ -129,12 +130,15 @@ extension View {
 
 struct PlaygroundSettings: View {
     @Environment(\.openWindow) private var openWindow
+    @Bindable private var experiments = ExperimentStore.shared
 
     var body: some View {
         Form {
             Button("Open Playground") {
                 openWindow(id: Playground.windowID)
             }
+
+            Toggle("Smooth Turning", isOn: $experiments.smoothTurning)
         }
         .formStyle(.grouped)
         .frame(width: 400)

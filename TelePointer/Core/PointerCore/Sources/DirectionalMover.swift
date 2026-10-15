@@ -5,33 +5,44 @@ public final class DirectionalMover {
     public struct Tuning {
         public var tick: Duration
         public var holdLimit: Double
+        public var turnDuration: Double
         public var steadyModifier: NSEvent.ModifierFlags
 
         public init(
             tick: Duration = .milliseconds(8),
             holdLimit: Double = 5,
+            turnDuration: Double = 0.08,
             steadyModifier: NSEvent.ModifierFlags = .command
         ) {
             self.tick = tick
             self.holdLimit = holdLimit
+            self.turnDuration = turnDuration
             self.steadyModifier = steadyModifier
         }
     }
 
     private let tuning: Tuning
     private let settings: SpeedStore
+    private let experiments: ExperimentStore
 
     private var active: [Direction: NSEvent.ModifierFlags] = [:]
     private var position: CGPoint?
     private var warpFrames: [CGRect] = []
     private var curve: SpeedCurve = .default
     private var steady: Double = SteadySpeed.default
+    private var smoothTurning = true
+    private var heading: CGVector?
     private var repeater: Task<Void, Never>?
     private var generation = 0
 
-    public init(tuning: Tuning = Tuning(), settings: SpeedStore = .shared) {
+    public init(
+        tuning: Tuning = Tuning(),
+        settings: SpeedStore = .shared,
+        experiments: ExperimentStore = .shared
+    ) {
         self.tuning = tuning
         self.settings = settings
+        self.experiments = experiments
     }
 
     public func press(_ direction: Direction, requiredModifiers: NSEvent.ModifierFlags) {
@@ -40,6 +51,7 @@ public final class DirectionalMover {
             warpFrames = PointerMover.screenWarpFrames()
             curve = settings.curve
             steady = settings.steadySpeed
+            smoothTurning = experiments.smoothTurning
         }
 
         active[direction] = requiredModifiers.subtracting(tuning.steadyModifier)
@@ -73,6 +85,7 @@ public final class DirectionalMover {
         repeater = nil
         active.removeAll()
         position = nil
+        heading = nil
     }
 
     private func run(token: Int) async {
@@ -100,7 +113,8 @@ public final class DirectionalMover {
                 speed = curve.speed(at: ramped)
             }
 
-            step(normalizedVector(of: Set(active.keys)), distance: speed * delta)
+            let vector = turn(toward: normalizedVector(of: Set(active.keys)), over: delta)
+            step(vector, distance: speed * delta)
 
             try? await Task.sleep(for: tuning.tick)
         }
@@ -108,6 +122,22 @@ public final class DirectionalMover {
         if token == generation {
             stop()
         }
+    }
+
+    private func turn(toward target: CGVector, over delta: Double) -> CGVector {
+        guard smoothTurning, let current = heading else {
+            heading = target
+            return target
+        }
+
+        let blend = 1 - exp(-delta / tuning.turnDuration)
+        let turned = CGVector(
+            dx: current.dx + (target.dx - current.dx) * blend,
+            dy: current.dy + (target.dy - current.dy) * blend
+        )
+
+        heading = turned
+        return turned
     }
 
     private func step(_ vector: CGVector, distance: Double) {

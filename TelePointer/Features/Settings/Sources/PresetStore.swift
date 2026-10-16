@@ -42,7 +42,7 @@ final class PresetStore {
     func add() -> Preset.ID {
         let preset = Preset(
             id: UUID(),
-            name: String(localized: "Preset \(presets.count + 1)"),
+            name: defaultName(),
             settings: currentSettings()
         )
 
@@ -82,6 +82,15 @@ final class PresetStore {
 
         exceptionStore.all = [:]
         active.settings.apply(speed: speedStore, exceptions: exceptionStore, experiments: experimentStore)
+    }
+
+    private func defaultName() -> String {
+        let names = Set(presets.map(\.name))
+
+        return (1...)
+            .lazy
+            .map { String(localized: "Preset \($0)") }
+            .first { !names.contains($0) }!
     }
 
     private func currentSettings() -> SettingsFile {

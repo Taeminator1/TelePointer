@@ -70,6 +70,18 @@ struct PresetStoreTests {
         #expect(store.presets == [kept])
     }
 
+    @Test("기본 이름은 이미 있는 이름과 겹치지 않는다")
+    func avoidsDuplicateDefaultName() {
+        let store = makeStore()
+        store.add()
+        store.add()
+
+        store.remove([store.presets[0].id])
+        store.add()
+
+        #expect(store.presets.map(\.name) == ["Preset 2", "Preset 1"])
+    }
+
     @Test("preset에 별명을 붙인다")
     func renamesPreset() {
         let store = makeStore()

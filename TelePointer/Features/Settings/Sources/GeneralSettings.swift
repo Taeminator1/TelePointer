@@ -17,7 +17,7 @@ struct GeneralSettings: View {
                 }
             }
 
-            Section("Presets") {}
+            PresetSection(store: .shared)
         }
         .formStyle(.grouped)
     }

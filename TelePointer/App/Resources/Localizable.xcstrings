@@ -177,6 +177,17 @@
         }
       }
     },
+    "In Use" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용 중"
+          }
+        }
+      }
+    },
     "Left" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -210,6 +221,17 @@
         }
       }
     },
+    "No Presets" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "프리셋 없음"
+          }
+        }
+      }
+    },
     "Open at Login" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -239,6 +261,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "포인터 속도"
+          }
+        }
+      }
+    },
+    "Preset %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "프리셋 %lld"
           }
         }
       }
@@ -415,6 +448,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "파일이 손상되었습니다."
+          }
+        }
+      }
+    },
+    "The preset at the top is in use." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "맨 위의 프리셋을 사용합니다."
           }
         }
       }

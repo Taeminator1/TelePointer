@@ -16,6 +16,8 @@ struct GeneralSettings: View {
                     }
                 }
             }
+
+            Section("Presets") {}
         }
         .formStyle(.grouped)
     }

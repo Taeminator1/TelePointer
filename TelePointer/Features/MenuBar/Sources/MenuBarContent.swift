@@ -26,20 +26,6 @@ public struct MenuBarContent: View {
         Divider()
 
         Button {
-            SettingsTransfer.importFromFile()
-        } label: {
-            Label("Import Settings…", systemImage: "square.and.arrow.down")
-        }
-
-        Button {
-            SettingsTransfer.exportToFile()
-        } label: {
-            Label("Export Settings…", systemImage: "square.and.arrow.up")
-        }
-
-        Divider()
-
-        Button {
             NSApplication.shared.terminate(nil)
         } label: {
             Label("Quit", systemImage: "xmark.rectangle")

@@ -111,13 +111,24 @@
         }
       }
     },
-    "Export Settings…" : {
+    "Export Settings" : {
       "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "설정 내보내기…"
+            "value" : "설정 내보내기"
+          }
+        }
+      }
+    },
+    "Export…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내보내기…"
           }
         }
       }
@@ -144,13 +155,24 @@
         }
       }
     },
-    "Import Settings…" : {
+    "Import Settings" : {
       "extractionState" : "manual",
       "localizations" : {
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "설정 가져오기…"
+            "value" : "설정 가져오기"
+          }
+        }
+      }
+    },
+    "Import…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가져오기…"
           }
         }
       }

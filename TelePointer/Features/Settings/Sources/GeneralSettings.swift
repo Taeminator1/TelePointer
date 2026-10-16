@@ -2,8 +2,22 @@ import SwiftUI
 
 struct GeneralSettings: View {
     var body: some View {
-        Form {}
-            .formStyle(.grouped)
+        Form {
+            Section {
+                LabeledContent("Import Settings") {
+                    Button("Import…") {
+                        SettingsTransfer.importFromFile()
+                    }
+                }
+
+                LabeledContent("Export Settings") {
+                    Button("Export…") {
+                        SettingsTransfer.exportToFile()
+                    }
+                }
+            }
+        }
+        .formStyle(.grouped)
     }
 }
 

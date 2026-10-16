@@ -5,11 +5,11 @@ import ShortcutException
 import UniformTypeIdentifiers
 
 @MainActor
-public enum SettingsTransfer {
+enum SettingsTransfer {
     private static let fileType = UTType(exportedAs: "com.taeminyun.TelePointer.settings")
     private static let fileName = "Settings.telepointer"
 
-    public static func exportToFile(
+    static func exportToFile(
         speed speedStore: SpeedStore = .shared,
         exceptions exceptionStore: ShortcutExceptionStore = .shared,
         experiments experimentStore: ExperimentStore = .shared
@@ -34,7 +34,7 @@ public enum SettingsTransfer {
         }
     }
 
-    public static func importFromFile(
+    static func importFromFile(
         speed speedStore: SpeedStore = .shared,
         exceptions exceptionStore: ShortcutExceptionStore = .shared,
         experiments experimentStore: ExperimentStore = .shared

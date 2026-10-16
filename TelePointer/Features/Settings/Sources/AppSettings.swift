@@ -6,7 +6,7 @@ public struct AppSettings: View {
     private static let windowWidth: CGFloat = 568
     private static let sidebarWidth: CGFloat = 160
 
-    @State private var selection: SettingsPane = .shortcuts
+    @State private var selection: SettingsPane = .general
 
     public init() {}
 
@@ -25,6 +25,8 @@ public struct AppSettings: View {
         } detail: {
             Group {
                 switch selection {
+                case .general:
+                    GeneralSettings()
                 case .shortcuts:
                     ShortcutSettings()
                 case .speed:
@@ -49,6 +51,7 @@ public struct AppSettings: View {
 }
 
 private enum SettingsPane: CaseIterable {
+    case general
     case shortcuts
     case speed
     #if DEBUG
@@ -57,6 +60,7 @@ private enum SettingsPane: CaseIterable {
 
     var title: LocalizedStringKey {
         switch self {
+        case .general: "General"
         case .shortcuts: "Shortcuts"
         case .speed: "Pointer Speed"
         #if DEBUG
@@ -67,6 +71,7 @@ private enum SettingsPane: CaseIterable {
 
     var systemImage: String {
         switch self {
+        case .general: "gearshape"
         case .shortcuts: "keyboard"
         case .speed: "cursorarrow.motionlines"
         #if DEBUG

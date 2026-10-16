@@ -43,7 +43,7 @@ final class PresetStore {
         let preset = Preset(
             id: UUID(),
             name: String(localized: "Preset \(presets.count + 1)"),
-            settings: .current(speed: speedStore, exceptions: exceptionStore, experiments: experimentStore)
+            settings: currentSettings()
         )
 
         presets.append(preset)
@@ -52,7 +52,7 @@ final class PresetStore {
     }
 
     func move(fromOffsets source: IndexSet, toOffset destination: Int) {
-        presets.move(fromOffsets: source, toOffset: destination)
+        switchingActive { $0.move(fromOffsets: source, toOffset: destination) }
     }
 
     func rename(_ id: Preset.ID, to name: String) {
@@ -64,7 +64,28 @@ final class PresetStore {
     }
 
     func remove(_ ids: Set<Preset.ID>) {
-        presets.removeAll { ids.contains($0.id) }
+        switchingActive { $0.removeAll { ids.contains($0.id) } }
+    }
+
+    private func switchingActive(_ change: (inout [Preset]) -> Void) {
+        var presets = presets
+        let activeID = presets.first?.id
+
+        if !presets.isEmpty {
+            presets[0].settings = currentSettings()
+        }
+
+        change(&presets)
+        self.presets = presets
+
+        guard let active = presets.first, active.id != activeID else { return }
+
+        exceptionStore.all = [:]
+        active.settings.apply(speed: speedStore, exceptions: exceptionStore, experiments: experimentStore)
+    }
+
+    private func currentSettings() -> SettingsFile {
+        .current(speed: speedStore, exceptions: exceptionStore, experiments: experimentStore)
     }
 
     private static func load(from defaults: UserDefaults) -> [Preset] {

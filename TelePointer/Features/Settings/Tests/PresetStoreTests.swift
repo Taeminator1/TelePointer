@@ -12,11 +12,16 @@ struct PresetStoreTests {
         defaults.removePersistentDomain(forName: "PresetStoreTests")
     }
 
-    private func makeStore(speed: SpeedStore? = nil) -> PresetStore {
+    private let code = ExcludedApp(bundleID: "com.microsoft.vscode", name: "Code")
+
+    private func makeStore(
+        speed: SpeedStore? = nil,
+        exceptions: ShortcutExceptionStore? = nil
+    ) -> PresetStore {
         PresetStore(
             defaults: defaults,
             speed: speed ?? SpeedStore(defaults: defaults),
-            exceptions: ShortcutExceptionStore(defaults: defaults),
+            exceptions: exceptions ?? ShortcutExceptionStore(defaults: defaults),
             experiments: ExperimentStore(defaults: defaults)
         )
     }
@@ -92,5 +97,60 @@ struct PresetStoreTests {
         store.add()
 
         #expect(makeStore().presets == store.presets)
+    }
+
+    @Test("맨 위로 올린 preset의 설정을 적용하고, 내려간 preset은 바뀐 설정을 담는다")
+    func appliesPresetMovedToTop() {
+        let speed = SpeedStore(defaults: defaults)
+        let store = makeStore(speed: speed)
+        store.add()
+        speed.steadySpeed = 200
+        store.add()
+        speed.steadySpeed = 300
+
+        store.move(fromOffsets: [1], toOffset: 0)
+
+        #expect(speed.steadySpeed == 200)
+        #expect(store.presets[1].settings.speed?.steady == 300)
+    }
+
+    @Test("맨 위 preset을 지우면 다음 preset의 설정을 적용한다")
+    func appliesNextPresetAfterRemovingTop() {
+        let speed = SpeedStore(defaults: defaults)
+        let store = makeStore(speed: speed)
+        store.add()
+        speed.steadySpeed = 200
+        store.add()
+
+        store.remove([store.presets[0].id])
+
+        #expect(speed.steadySpeed == 200)
+    }
+
+    @Test("맨 위가 그대로면 설정을 건드리지 않는다")
+    func keepsSettingsWhenTopUnchanged() {
+        let speed = SpeedStore(defaults: defaults)
+        let store = makeStore(speed: speed)
+        store.add()
+        store.add()
+        speed.steadySpeed = 200
+
+        store.remove([store.presets[1].id])
+
+        #expect(speed.steadySpeed == 200)
+    }
+
+    @Test("preset을 적용하면 예외 앱을 통째로 바꾼다")
+    func replacesExceptionsOnApply() {
+        let exceptions = ShortcutExceptionStore(defaults: defaults)
+        let store = makeStore(exceptions: exceptions)
+        store.add()
+        store.add()
+        store.move(fromOffsets: [1], toOffset: 0)
+        exceptions.add(code, for: "movePointer")
+
+        store.move(fromOffsets: [1], toOffset: 0)
+
+        #expect(exceptions.all.isEmpty)
     }
 }

@@ -8,6 +8,9 @@ struct PresetSection: View {
     let store: PresetStore
 
     @State private var selection: Set<Preset.ID> = []
+    @State private var renamingID: Preset.ID?
+    @State private var draftName = ""
+    @FocusState private var isNameFocused: Bool
 
     var body: some View {
         Section {
@@ -32,7 +35,7 @@ struct PresetSection: View {
 
                 HStack(spacing: 0) {
                     barButton("plus") {
-                        store.add()
+                        add()
                     }
 
                     Divider()
@@ -58,9 +61,50 @@ struct PresetSection: View {
         }
     }
 
+    private func add() {
+        let id = store.add()
+
+        selection = [id]
+        startRenaming(id)
+    }
+
     private func remove() {
         store.remove(selection)
         selection = []
+    }
+
+    @ViewBuilder
+    private func name(of preset: Preset) -> some View {
+        if renamingID == preset.id {
+            TextField("Name", text: $draftName)
+                .textFieldStyle(.plain)
+                .labelsHidden()
+                .focused($isNameFocused)
+                .onAppear { isNameFocused = true }
+                .onSubmit(finishRenaming)
+                .onExitCommand { renamingID = nil }
+                .onChange(of: isNameFocused) { _, isFocused in
+                    if !isFocused {
+                        finishRenaming()
+                    }
+                }
+        } else {
+            Text(preset.name)
+        }
+    }
+
+    private func startRenaming(_ id: Preset.ID) {
+        guard let preset = store.presets.first(where: { $0.id == id }) else { return }
+
+        draftName = preset.name
+        renamingID = id
+    }
+
+    private func finishRenaming() {
+        guard let id = renamingID else { return }
+
+        store.rename(id, to: draftName)
+        renamingID = nil
     }
 
     @ViewBuilder
@@ -73,7 +117,7 @@ struct PresetSection: View {
             List(selection: $selection) {
                 ForEach(Array(store.presets.enumerated()), id: \.element.id) { index, preset in
                     HStack(spacing: 0) {
-                        Text(preset.name)
+                        name(of: preset)
                             .frame(width: Self.nameWidth, alignment: .leading)
 
                         if index == 0 {
@@ -86,6 +130,12 @@ struct PresetSection: View {
                     .listRowInsets(EdgeInsets())
                 }
                 .onMove(perform: store.move)
+            }
+            .contextMenu(forSelectionType: Preset.ID.self) { _ in
+            } primaryAction: { ids in
+                guard ids.count == 1, let id = ids.first else { return }
+
+                startRenaming(id)
             }
             .listStyle(.plain)
             .environment(\.defaultMinListRowHeight, Self.rowHeight)

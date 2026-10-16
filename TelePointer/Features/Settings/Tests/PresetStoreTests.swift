@@ -65,6 +65,27 @@ struct PresetStoreTests {
         #expect(store.presets == [kept])
     }
 
+    @Test("preset에 별명을 붙인다")
+    func renamesPreset() {
+        let store = makeStore()
+        store.add()
+
+        store.rename(store.presets[0].id, to: "  Gaming  ")
+
+        #expect(store.presets[0].name == "Gaming")
+    }
+
+    @Test("빈 별명은 받지 않는다")
+    func ignoresBlankName() {
+        let store = makeStore()
+        store.add()
+        let name = store.presets[0].name
+
+        store.rename(store.presets[0].id, to: "   ")
+
+        #expect(store.presets[0].name == name)
+    }
+
     @Test("추가한 preset은 다시 열어도 남아 있다")
     func persistsPresets() {
         let store = makeStore()

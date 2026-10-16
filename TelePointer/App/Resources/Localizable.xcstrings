@@ -210,6 +210,17 @@
         }
       }
     },
+    "Name" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이름"
+          }
+        }
+      }
+    },
     "No apps yet." : {
       "extractionState" : "manual",
       "localizations" : {

@@ -38,18 +38,29 @@ final class PresetStore {
         presets = Self.load(from: defaults)
     }
 
-    func add() {
-        presets.append(
-            Preset(
-                id: UUID(),
-                name: String(localized: "Preset \(presets.count + 1)"),
-                settings: .current(speed: speedStore, exceptions: exceptionStore, experiments: experimentStore)
-            )
+    @discardableResult
+    func add() -> Preset.ID {
+        let preset = Preset(
+            id: UUID(),
+            name: String(localized: "Preset \(presets.count + 1)"),
+            settings: .current(speed: speedStore, exceptions: exceptionStore, experiments: experimentStore)
         )
+
+        presets.append(preset)
+
+        return preset.id
     }
 
     func move(fromOffsets source: IndexSet, toOffset destination: Int) {
         presets.move(fromOffsets: source, toOffset: destination)
+    }
+
+    func rename(_ id: Preset.ID, to name: String) {
+        let name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !name.isEmpty, let index = presets.firstIndex(where: { $0.id == id }) else { return }
+
+        presets[index].name = name
     }
 
     func remove(_ ids: Set<Preset.ID>) {

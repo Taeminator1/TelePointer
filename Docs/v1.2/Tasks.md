@@ -22,7 +22,7 @@
 - [x] General 탭의 Import · Export 아래에 Presets를 둔다
 - [x] preset을 추가한다
 - [x] preset을 삭제한다
-- [ ] preset마다 별명을 붙인다
+- [x] preset마다 별명을 붙인다
 
 ## 3. 부드러운 커서 이동
 

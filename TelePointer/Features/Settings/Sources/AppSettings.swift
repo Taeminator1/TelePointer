@@ -30,8 +30,8 @@ public struct AppSettings: View {
                 case .speed:
                     SpeedSettings()
                 #if DEBUG
-                case .playground:
-                    PlaygroundSettings()
+                case .experiments:
+                    ExperimentSettings()
                 #endif
                 }
             }
@@ -52,7 +52,7 @@ private enum SettingsPane: CaseIterable {
     case shortcuts
     case speed
     #if DEBUG
-    case playground
+    case experiments
     #endif
 
     var title: LocalizedStringKey {
@@ -60,7 +60,7 @@ private enum SettingsPane: CaseIterable {
         case .shortcuts: "Shortcuts"
         case .speed: "Pointer Speed"
         #if DEBUG
-        case .playground: "Playground"
+        case .experiments: "Experiments"
         #endif
         }
     }
@@ -70,7 +70,7 @@ private enum SettingsPane: CaseIterable {
         case .shortcuts: "keyboard"
         case .speed: "cursorarrow.motionlines"
         #if DEBUG
-        case .playground: "scribble"
+        case .experiments: "flask"
         #endif
         }
     }

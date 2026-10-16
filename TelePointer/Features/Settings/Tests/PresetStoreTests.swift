@@ -52,6 +52,19 @@ struct PresetStoreTests {
         #expect(store.presets.map(\.id) == ids.reversed())
     }
 
+    @Test("고른 preset만 삭제한다")
+    func removesPresets() {
+        let store = makeStore()
+        store.add()
+        store.add()
+        store.add()
+        let kept = store.presets[1]
+
+        store.remove([store.presets[0].id, store.presets[2].id])
+
+        #expect(store.presets == [kept])
+    }
+
     @Test("추가한 preset은 다시 열어도 남아 있다")
     func persistsPresets() {
         let store = makeStore()

@@ -52,6 +52,10 @@ final class PresetStore {
         presets.move(fromOffsets: source, toOffset: destination)
     }
 
+    func remove(_ ids: Set<Preset.ID>) {
+        presets.removeAll { ids.contains($0.id) }
+    }
+
     private static func load(from defaults: UserDefaults) -> [Preset] {
         guard
             let data = defaults.data(forKey: presetsKey),

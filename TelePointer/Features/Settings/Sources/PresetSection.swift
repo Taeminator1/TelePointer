@@ -7,7 +7,7 @@ struct PresetSection: View {
 
     let store: PresetStore
 
-    @State private var selection: Preset.ID?
+    @State private var selection: Set<Preset.ID> = []
 
     var body: some View {
         Section {
@@ -38,9 +38,10 @@ struct PresetSection: View {
                     Divider()
                         .frame(height: 12)
 
-                    // TODO: preset 삭제
-                    barButton("minus") {}
-                        .disabled(true)
+                    barButton("minus") {
+                        remove()
+                    }
+                    .disabled(selection.isEmpty)
                 }
                 .buttonStyle(.borderless)
             }
@@ -55,6 +56,11 @@ struct PresetSection: View {
                 .frame(width: Self.barButtonSize.width, height: Self.barButtonSize.height)
                 .contentShape(.rect)
         }
+    }
+
+    private func remove() {
+        store.remove(selection)
+        selection = []
     }
 
     @ViewBuilder
